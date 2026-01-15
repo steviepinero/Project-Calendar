@@ -19,9 +19,6 @@
                 <div class="appbar-left">
                     <h1 class="appbar-title">MSP Project Calendar</h1>
                 </div>
-                <div id="colorLegend" class="color-legend">
-                    <!-- Color legend will be dynamically generated -->
-                </div>
                 <div class="appbar-right">
                     <button id="addEmployeeBtn" class="e-btn e-outline">+ Add Employee</button>
                     <button id="addProjectBtn" class="e-btn e-primary">+ Add Project</button>
@@ -103,6 +100,8 @@
                             <div id="ganttBody" class="gantt-body">
                                 <!-- Gantt bars will be dynamically generated -->
                             </div>
+                            <!-- Tooltip for project details -->
+                            <div id="ganttTooltip" class="gantt-tooltip" style="display: none;"></div>
                         </div>
 
                         <!-- Right Panel: Project Details -->

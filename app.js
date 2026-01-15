@@ -1,4 +1,5 @@
 // Data structures
+// Cache buster: 2026-01-15-15:03
 let projects = [];
 let selectedProjectId = null;
 let editingProjectId = null;
@@ -66,7 +67,6 @@ function initializeApp() {
     document.getElementById('requestDate').valueAsDate = today;
     document.getElementById('assignedStartDate').valueAsDate = today;
     document.getElementById('preferredStartDate').valueAsDate = today;
-    renderColorLegend();
     renderEmployeeDropdowns();
     renderAllowList();
 }
@@ -878,7 +878,78 @@ function createGanttBar(project, dateRange, index = 0) {
         openEditModal(project.id);
     };
     
+    // Add hover tooltip
+    bar.addEventListener('mouseenter', (e) => showGanttTooltip(e, project));
+    bar.addEventListener('mouseleave', () => hideGanttTooltip());
+    
     return bar;
+}
+
+function showGanttTooltip(event, project) {
+    const tooltip = document.getElementById('ganttTooltip');
+    const member = teamMembers[project.assignedTo];
+    
+    // Format dates
+    const startDate = project.startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    const endDate = project.endDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    
+    // Build tooltip content
+    const content = `
+        <div class="gantt-tooltip-title">${project.name}</div>
+        <div class="gantt-tooltip-item">
+            <span class="gantt-tooltip-label">Agent:</span>
+            <span class="gantt-tooltip-value">${member ? member.name : 'Unassigned'}</span>
+        </div>
+        <div class="gantt-tooltip-item">
+            <span class="gantt-tooltip-label">Type:</span>
+            <span class="gantt-tooltip-value">${project.type.charAt(0).toUpperCase() + project.type.slice(1)}</span>
+        </div>
+        <div class="gantt-tooltip-item">
+            <span class="gantt-tooltip-label">Status:</span>
+            <span class="gantt-tooltip-value">${project.status}</span>
+        </div>
+        <div class="gantt-tooltip-item">
+            <span class="gantt-tooltip-label">Duration:</span>
+            <span class="gantt-tooltip-value">${project.duration}h (${project.dailyLimit}h/day)</span>
+        </div>
+        <div class="gantt-tooltip-item">
+            <span class="gantt-tooltip-label">Start:</span>
+            <span class="gantt-tooltip-value">${startDate}</span>
+        </div>
+        <div class="gantt-tooltip-item">
+            <span class="gantt-tooltip-label">End:</span>
+            <span class="gantt-tooltip-value">${endDate}</span>
+        </div>
+    `;
+    
+    tooltip.innerHTML = content;
+    
+    // Position tooltip
+    const barRect = event.target.getBoundingClientRect();
+    const tooltipWidth = 300;
+    const tooltipHeight = tooltip.offsetHeight || 150;
+    
+    let left = barRect.left + (barRect.width / 2) - (tooltipWidth / 2);
+    let top = barRect.top - tooltipHeight - 10;
+    
+    // Adjust if tooltip goes off-screen
+    if (left < 10) left = 10;
+    if (left + tooltipWidth > window.innerWidth - 10) {
+        left = window.innerWidth - tooltipWidth - 10;
+    }
+    
+    if (top < 10) {
+        top = barRect.bottom + 10;
+    }
+    
+    tooltip.style.left = `${left}px`;
+    tooltip.style.top = `${top}px`;
+    tooltip.style.display = 'block';
+}
+
+function hideGanttTooltip() {
+    const tooltip = document.getElementById('ganttTooltip');
+    tooltip.style.display = 'none';
 }
 
 function setupColumnResizers() {
@@ -1141,6 +1212,7 @@ function getNextColor() {
 
 function renderColorLegend() {
     const legendContainer = document.getElementById('colorLegend');
+    if (!legendContainer) return; // Exit if element doesn't exist
     legendContainer.innerHTML = '';
     
     Object.keys(teamMembers).forEach(personId => {
@@ -1207,7 +1279,6 @@ function saveEmployee() {
     document.getElementById('employeeDailyLimit').value = 8;
     
     // Update UI
-    renderColorLegend();
     renderEmployeeDropdowns();
 }
 

@@ -111,6 +111,11 @@ function switchPage(pageName) {
         // Initialize hardware page immediately (without waiting for Syncfusion)
         initializeHardwarePage();
     }
+    
+    if (pageName === 'lifecycle') {
+        // Initialize lifecycle page
+        initializeLifecyclePage();
+    }
 }
 
 function setupEventListeners() {
@@ -1794,6 +1799,134 @@ function initializeHardwareGrid() {
     if (gridElement) {
         gridElement.innerHTML = html;
         console.log('Fallback HTML table created successfully');
+    }
+}
+
+// ===== LIFECYCLE PAGE FUNCTIONS =====
+
+function initializeLifecyclePage() {
+    console.log('Initializing lifecycle page');
+    renderLifecycleChart();
+    renderLifecycleDataGrid();
+    setupConfigurationHandlers();
+}
+
+function renderLifecycleChart() {
+    console.log('Rendering lifecycle chart');
+    
+    if (typeof Chart === 'undefined') {
+        console.warn('Chart.js not loaded, retrying...');
+        setTimeout(renderLifecycleChart, 500);
+        return;
+    }
+    
+    const ctx = document.getElementById('lifecycleChart');
+    if (!ctx) {
+        console.error('lifecycleChart canvas not found');
+        return;
+    }
+    
+    if (ctx.chart) {
+        ctx.chart.destroy();
+    }
+    
+    const chartData = {
+        labels: ['Local', 'Work or Home', 'Microsoft', 'Other'],
+        datasets: [
+            {
+                data: [44, 24, 14, 18],
+                backgroundColor: ['#3498db', '#f39c12', '#2ecc71', '#e74c3c'],
+                borderColor: ['#2980b9', '#e67e22', '#27ae60', '#c0392b'],
+                borderWidth: 2
+            }
+        ]
+    };
+    
+    ctx.chart = new Chart(ctx, {
+        type: 'doughnut',
+        data: chartData,
+        options: {
+            responsive: false,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'bottom',
+                    labels: {
+                        padding: 20,
+                        font: { size: 12 }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return context.label + ': ' + context.parsed + '%';
+                        }
+                    }
+                }
+            }
+        }
+    });
+    
+    console.log('Lifecycle chart rendered successfully');
+}
+
+function renderLifecycleDataGrid() {
+    console.log('Rendering lifecycle data grid');
+    
+    const gridData = [
+        { Type: 'Desktop', DeviceName: 'ITP-DT-SMC', User: 'SCunningham', Purchased: '6/21/2022' },
+        { Type: 'Laptop', DeviceName: 'ITP-LT-SMC', User: 'SCunningham', Purchased: '7/11/2001' },
+        { Type: 'Desktop', DeviceName: 'ITP-DT-AMC', User: 'ACunningham', Purchased: '1/20/2019' },
+        { Type: 'Switch', DeviceName: '', User: '', Purchased: '8/1/2013' },
+        { Type: 'NAS', DeviceName: 'ITP-NAS', User: '', Purchased: '3/24/2020' },
+        { Type: 'Desktop', DeviceName: 'ITP-DT-SMC', User: 'SCunningham', Purchased: '6/21/2022' },
+        { Type: 'Laptop', DeviceName: 'ITP-LT-SMC', User: 'SCunningham', Purchased: '7/11/2001' },
+        { Type: 'Desktop', DeviceName: 'ITP-DT-AMC', User: 'ACunningham', Purchased: '1/20/2019' },
+        { Type: 'Switch', DeviceName: '', User: '', Purchased: '8/1/2013' },
+        { Type: 'NAS', DeviceName: 'ITP-NAS', User: '', Purchased: '3/24/2020' },
+        { Type: 'Desktop', DeviceName: 'ITP-DT-SMC', User: 'SCunningham', Purchased: '6/21/2022' },
+        { Type: 'Laptop', DeviceName: 'ITP-LT-SMC', User: 'SCunningham', Purchased: '7/11/2001' },
+        { Type: 'Desktop', DeviceName: 'ITP-DT-AMC', User: 'ACunningham', Purchased: '1/20/2019' },
+        { Type: 'Desktop', DeviceName: 'ITP-DT-SMC', User: 'SCunningham', Purchased: '6/21/2022' },
+        { Type: 'Laptop', DeviceName: 'ITP-LT-SMC', User: 'SCunningham', Purchased: '7/11/2001' },
+        { Type: 'Desktop', DeviceName: 'ITP-DT-AMC', User: 'ACunningham', Purchased: '1/20/2019' },
+    ];
+    
+    let html = '<table><thead><tr><th>Type</th><th>Device Name</th><th>User</th><th>Purchased</th></tr></thead><tbody>';
+    gridData.forEach(row => {
+        html += `<tr><td>${row.Type}</td><td>${row.DeviceName}</td><td>${row.User}</td><td>${row.Purchased}</td></tr>`;
+    });
+    html += '</tbody></table>';
+    
+    const gridElement = document.getElementById('lifecycleDataGrid');
+    if (gridElement) {
+        gridElement.innerHTML = html;
+        console.log('Lifecycle data grid rendered successfully');
+    } else {
+        console.error('lifecycleDataGrid element not found');
+    }
+}
+
+function setupConfigurationHandlers() {
+    console.log('Setting up configuration handlers');
+    
+    const deleteBtn = document.querySelector('.delete-btn');
+    if (deleteBtn) {
+        deleteBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log('Delete button clicked');
+            alert('Delete functionality coming soon');
+        });
+    }
+    
+    const addBtn = document.querySelector('.add-btn');
+    if (addBtn) {
+        addBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log('Add button clicked');
+            alert('Add functionality coming soon');
+        });
     }
 }
 

@@ -58,14 +58,9 @@
                     <div class="sidebar-section">
                         <div class="sidebar-category">ANALYSIS</div>
                         <ul class="sidebar-menu">
-                            <li><a href="#" class="sidebar-link">Endpoint</a></li>
+                            <li><a href="#" class="nav-item" data-page="hardware">Endpoint</a></li>
+                            <li><a href="#" class="nav-item" data-page="lifecycle">Lifecycle</a></li>
                             <li><a href="#" class="nav-item" data-page="software">Software</a></li>
-                        </ul>
-                    </div>
-                    <div class="sidebar-section">
-                        <div class="sidebar-category">HARDWARE</div>
-                        <ul class="sidebar-menu">
-                            <li><a href="#" class="nav-item" data-page="hardware">Hardware</a></li>
                         </ul>
                     </div>
                     <div class="sidebar-section">
@@ -245,6 +240,61 @@
                         </div>
                         <div class="e-card-content">
                             <p>Software page content coming soon...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Page: Lifecycle -->
+                <div id="page-lifecycle" class="page-content">
+                    <div class="lifecycle-page">
+                        <!-- Configuration Table -->
+                        <div class="lifecycle-config-section">
+                            <h3>Configuration</h3>
+                            <table class="config-table">
+                                <thead>
+                                    <tr>
+                                        <th>Graph Type</th>
+                                        <th>Data Point</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="highlight-row">
+                                        <td>
+                                            <select id="graphType" class="config-select">
+                                                <option>data</option>
+                                                <option>bar chart</option>
+                                                <option>pie chart</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <select id="dataPoint" class="config-select">
+                                                <option>n/a</option>
+                                                <option>Account Type</option>
+                                                <option>Domain Joined</option>
+                                            </select>
+                                        </td>
+                                        <td class="config-actions">
+                                            <button class="delete-btn" title="Delete">🗑️</button>
+                                            <button class="add-btn" title="Add">➕</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Charts and Data Section -->
+                        <div class="lifecycle-content">
+                            <!-- Left: Pie Chart -->
+                            <div class="lifecycle-chart-section">
+                                <h2>Account Type</h2>
+                                <canvas id="lifecycleChart" class="lifecycle-chart-container"></canvas>
+                            </div>
+
+                            <!-- Right: Raw Data Table -->
+                            <div class="lifecycle-table-section">
+                                <h2>Raw Data</h2>
+                                <div id="lifecycleDataGrid"></div>
+                            </div>
                         </div>
                     </div>
                 </div>

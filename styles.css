@@ -1335,28 +1335,11 @@ header h1 {
 
 /* Hamburger Menu Toggle Button - Only on Hardware Page */
 .hardware-menu-toggle {
-    display: none;
+    display: none !important;
 }
 
 #page-hardware .hardware-menu-toggle {
-    display: block;
-    position: fixed;
-    top: 10px;
-    right: 10px;
-    z-index: 700;
-    background-color: #34495e;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 18px;
-    font-weight: 500;
-    transition: all 0.3s ease;
-}
-
-#page-hardware .hardware-menu-toggle:hover {
-    background-color: #2c3e50;
+    display: none !important;
 }
 
 /* Sidebar Overlay - Only on Hardware Page */
@@ -1417,6 +1400,36 @@ header h1 {
     margin: 0 0 15px 0;
 }
 
+/* Syncfusion Card Styling */
+.hardware-chart-section.e-card,
+.hardware-table-section.e-card {
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 0 !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+}
+
+.hardware-chart-section.e-card .e-card-header,
+.hardware-table-section.e-card .e-card-header {
+    border-bottom: 1px solid #e0e0e0;
+    padding: 16px 20px;
+    background-color: #f8f9fa;
+}
+
+.hardware-chart-section.e-card .e-card-header-title,
+.hardware-table-section.e-card .e-card-header-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0;
+}
+
+.hardware-chart-section.e-card .e-card-content,
+.hardware-table-section.e-card .e-card-content {
+    padding: 20px;
+}
+
 .hardware-chart-container {
     width: 100%;
     height: 300px;
@@ -1442,31 +1455,58 @@ header h1 {
     overflow: auto;
 }
 
-#hardwareGrid table {
+/* HTML Table Fallback Styling */
+#hardwareGrid .hardware-table {
     width: 100%;
     border-collapse: collapse;
     font-size: 13px;
 }
 
-#hardwareGrid thead tr {
+#hardwareGrid .hardware-table thead tr {
     background-color: #34495e;
     color: white;
 }
 
-#hardwareGrid th {
+#hardwareGrid .hardware-table th {
     padding: 12px;
     text-align: left;
     font-weight: 600;
     border: 1px solid #34495e;
 }
 
-#hardwareGrid td {
+#hardwareGrid .hardware-table td {
     padding: 10px 12px;
     border: 1px solid #ddd;
 }
 
-#hardwareGrid tbody tr:hover {
+#hardwareGrid .hardware-table tbody tr:hover {
     background-color: #f0f0f0;
+}
+
+/* Syncfusion Grid Customization */
+.e-grid {
+    border: none !important;
+    font-family: inherit;
+}
+
+.e-grid .e-gridheader {
+    background-color: #f8f9fa !important;
+}
+
+.e-grid .e-headercell {
+    background-color: #34495e !important;
+    color: white !important;
+    font-weight: 600 !important;
+    padding: 12px !important;
+}
+
+.e-grid .e-rowcell {
+    padding: 10px 12px !important;
+    border: 1px solid #ddd !important;
+}
+
+.e-grid .e-row:hover {
+    background-color: #f0f0f0 !important;
 }
 
 /* Responsive Design */

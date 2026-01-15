@@ -242,10 +242,7 @@
                     <div class="sidebar-overlay" id="sidebarOverlay"></div>
                     
                     <div class="hardware-page">
-                        <!-- Toggle Button for Original Sidebar -->
-                        <button id="hardwareMenuToggle" class="hardware-menu-toggle">☰</button>
-
-                        <!-- Static Left Sidebar (now toggleable) -->
+                        <!-- Static Left Sidebar -->
                         <div class="hardware-static-sidebar" id="hardwareStaticSidebar">
                             <div class="sidebar-header">DASH BOARD</div>
                             <div class="sidebar-section">
@@ -288,14 +285,24 @@
                             <!-- Content Area -->
                             <div class="hardware-content">
                                 <!-- Chart Section -->
-                                <div class="hardware-chart-section">
-                                    <h2>Device Analysis - Lifecycle Replacement (4 year cycle)</h2>
-                                    <canvas id="hardwareChart" class="hardware-chart-container"></canvas>
+                                <div class="hardware-chart-section e-card">
+                                    <div class="e-card-header">
+                                        <div class="e-card-header-title">Device Analysis - Lifecycle Replacement (4 year cycle)</div>
+                                    </div>
+                                    <div class="e-card-content">
+                                        <canvas id="hardwareChart" class="hardware-chart-container" style="display: none;"></canvas>
+                                        <div id="hardwareSfChart" class="hardware-chart-container"></div>
+                                    </div>
                                 </div>
 
                                 <!-- Table Section -->
-                                <div class="hardware-table-section">
-                                    <div id="hardwareGrid"></div>
+                                <div class="hardware-table-section e-card">
+                                    <div class="e-card-header">
+                                        <div class="e-card-header-title">Device Inventory</div>
+                                    </div>
+                                    <div class="e-card-content">
+                                        <div id="hardwareGrid"></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

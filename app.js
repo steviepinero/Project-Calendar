@@ -1812,63 +1812,171 @@ function initializeLifecyclePage() {
 }
 
 function renderLifecycleChart() {
-    console.log('Rendering lifecycle chart');
+    console.log('Rendering lifecycle chart with Three.js');
     
-    if (typeof Chart === 'undefined') {
-        console.warn('Chart.js not loaded, retrying...');
+    const container = document.getElementById('lifecycleChartContainer');
+    if (!container) {
+        console.error('Chart container not found');
+        return;
+    }
+    
+    // Check if Three.js is loaded
+    if (typeof THREE === 'undefined') {
+        console.warn('Three.js not loaded, retrying...');
         setTimeout(renderLifecycleChart, 500);
         return;
     }
     
-    const ctx = document.getElementById('lifecycleChart');
-    if (!ctx) {
-        console.error('lifecycleChart canvas not found');
-        return;
+    // Clear previous scene
+    while (container.firstChild) {
+        container.removeChild(container.firstChild);
     }
     
-    if (ctx.chart) {
-        ctx.chart.destroy();
-    }
+    // Chart dimensions
+    const width = 500;
+    const height = 500;
     
-    const chartData = {
-        labels: ['Local', 'Work or Home', 'Microsoft', 'Other'],
-        datasets: [
-            {
-                data: [44, 24, 14, 18],
-                backgroundColor: ['#3498db', '#f39c12', '#2ecc71', '#e74c3c'],
-                borderColor: ['#2980b9', '#e67e22', '#27ae60', '#c0392b'],
-                borderWidth: 2
-            }
-        ]
-    };
+    // Create scene, camera, renderer
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xffffff);
     
-    ctx.chart = new Chart(ctx, {
-        type: 'doughnut',
-        data: chartData,
-        options: {
-            responsive: false,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: true,
-                    position: 'bottom',
-                    labels: {
-                        padding: 20,
-                        font: { size: 12 }
-                    }
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            return context.label + ': ' + context.parsed + '%';
-                        }
-                    }
-                }
-            }
-        }
+    const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
+    camera.position.set(0, -2.5, 1.8);
+    camera.lookAt(0, 0, 0);
+    
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    container.appendChild(renderer.domElement);
+    
+    // Lighting
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+    scene.add(ambientLight);
+    
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.9);
+    directionalLight.position.set(3, 4, 3);
+    scene.add(directionalLight);
+    
+    // Chart data
+    const data = [
+        { label: 'Local', value: 44, color: '#3498db' },
+        { label: 'Work or Home', value: 24, color: '#f39c12' },
+        { label: 'Microsoft', value: 14, color: '#2ecc71' },
+        { label: 'Other', value: 18, color: '#e74c3c' }
+    ];
+    
+    // Create 3D pie chart segments
+    const radius = 1.2;
+    const depth = 0.4;
+    let startAngle = -Math.PI / 2;
+    
+    // Create a group to hold all segments
+    const pieGroup = new THREE.Group();
+    scene.add(pieGroup);
+    
+    // Create canvas for labels
+    const canvas = document.createElement('canvas');
+    canvas.width = 2048;
+    canvas.height = 512;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    let labelX = 0;
+    
+    data.forEach((item, index) => {
+        const sliceAngle = (item.value / 100) * Math.PI * 2;
+        const color = new THREE.Color(item.color);
+        
+        // Create cylinder geometry for this slice
+        const geometry = new THREE.CylinderGeometry(radius, radius, depth, 32, 1, false, startAngle, sliceAngle);
+        
+        // Create material
+        const material = new THREE.MeshPhongMaterial({
+            color: color,
+            shininess: 80,
+            flatShading: false
+        });
+        
+        const mesh = new THREE.Mesh(geometry, material);
+        mesh.rotation.x = Math.PI / 2;
+        mesh.userData = { 
+            label: item.label, 
+            value: item.value,
+            midAngle: startAngle + sliceAngle / 2
+        };
+        pieGroup.add(mesh);
+        
+        // Draw labels on canvas
+        ctx.fillStyle = item.color;
+        ctx.fillRect(labelX, 0, 512, 512);
+        
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 80px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(item.value + '%', labelX + 256, 150);
+        
+        ctx.font = 'bold 60px Arial';
+        ctx.fillText(item.label, labelX + 256, 300);
+        
+        labelX += 512;
+        startAngle += sliceAngle;
     });
     
-    console.log('Lifecycle chart rendered successfully');
+    // Create canvas texture for labels
+    const texture = new THREE.CanvasTexture(canvas);
+    
+    // Render the 3D pie chart
+    renderer.render(scene, camera);
+    
+    // Create legend as HTML elements below the chart for better display
+    const legendContainer = document.getElementById('lifecycleLegend');
+    if (legendContainer) {
+        legendContainer.innerHTML = '';
+        
+        // Create legend items
+        data.forEach((item) => {
+            const legendItem = document.createElement('div');
+            legendItem.style.cssText = `
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                margin-bottom: 12px;
+                font-size: 16px;
+                font-weight: 500;
+            `;
+            
+            const colorBox = document.createElement('div');
+            colorBox.style.cssText = `
+                width: 24px;
+                height: 24px;
+                background-color: ${item.color};
+                border: 1px solid #333;
+                flex-shrink: 0;
+            `;
+            
+            const label = document.createElement('span');
+            label.textContent = `${item.value}% - ${item.label}`;
+            label.style.color = '#333';
+            
+            legendItem.appendChild(colorBox);
+            legendItem.appendChild(label);
+            legendContainer.appendChild(legendItem);
+        });
+    }
+    
+    console.log('Lifecycle chart rendered successfully with Three.js');
+    
+    // Handle window resize
+    window.addEventListener('resize', () => {
+        const newWidth = Math.min(500, container.clientWidth);
+        const newHeight = 500;
+        camera.aspect = newWidth / newHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(newWidth, newHeight);
+        renderer.render(scene, camera);
+    });
 }
 
 function renderLifecycleDataGrid() {

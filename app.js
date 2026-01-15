@@ -1,5 +1,5 @@
 // Data structures
-// Cache buster: 2026-01-15-15:03
+// Cache buster: 2026-01-15-19:13
 let projects = [];
 let selectedProjectId = null;
 let editingProjectId = null;

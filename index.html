@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MSP Project Calendar</title>
+    
+    <!-- Syncfusion CSS -->
+    <link rel="stylesheet" href="https://cdn.syncfusion.com/ej2/23.1.36/material.css">
+    <link rel="stylesheet" href="https://cdn.syncfusion.com/ej2/23.1.36/material.css" id="theme">
+    
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="ej2-container">
+        <!-- Header -->
+        <header class="appbar-container">
+            <div class="appbar-content">
+                <div class="appbar-left">
+                    <h1 class="appbar-title">MSP Project Calendar</h1>
+                </div>
+                <div id="colorLegend" class="color-legend">
+                    <!-- Color legend will be dynamically generated -->
+                </div>
+                <div class="appbar-right">
+                    <button id="addEmployeeBtn" class="e-btn e-outline">+ Add Employee</button>
+                    <button id="addProjectBtn" class="e-btn e-primary">+ Add Project</button>
+                    <button id="addTaskBtn" class="e-btn e-outline">+ Add Task</button>
+                </div>
+            </div>
+        </header>
+
+        <div class="layout-wrapper">
+            <!-- Sidebar Navigation -->
+            <aside class="sidebar">
+                <div class="sidebar-header">
+                    <h2>Menu</h2>
+                </div>
+                <nav class="sidebar-nav">
+                    <a href="#" class="nav-item active" data-page="scheduling">
+                        <span class="nav-icon">📅</span>
+                        <span class="nav-label">Smart Scheduling</span>
+                    </a>
+                    <a href="#" class="nav-item" data-page="network">
+                        <span class="nav-icon">🌐</span>
+                        <span class="nav-label">Network Access</span>
+                    </a>
+                    <a href="#" class="nav-item" data-page="billing">
+                        <span class="nav-icon">💳</span>
+                        <span class="nav-label">Billing</span>
+                    </a>
+                    <a href="#" class="nav-item" data-page="software">
+                        <span class="nav-icon">💿</span>
+                        <span class="nav-label">Software</span>
+                    </a>
+                    <a href="#" class="nav-item" data-page="hardware">
+                        <span class="nav-icon">⚙️</span>
+                        <span class="nav-label">Hardware</span>
+                    </a>
+                    <a href="#" class="nav-item" data-page="proposals">
+                        <span class="nav-icon">📄</span>
+                        <span class="nav-label">Proposals</span>
+                    </a>
+                    <a href="#" class="nav-item" data-page="dashboards">
+                        <span class="nav-icon">📊</span>
+                        <span class="nav-label">Dashboards / Triggers</span>
+                    </a>
+                </nav>
+            </aside>
+
+            <!-- Main Content Area -->
+            <div class="main-wrapper">
+                <!-- Page: Smart Scheduling (Gantt Chart) -->
+                <div id="page-scheduling" class="page-content active">
+                    <div class="main-content">
+                        <!-- Left Panel: Project List -->
+                        <div class="project-list">
+                            <div class="project-header">
+                                <h3>Projects & Tasks</h3>
+                            </div>
+                            <div id="projectTreeContainer" class="project-tree">
+                                <!-- Projects will be dynamically added here -->
+                            </div>
+                        </div>
+
+                        <!-- Center Panel: Gantt Chart -->
+                        <div class="gantt-container">
+                            <div class="gantt-controls">
+                                <div class="view-toggle">
+                                    <button id="multiWeekViewBtn" class="e-btn e-outline active-view">Multi-Week View</button>
+                                    <button id="singleWeekViewBtn" class="e-btn e-outline">Single Week View</button>
+                                </div>
+                                <div id="weekNavigation" class="week-navigation" style="display: none;">
+                                    <button id="prevWeekBtn" class="e-btn e-icon-btn">◀</button>
+                                    <span id="currentWeekDisplay" class="week-display"></span>
+                                    <button id="nextWeekBtn" class="e-btn e-icon-btn">▶</button>
+                                    <button id="todayBtn" class="e-btn e-outline">Today</button>
+                                </div>
+                            </div>
+                            <div id="ganttHeader" class="gantt-header">
+                                <!-- Date headers will be dynamically generated -->
+                            </div>
+                            <div id="ganttBody" class="gantt-body">
+                                <!-- Gantt bars will be dynamically generated -->
+                            </div>
+                        </div>
+
+                        <!-- Right Panel: Project Details -->
+                        <div class="details-panel">
+                            <div class="summary-section">
+                                <h3>SUMMARY</h3>
+                                <textarea id="summaryText" class="e-field" placeholder="Project summary... 60 chars or less" maxlength="60"></textarea>
+                            </div>
+
+                            <div class="detail-section">
+                                <h3>DETAIL</h3>
+                                <textarea id="detailText" class="e-field" placeholder="Project details and scope..."></textarea>
+                            </div>
+
+                            <div class="status-section">
+                                <h3>STATUS</h3>
+                                <div class="status-grid">
+                                    <div class="status-row">
+                                        <label>Status:</label>
+                                        <select id="projectStatus" class="e-field">
+                                            <option value="Active">Active</option>
+                                            <option value="Pending">Pending</option>
+                                            <option value="Completed">Completed</option>
+                                            <option value="On Hold">On Hold</option>
+                                        </select>
+                                    </div>
+                                    <div class="status-row">
+                                        <label>Request Date:</label>
+                                        <input type="date" id="requestDate" class="e-field">
+                                    </div>
+                                    <div class="status-row">
+                                        <label>Requested By:</label>
+                                        <input type="text" id="requestedBy" class="e-field" placeholder="Name">
+                                    </div>
+                                    <div class="status-row">
+                                        <label>Hours Per Day:</label>
+                                        <input type="number" id="hoursPerDay" class="e-field" value="4.00" step="0.25" min="0" max="24">
+                                    </div>
+                                    <div class="status-row">
+                                        <label>Org/Estimated Hours:</label>
+                                        <input type="number" id="estimatedHours" class="e-field" value="16.00" step="0.25" min="0">
+                                    </div>
+                                    <div class="status-row">
+                                        <label>Est/Remaining Hours:</label>
+                                        <input type="number" id="remainingHours" class="e-field" value="10.00" step="0.25" min="0">
+                                    </div>
+                                    <div class="status-row">
+                                        <label>Assigned Start Date:</label>
+                                        <input type="date" id="assignedStartDate" class="e-field">
+                                    </div>
+                                    <div class="status-row">
+                                        <label>Estimated Hours:</label>
+                                        <input type="number" id="estHours" class="e-field" value="10.00" step="0.25" min="0">
+                                    </div>
+                                    <div class="status-row">
+                                        <label>Actual Hours:</label>
+                                        <input type="number" id="actualHours" class="e-field" value="10.00" step="0.25" min="0">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="checklist-section">
+                                <h3>CHECKLIST</h3>
+                                <div id="checklistItems">
+                                    <!-- Checklist items will be added here -->
+                                </div>
+                                <button id="addChecklistBtn" class="e-btn e-small">+ Add Item</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Page: Network Access -->
+                <div id="page-network" class="page-content">
+                    <div class="network-content">
+                        <div class="allow-list-section e-card">
+                            <div class="e-card-header">
+                                <div class="e-card-header-title">Allow List</div>
+                            </div>
+                            <div class="e-card-content">
+                                <div class="list-box e-listview" id="allowListBox">
+                                    <!-- MAC addresses will be dynamically added here -->
+                                </div>
+                                <div class="list-actions">
+                                    <button class="e-btn e-small e-danger" id="removeSelectedBtn">Remove</button>
+                                    <button class="e-btn e-small e-danger" id="blockSelectedBtn">Block</button>
+                                    <button class="e-btn e-small e-primary" id="addManuallyBtn">+ Add Manually</button>
+                                    <input type="text" placeholder="XX:XX:XX:XX:XX:XX" class="e-field mac-input" id="macInput">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="configuration-section e-card">
+                            <div class="e-card-header">
+                                <div class="e-card-header-title">Configuration</div>
+                            </div>
+                            <div class="e-card-content">
+                                <div class="config-group">
+                                    <label>RMM</label>
+                                    <input type="text" placeholder="connection string..." class="e-field" id="rmmConfig">
+                                </div>
+                                <div class="config-group">
+                                    <label>Watchguard</label>
+                                    <input type="text" placeholder="connection string..." class="e-field" id="watchguardConfig">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Page: Billing (Placeholder) -->
+                <div id="page-billing" class="page-content">
+                    <div class="e-card">
+                        <div class="e-card-header">
+                            <div class="e-card-header-title">Billing</div>
+                        </div>
+                        <div class="e-card-content">
+                            <p>Billing page content coming soon...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Page: Software (Placeholder) -->
+                <div id="page-software" class="page-content">
+                    <div class="e-card">
+                        <div class="e-card-header">
+                            <div class="e-card-header-title">Software</div>
+                        </div>
+                        <div class="e-card-content">
+                            <p>Software page content coming soon...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Page: Hardware (Placeholder) -->
+                <div id="page-hardware" class="page-content">
+                    <div class="e-card">
+                        <div class="e-card-header">
+                            <div class="e-card-header-title">Hardware</div>
+                        </div>
+                        <div class="e-card-content">
+                            <p>Hardware page content coming soon...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Page: Proposals (Placeholder) -->
+                <div id="page-proposals" class="page-content">
+                    <div class="e-card">
+                        <div class="e-card-header">
+                            <div class="e-card-header-title">Proposals</div>
+                        </div>
+                        <div class="e-card-content">
+                            <p>Proposals page content coming soon...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Page: Dashboards / Triggers (Placeholder) -->
+                <div id="page-dashboards" class="page-content">
+                    <div class="e-card">
+                        <div class="e-card-header">
+                            <div class="e-card-header-title">Dashboards / Triggers</div>
+                        </div>
+                        <div class="e-card-content">
+                            <p>Dashboards page content coming soon...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Blocking MAC Address -->
+    <div id="blockModal" class="e-dialog" style="display: none;">
+        <div class="modal-content">
+            <span class="close" id="closeBlockModal">&times;</span>
+            <h2>Block MAC Address</h2>
+            <form id="blockForm">
+                <div class="e-form-group">
+                    <label>MAC Address:</label>
+                    <input type="text" id="blockMacAddress" class="e-field" readonly>
+                </div>
+                <div class="e-form-group">
+                    <label>Block Reason:</label>
+                    <textarea id="blockReason" class="e-field" placeholder="Enter reason for blocking..." rows="4"></textarea>
+                </div>
+                <div class="e-form-group">
+                    <label>Block Duration:</label>
+                    <select id="blockDuration" class="e-field">
+                        <option value="permanent">Permanent</option>
+                        <option value="24hours">24 Hours</option>
+                        <option value="7days">7 Days</option>
+                        <option value="30days">30 Days</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="e-btn e-danger">Confirm Block</button>
+                    <button type="button" class="e-btn e-outline" id="cancelBlockBtn">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal for Adding MAC Address Manually -->
+    <div id="addMacModal" class="e-dialog" style="display: none;">
+        <div class="modal-content">
+            <span class="close" id="closeAddMacModal">&times;</span>
+            <h2>Add MAC Address</h2>
+            <form id="addMacForm">
+                <div class="e-form-group">
+                    <label>MAC Address:</label>
+                    <input type="text" id="newMacAddress" class="e-field" placeholder="XX:XX:XX:XX:XX:XX" required>
+                    <small>Format: XX:XX:XX:XX:XX:XX (e.g., 00:1B:44:11:3A:B7)</small>
+                </div>
+                <div class="e-form-group">
+                    <label>Description (Optional):</label>
+                    <input type="text" id="macDescription" class="e-field" placeholder="Device name or description">
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="e-btn e-primary">Add MAC Address</button>
+                    <button type="button" class="e-btn e-outline" id="cancelAddMacBtn">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal for Adding Projects/Tasks -->
+    <div id="projectModal" class="e-dialog" style="display: none;">
+        <div class="modal-content">
+            <span class="close" id="closeAddModal">&times;</span>
+            <h2 id="modalTitle">Add New Project</h2>
+            <form id="projectForm">
+                <div class="e-form-group">
+                    <label>Project/Task Name:</label>
+                    <input type="text" id="projectName" class="e-field" required>
+                </div>
+                <div class="e-form-group">
+                    <label>Assigned To:</label>
+                    <select id="assignedTo" class="e-field" required>
+                        <option value="">Select Team Member</option>
+                        <!-- Options will be dynamically generated -->
+                    </select>
+                </div>
+                <div class="e-form-group">
+                    <label>Daily Hour Limit:</label>
+                    <input type="number" id="dailyHourLimit" class="e-field" value="8" step="0.25" min="0" max="24" required>
+                </div>
+                <div class="e-form-group">
+                    <label>Task Duration (hours):</label>
+                    <input type="number" id="taskDuration" class="e-field" value="4" step="0.25" min="0.25" required>
+                </div>
+                <div class="e-form-group">
+                    <label>Preferred Start Date:</label>
+                    <input type="date" id="preferredStartDate" class="e-field" required>
+                </div>
+                <div class="e-form-group">
+                    <label>Type:</label>
+                    <select id="projectType" class="e-field">
+                        <option value="project">Project</option>
+                        <option value="task">Task</option>
+                        <option value="subtask">Sub-task</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="e-btn e-primary">Save</button>
+                    <button type="button" class="e-btn e-outline" id="cancelBtn">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal for Adding Employees -->
+    <div id="employeeModal" class="e-dialog" style="display: none;">
+        <div class="modal-content">
+            <span class="close" id="closeEmployeeModal">&times;</span>
+            <h2>Add New Employee</h2>
+            <form id="employeeForm">
+                <div class="e-form-group">
+                    <label>Employee Name:</label>
+                    <input type="text" id="employeeName" class="e-field" required>
+                </div>
+                <div class="e-form-group">
+                    <label>Daily Hour Limit:</label>
+                    <input type="number" id="employeeDailyLimit" class="e-field" value="8" step="0.25" min="0" max="24" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="e-btn e-primary">Add Employee</button>
+                    <button type="button" class="e-btn e-outline" id="cancelEmployeeBtn">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal for Editing Projects/Tasks -->
+    <div id="editModal" class="e-dialog" style="display: none;">
+        <div class="modal-content modal-content-large">
+            <span class="close" id="closeEditModal">&times;</span>
+            <h2 id="editModalTitle">Edit Project</h2>
+            <form id="editForm">
+                <div class="e-form-group">
+                    <label>Project/Task Name:</label>
+                    <input type="text" id="editProjectName" class="e-field" required>
+                </div>
+                <div class="form-row-split">
+                    <div class="e-form-group">
+                        <label>Assigned To:</label>
+                        <select id="editAssignedTo" class="e-field" required>
+                            <option value="">Select Team Member</option>
+                            <!-- Options will be dynamically generated -->
+                        </select>
+                    </div>
+                    <div class="e-form-group">
+                        <label>Status:</label>
+                        <select id="editStatus" class="e-field">
+                            <option value="Active">Active</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Completed">Completed</option>
+                            <option value="On Hold">On Hold</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row-split">
+                    <div class="e-form-group">
+                        <label>Daily Hour Limit:</label>
+                        <input type="number" id="editDailyHourLimit" class="e-field" step="0.25" min="0" max="24" required>
+                    </div>
+                    <div class="e-form-group">
+                        <label>Task Duration (hours):</label>
+                        <input type="number" id="editTaskDuration" class="e-field" step="0.25" min="0.25" required>
+                    </div>
+                </div>
+                <div class="form-row-split">
+                    <div class="e-form-group">
+                        <label>Start Date:</label>
+                        <input type="date" id="editStartDate" class="e-field" required>
+                    </div>
+                    <div class="e-form-group">
+                        <label>Type:</label>
+                        <select id="editProjectType" class="e-field">
+                            <option value="project">Project</option>
+                            <option value="task">Task</option>
+                            <option value="subtask">Sub-task</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="e-form-group">
+                    <label>Description:</label>
+                    <textarea id="editDescription" class="e-field" rows="4" placeholder="Project details and scope..."></textarea>
+                </div>
+                <div class="e-form-group">
+                    <label>Notes:</label>
+                    <textarea id="editNotes" class="e-field" rows="3" placeholder="Additional notes..."></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="e-btn e-primary">Update</button>
+                    <button type="button" class="e-btn e-danger" id="deleteBtn">Delete</button>
+                    <button type="button" class="e-btn e-outline" id="cancelEditBtn">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Syncfusion JS -->
+    <script src="https://cdn.syncfusion.com/ej2/23.1.36/dist/ej2.umd.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,5 +1,5 @@
 // Data structures
-// Cache buster: 2026-01-15-19:13
+// Cache buster: 2026-01-15-19:28
 let projects = [];
 let selectedProjectId = null;
 let editingProjectId = null;
@@ -1903,8 +1903,12 @@ function renderLifecycleChart() {
         mesh.userData = { 
             label: item.label, 
             value: item.value,
-            midAngle: startAngle + sliceAngle / 2
+            midAngle: startAngle + sliceAngle / 2,
+            originalScale: 1,
+            animationDelay: index * 100, // Stagger animation by 100ms
+            animationDuration: 600 // Animation duration in ms
         };
+        mesh.scale.set(0, 0, 0); // Start at 0 scale for animation
         pieGroup.add(mesh);
         
         // Draw labels on canvas
@@ -1927,8 +1931,48 @@ function renderLifecycleChart() {
     // Create canvas texture for labels
     const texture = new THREE.CanvasTexture(canvas);
     
-    // Render the 3D pie chart
-    renderer.render(scene, camera);
+    // Animation variables
+    const animationStartTime = Date.now();
+    let isAnimating = true;
+    
+    // Animation loop
+    const animate = () => {
+        const elapsed = Date.now() - animationStartTime;
+        
+        // Animate pie slices
+        pieGroup.children.forEach((mesh) => {
+            if (mesh.userData.animationDelay !== undefined) {
+                const delayedElapsed = elapsed - mesh.userData.animationDelay;
+                const duration = mesh.userData.animationDuration;
+                
+                if (delayedElapsed > 0) {
+                    // Ease-out cubic animation
+                    const progress = Math.min(delayedElapsed / duration, 1);
+                    const easeOut = 1 - Math.pow(1 - progress, 3);
+                    
+                    mesh.scale.set(easeOut, easeOut, easeOut);
+                    
+                    if (progress === 1) {
+                        mesh.userData.animationDelay = undefined; // Mark as complete
+                    }
+                }
+            }
+        });
+        
+        // Stop animation when all slices are scaled
+        if (elapsed > (data.length * 100 + 600)) {
+            isAnimating = false;
+        }
+        
+        renderer.render(scene, camera);
+        
+        if (isAnimating) {
+            requestAnimationFrame(animate);
+        }
+    };
+    
+    // Start animation
+    animate();
     
     // Create legend as HTML elements below the chart for better display
     const legendContainer = document.getElementById('lifecycleLegend');

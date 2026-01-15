@@ -6,8 +6,8 @@
     <title>MSP Project Calendar</title>
     
     <!-- Syncfusion CSS -->
-    <link rel="stylesheet" href="https://cdn.syncfusion.com/ej2/23.1.36/material.css">
-    <link rel="stylesheet" href="https://cdn.syncfusion.com/ej2/23.1.36/material.css" id="theme">
+    <link rel="stylesheet" href="https://cdn.syncfusion.com/ej2/20.4.48/material.css">
+    <link rel="stylesheet" href="https://cdn.syncfusion.com/ej2/20.4.48/material.css" id="theme">
     
     <link rel="stylesheet" href="styles.css">
 </head>
@@ -236,14 +236,68 @@
                     </div>
                 </div>
 
-                <!-- Page: Hardware (Placeholder) -->
+                <!-- Page: Hardware -->
                 <div id="page-hardware" class="page-content">
-                    <div class="e-card">
-                        <div class="e-card-header">
-                            <div class="e-card-header-title">Hardware</div>
+                    <!-- Sidebar Overlay for closing -->
+                    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+                    
+                    <div class="hardware-page">
+                        <!-- Toggle Button for Original Sidebar -->
+                        <button id="hardwareMenuToggle" class="hardware-menu-toggle">☰</button>
+
+                        <!-- Static Left Sidebar (now toggleable) -->
+                        <div class="hardware-static-sidebar" id="hardwareStaticSidebar">
+                            <div class="sidebar-header">DASH BOARD</div>
+                            <div class="sidebar-section">
+                                <div class="sidebar-category">ON BOARDING</div>
+                                <ul class="sidebar-menu">
+                                    <li><a href="#" class="sidebar-link">Client Profile</a></li>
+                                    <li><a href="#" class="sidebar-link">Scheduling</a></li>
+                                    <li><a href="#" class="sidebar-link">Network Analysis</a></li>
+                                    <li><a href="#" class="sidebar-link">Proposal Generator</a></li>
+                                </ul>
+                            </div>
+                            <div class="sidebar-section">
+                                <div class="sidebar-category">CONFIGURATION</div>
+                                <ul class="sidebar-menu">
+                                    <li><a href="#" class="sidebar-link">Filter Management</a></li>
+                                    <li><a href="#" class="sidebar-link">Data Points</a></li>
+                                </ul>
+                            </div>
+                            <div class="sidebar-section">
+                                <div class="sidebar-category">OPERATIONS</div>
+                                <ul class="sidebar-menu">
+                                    <li><a href="#" class="sidebar-link">Network Access</a></li>
+                                    <li><a href="#" class="sidebar-link">Billing</a></li>
+                                </ul>
+                            </div>
+                            <div class="sidebar-section">
+                                <div class="sidebar-category">ANALYSIS</div>
+                                <ul class="sidebar-menu">
+                                    <li><a href="#" class="sidebar-link">Endpoint</a></li>
+                                    <li><a href="#" class="sidebar-link">Software</a></li>
+                                </ul>
+                            </div>
+                            <div class="sidebar-section">
+                                <div class="sidebar-category">BEST PRACTICES</div>
+                            </div>
                         </div>
-                        <div class="e-card-content">
-                            <p>Hardware page content coming soon...</p>
+
+                        <!-- Main Content Area -->
+                        <div class="hardware-main-container">
+                            <!-- Content Area -->
+                            <div class="hardware-content">
+                                <!-- Chart Section -->
+                                <div class="hardware-chart-section">
+                                    <h2>Device Analysis - Lifecycle Replacement (4 year cycle)</h2>
+                                    <canvas id="hardwareChart" class="hardware-chart-container"></canvas>
+                                </div>
+
+                                <!-- Table Section -->
+                                <div class="hardware-table-section">
+                                    <div id="hardwareGrid"></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -465,8 +519,9 @@
         </div>
     </div>
 
-    <!-- Syncfusion JS -->
-    <script src="https://cdn.syncfusion.com/ej2/23.1.36/dist/ej2.umd.js"></script>
+    <!-- Syncfusion JS - Using working CDN links -->
+    <script src="https://cdn.syncfusion.com/ej2/20.4.48/dist/ej2.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
     <script src="app.js"></script>
 </body>
 </html>

@@ -18,10 +18,10 @@ body {
 }
 
 .appbar-container {
+    display: none !important;
     background-color: #2c3e50;
     color: white;
     padding: 15px 30px;
-    display: flex;
     align-items: center;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     flex-shrink: 0;
@@ -83,6 +83,28 @@ header.hidden {
     flex-direction: column;
     overflow-y: auto;
     box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+}
+
+/* Hide sidebar on hardware page by default, show as overlay */
+#page-hardware .sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 220px;
+    height: 100vh;
+    background-color: #f8f9fa;
+    border-right: 1px solid #dee2e6;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    z-index: 650;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease-in-out;
+}
+
+#page-hardware .sidebar.visible {
+    transform: translateX(0);
 }
 
 .sidebar-header {
@@ -1226,4 +1248,285 @@ header h1 {
     border-color: #3498db !important;
 }
 
+/* Hardware Page Styles */
+#page-hardware.active {
+    display: flex !important;
+}
+
+.hardware-page {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    background: white;
+}
+
+/* Static Sidebar - Now Toggleable */
+.hardware-static-sidebar {
+    width: 200px;
+    background-color: #f5f5f5;
+    border-right: 2px solid #ddd;
+    overflow-y: auto;
+    padding: 20px 0;
+    flex-shrink: 0;
+    box-shadow: 2px 0 8px rgba(0,0,0,0.05);
+    transition: all 0.3s ease-in-out;
+    position: relative;
+}
+
+.hardware-static-sidebar.collapsed {
+    width: 0;
+    padding: 0;
+    border-right: none;
+    overflow: hidden;
+}
+
+.hardware-static-sidebar .sidebar-header {
+    font-size: 13px;
+    font-weight: 700;
+    color: #2c3e50;
+    padding: 0 20px 20px 20px;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.hardware-static-sidebar .sidebar-section {
+    margin-bottom: 20px;
+    padding: 0 20px;
+}
+
+.hardware-static-sidebar .sidebar-category {
+    font-size: 11px;
+    font-weight: 600;
+    color: #34495e;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.hardware-static-sidebar .sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.hardware-static-sidebar .sidebar-menu li {
+    margin-bottom: 4px;
+}
+
+.hardware-static-sidebar .sidebar-link {
+    font-size: 12px;
+    color: #555;
+    text-decoration: none;
+    display: block;
+    padding: 6px 12px;
+    border-radius: 3px;
+    transition: all 0.2s;
+}
+
+.hardware-static-sidebar .sidebar-link:hover {
+    background-color: #e0e0e0;
+    color: #2c3e50;
+}
+
+/* Hamburger Menu Toggle Button - Only on Hardware Page */
+.hardware-menu-toggle {
+    display: none;
+}
+
+#page-hardware .hardware-menu-toggle {
+    display: block;
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 700;
+    background-color: #34495e;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+#page-hardware .hardware-menu-toggle:hover {
+    background-color: #2c3e50;
+}
+
+/* Sidebar Overlay - Only on Hardware Page */
+.sidebar-overlay {
+    display: none;
+}
+
+#page-hardware .sidebar-overlay {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 600;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    pointer-events: none;
+}
+
+#page-hardware .sidebar-overlay.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Main Container */
+.hardware-main-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Content Area */
+.hardware-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    padding: 20px 40px;
+    gap: 20px;
+    width: 100%;
+}
+
+.hardware-chart-section {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 20px;
+    flex-shrink: 0;
+}
+
+.hardware-chart-section h2 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0 0 15px 0;
+}
+
+.hardware-chart-container {
+    width: 100%;
+    height: 300px;
+    background: #fafafa;
+    border-radius: 4px;
+}
+
+.hardware-table-section {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 20px;
+    flex: 1;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+#hardwareGrid {
+    width: 100%;
+    height: 100%;
+    min-height: 400px;
+    overflow: auto;
+}
+
+#hardwareGrid table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+#hardwareGrid thead tr {
+    background-color: #34495e;
+    color: white;
+}
+
+#hardwareGrid th {
+    padding: 12px;
+    text-align: left;
+    font-weight: 600;
+    border: 1px solid #34495e;
+}
+
+#hardwareGrid td {
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+}
+
+#hardwareGrid tbody tr:hover {
+    background-color: #f0f0f0;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .hardware-static-sidebar {
+        width: 160px;
+        padding: 15px 0;
+    }
+    
+    .hardware-static-sidebar .sidebar-header {
+        font-size: 12px;
+        padding: 0 15px 15px 15px;
+    }
+    
+    .hardware-static-sidebar .sidebar-section {
+        padding: 0 15px;
+    }
+    
+    .hardware-content {
+        padding: 15px 30px;
+    }
+    
+    .hardware-menu-toggle.toggle-expanded {
+        left: 170px;
+    }
+}
+
+@media (max-width: 768px) {
+    .hardware-static-sidebar {
+        width: 0;
+        padding: 0;
+        border-right: none;
+        overflow: hidden;
+        position: fixed;
+        left: 0;
+        top: 0;
+        height: 100vh;
+        z-index: 500;
+        width: 250px !important;
+        border-right: 2px solid #ddd !important;
+        padding: 20px 0 !important;
+        transition: transform 0.3s ease-in-out;
+        transform: translateX(-250px);
+    }
+    
+    .hardware-static-sidebar.collapsed {
+        transform: translateX(0);
+        width: 250px !important;
+        padding: 20px 0 !important;
+        border-right: 2px solid #ddd !important;
+    }
+    
+    .hardware-menu-toggle {
+        position: fixed;
+        top: 10px;
+        left: 10px;
+    }
+    
+    .hardware-menu-toggle.toggle-expanded {
+        left: 10px;
+    }
+}
 

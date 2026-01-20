@@ -90,6 +90,11 @@ header.hidden {
     display: flex;
     flex-direction: column;
     width: 100%;
+    height: 100%;
+}
+
+.sidebar-nav .sidebar-section:last-child {
+    margin-top: auto;
 }
 
 .sidebar-header {

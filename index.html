@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdn.syncfusion.com/ej2/20.4.48/material.css">
     <link rel="stylesheet" href="https://cdn.syncfusion.com/ej2/20.4.48/material.css" id="theme">
     
-    <link rel="stylesheet" href="styles.css?v=20260120-1730">
+    <link rel="stylesheet" href="styles.css?v=20260120-1830">
 </head>
 <body>
     <div class="ej2-container">
@@ -20,7 +20,6 @@
                     <h1 class="appbar-title">MSP Project Calendar</h1>
                 </div>
                 <div class="appbar-right">
-                    <button id="settingsBtn" class="e-btn e-outline" title="Settings">⚙️ Settings</button>
                     <button id="addEmployeeBtn" class="e-btn e-outline">+ Add Employee</button>
                     <button id="addProjectBtn" class="e-btn e-primary">+ Add Project</button>
                     <button id="addTaskBtn" class="e-btn e-outline">+ Add Task</button>
@@ -74,6 +73,11 @@
                             <li><a href="#" class="sidebar-link">Reports</a></li>
                             <li><a href="#" class="sidebar-link">Documentation</a></li>
                         </ul>
+                    </div>
+                    <div class="sidebar-section" style="margin-top: auto; border-top: 1px solid #dee2e6; padding-top: 15px;">
+                        <button id="settingsBtn" style="width: 100%; padding: 12px; background-color: #34495e; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                            ⚙️ Settings
+                        </button>
                     </div>
                 </nav>
             </aside>
@@ -943,27 +947,121 @@
 
     <!-- Settings Modal -->
     <div id="settingsModal" class="modal">
-        <div class="modal-content" style="max-width: 500px;">
+        <div class="modal-content" style="max-width: 650px; max-height: 80vh; overflow-y: auto;">
             <span class="close" id="closeSettingsModal">&times;</span>
-            <h2>Settings</h2>
-            <form id="settingsForm" style="display: flex; flex-direction: column; gap: 15px;">
-                <div class="e-form-group">
-                    <label for="aiApiKey">OpenAI API Key:</label>
-                    <input type="password" id="aiApiKey" class="e-field" placeholder="sk-..." style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
-                    <small style="display: block; margin-top: 5px; color: #666;">
-                        Get your key from <a href="https://platform.openai.com/api-keys" target="_blank" style="color: #3498db;">OpenAI API Keys</a>
-                    </small>
+            <h2>⚙️ Settings & API Configuration</h2>
+            <p style="color: #666; font-size: 13px; margin: -10px 0 20px 0;">
+                Add your API credentials below to enable advanced features. Keys are stored securely in your browser.
+            </p>
+            <form id="settingsForm" style="display: flex; flex-direction: column; gap: 20px;">
+                
+                <!-- AI & Summarization -->
+                <div style="border: 1px solid #eee; padding: 15px; border-radius: 6px; background-color: #f9f9f9;">
+                    <h4 style="margin: 0 0 12px 0; color: #2c3e50; display: flex; align-items: center; gap: 8px;">
+                        🤖 AI & Summarization
+                    </h4>
+                    <div class="e-form-group">
+                        <label for="openaiApiKey">OpenAI API Key:</label>
+                        <input type="password" id="openaiApiKey" class="e-field" placeholder="sk-..." style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                        <small style="display: block; margin-top: 5px; color: #666;">
+                            Get from <a href="https://platform.openai.com/api-keys" target="_blank" style="color: #3498db;">OpenAI API Keys</a> | Cost: ~$0.00002/summarization
+                        </small>
+                    </div>
                 </div>
-                <div style="background-color: #f0f8ff; padding: 10px; border-radius: 4px; border-left: 4px solid #3498db;">
-                    <strong>💡 Why API Key?</strong>
-                    <p style="margin: 5px 0; font-size: 13px;">
-                        AI summarization uses OpenAI's GPT models. You need an API key for this feature to work.
-                        This key is stored <strong>only in your browser's local storage</strong> and never sent to our servers.
-                    </p>
+
+                <!-- VoIP & Calling -->
+                <div style="border: 1px solid #eee; padding: 15px; border-radius: 6px; background-color: #f9f9f9;">
+                    <h4 style="margin: 0 0 12px 0; color: #2c3e50; display: flex; align-items: center; gap: 8px;">
+                        ☎️ VoIP Calling
+                    </h4>
+                    <div class="e-form-group">
+                        <label for="twilioAccountSid">Twilio Account SID:</label>
+                        <input type="password" id="twilioAccountSid" class="e-field" placeholder="ACxxxxxxxxxxxxxxxxxxxxxxxx" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                        <small style="display: block; margin-top: 3px; color: #666;">
+                            From <a href="https://www.twilio.com/console" target="_blank" style="color: #3498db;">Twilio Console</a>
+                        </small>
+                    </div>
+                    <div class="e-form-group" style="margin-top: 10px;">
+                        <label for="twilioAuthToken">Twilio Auth Token:</label>
+                        <input type="password" id="twilioAuthToken" class="e-field" placeholder="your_auth_token" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                    </div>
+                    <div class="e-form-group" style="margin-top: 10px;">
+                        <label for="twilioPhoneNumber">Twilio Phone Number:</label>
+                        <input type="text" id="twilioPhoneNumber" class="e-field" placeholder="+1 (555) 123-4567" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                        <small style="display: block; margin-top: 3px; color: #666;">
+                            Your virtual phone number | Cost: $1/month + $0.012/min
+                        </small>
+                    </div>
                 </div>
-                <div style="display: flex; gap: 8px; justify-content: flex-end;">
+
+                <!-- E-Signature -->
+                <div style="border: 1px solid #eee; padding: 15px; border-radius: 6px; background-color: #f9f9f9;">
+                    <h4 style="margin: 0 0 12px 0; color: #2c3e50; display: flex; align-items: center; gap: 8px;">
+                        ✍️ E-Signature
+                    </h4>
+                    <div class="e-form-group">
+                        <label for="docusignClientId">DocuSign Client ID:</label>
+                        <input type="password" id="docusignClientId" class="e-field" placeholder="your_client_id" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                        <small style="display: block; margin-top: 3px; color: #666;">
+                            From <a href="https://developer.docusign.com" target="_blank" style="color: #3498db;">DocuSign Developer</a>
+                        </small>
+                    </div>
+                    <div class="e-form-group" style="margin-top: 10px;">
+                        <label for="docusignSecret">DocuSign Client Secret:</label>
+                        <input type="password" id="docusignSecret" class="e-field" placeholder="your_secret" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                    </div>
+                    <div class="e-form-group" style="margin-top: 10px;">
+                        <label for="docusignBaseUrl">DocuSign Base URL:</label>
+                        <input type="text" id="docusignBaseUrl" class="e-field" placeholder="https://demo.docusign.net" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                        <small style="display: block; margin-top: 3px; color: #666;">
+                            Cost: $10-20/month
+                        </small>
+                    </div>
+                </div>
+
+                <!-- Email Campaigns -->
+                <div style="border: 1px solid #eee; padding: 15px; border-radius: 6px; background-color: #f9f9f9;">
+                    <h4 style="margin: 0 0 12px 0; color: #2c3e50; display: flex; align-items: center; gap: 8px;">
+                        📧 Email Campaigns
+                    </h4>
+                    <div class="e-form-group">
+                        <label for="sendgridApiKey">SendGrid API Key:</label>
+                        <input type="password" id="sendgridApiKey" class="e-field" placeholder="SG.your_api_key" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                        <small style="display: block; margin-top: 3px; color: #666;">
+                            From <a href="https://sendgrid.com" target="_blank" style="color: #3498db;">SendGrid</a> | Cost: Free (100/day) or $10-30/month
+                        </small>
+                    </div>
+                </div>
+
+                <!-- Company Research -->
+                <div style="border: 1px solid #eee; padding: 15px; border-radius: 6px; background-color: #f9f9f9;">
+                    <h4 style="margin: 0 0 12px 0; color: #2c3e50; display: flex; align-items: center; gap: 8px;">
+                        🔍 Company Research
+                    </h4>
+                    <div class="e-form-group">
+                        <label for="clearbitApiKey">Clearbit API Key (Optional):</label>
+                        <input type="password" id="clearbitApiKey" class="e-field" placeholder="your_clearbit_key" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                        <small style="display: block; margin-top: 3px; color: #666;">
+                            From <a href="https://clearbit.com" target="_blank" style="color: #3498db;">Clearbit</a> (Optional)
+                        </small>
+                    </div>
+                </div>
+
+                <!-- Security Notice -->
+                <div style="background-color: #e8f4e8; padding: 12px; border-radius: 4px; border-left: 4px solid #27ae60;">
+                    <strong style="color: #27ae60; display: block; margin-bottom: 5px;">🔒 Security Notice</strong>
+                    <ul style="margin: 0; padding-left: 20px; font-size: 12px; color: #555; line-height: 1.5;">
+                        <li>All credentials are stored <strong>only in your browser</strong></li>
+                        <li>Never sent to our servers (except directly to API providers)</li>
+                        <li>Clear your browser data to remove all credentials</li>
+                        <li>Never share these keys - treat them like passwords</li>
+                    </ul>
+                </div>
+
+                <!-- Form Actions -->
+                <div style="display: flex; gap: 8px; justify-content: flex-end; border-top: 1px solid #eee; padding-top: 15px;">
                     <button type="button" id="cancelSettingsBtn" class="e-btn e-outline">Cancel</button>
-                    <button type="submit" class="e-btn e-primary">Save Settings</button>
+                    <button type="submit" class="e-btn e-primary">Save All Settings</button>
                 </div>
             </form>
         </div>
@@ -1003,6 +1101,6 @@
     <script src="https://cdn.syncfusion.com/ej2/20.4.48/dist/ej2.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="app.js?v=20260120-1730"></script>
+    <script src="app.js?v=20260120-1830"></script>
 </body>
 </html>

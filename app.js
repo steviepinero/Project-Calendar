@@ -1,5 +1,5 @@
 // Data structures
-// Cache buster: 2026-01-20-17:30
+// Cache buster: 2026-01-20-18:30
 
 // ===== AI SUMMARIZATION CONFIGURATION =====
 const AI_CONFIG = {
@@ -66,36 +66,161 @@ async function summarizeText(text) {
 // ===== END AI CONFIGURATION =====
 
 // ===== SETTINGS MANAGEMENT =====
+const STORAGE_KEYS = {
+    openai: 'openai_api_key',
+    twilio_sid: 'twilio_account_sid',
+    twilio_token: 'twilio_auth_token',
+    twilio_phone: 'twilio_phone_number',
+    docusign_id: 'docusign_client_id',
+    docusign_secret: 'docusign_client_secret',
+    docusign_url: 'docusign_base_url',
+    sendgrid: 'sendgrid_api_key',
+    clearbit: 'clearbit_api_key'
+};
+
 function loadSettings() {
-    const savedKey = localStorage.getItem('openai_api_key');
-    if (savedKey) {
-        AI_CONFIG.apiKey = savedKey;
+    // Load OpenAI
+    const openaiKey = localStorage.getItem(STORAGE_KEYS.openai);
+    if (openaiKey) {
+        AI_CONFIG.apiKey = openaiKey;
         console.log('✅ OpenAI API Key loaded from local storage');
+    }
+
+    // Load Twilio
+    const twilioSid = localStorage.getItem(STORAGE_KEYS.twilio_sid);
+    const twilioToken = localStorage.getItem(STORAGE_KEYS.twilio_token);
+    const twilioPhone = localStorage.getItem(STORAGE_KEYS.twilio_phone);
+    if (twilioSid && twilioToken) {
+        VOIP_CONFIG.apiKey = twilioSid;
+        VOIP_CONFIG.authToken = twilioToken;
+        VOIP_CONFIG.phoneNumber = twilioPhone;
+        console.log('✅ Twilio credentials loaded from local storage');
+    }
+
+    // Load DocuSign
+    const docusignId = localStorage.getItem(STORAGE_KEYS.docusign_id);
+    const docusignSecret = localStorage.getItem(STORAGE_KEYS.docusign_secret);
+    const docusignUrl = localStorage.getItem(STORAGE_KEYS.docusign_url);
+    if (docusignId && docusignSecret) {
+        E_SIGNATURE_CONFIG.apiKey = docusignId;
+        E_SIGNATURE_CONFIG.clientSecret = docusignSecret;
+        E_SIGNATURE_CONFIG.baseUrl = docusignUrl;
+        console.log('✅ DocuSign credentials loaded from local storage');
+    }
+
+    // Load SendGrid
+    const sendgridKey = localStorage.getItem(STORAGE_KEYS.sendgrid);
+    if (sendgridKey) {
+        EMAIL_CAMPAIGNS_CONFIG.apiKey = sendgridKey;
+        console.log('✅ SendGrid API Key loaded from local storage');
+    }
+
+    // Load Clearbit
+    const clearbitKey = localStorage.getItem(STORAGE_KEYS.clearbit);
+    if (clearbitKey) {
+        console.log('✅ Clearbit API Key loaded from local storage');
     }
 }
 
 function saveSettings() {
-    const apiKeyInput = document.getElementById('aiApiKey');
-    if (apiKeyInput && apiKeyInput.value) {
-        localStorage.setItem('openai_api_key', apiKeyInput.value);
-        AI_CONFIG.apiKey = apiKeyInput.value;
-        console.log('✅ Settings saved successfully');
-        alert('✅ Settings saved! API key is stored locally in your browser.');
+    // Get all input values
+    const openaiKey = document.getElementById('openaiApiKey')?.value?.trim();
+    const twilioSid = document.getElementById('twilioAccountSid')?.value?.trim();
+    const twilioToken = document.getElementById('twilioAuthToken')?.value?.trim();
+    const twilioPhone = document.getElementById('twilioPhoneNumber')?.value?.trim();
+    const docusignId = document.getElementById('docusignClientId')?.value?.trim();
+    const docusignSecret = document.getElementById('docusignSecret')?.value?.trim();
+    const docusignUrl = document.getElementById('docusignBaseUrl')?.value?.trim();
+    const sendgridKey = document.getElementById('sendgridApiKey')?.value?.trim();
+    const clearbitKey = document.getElementById('clearbitApiKey')?.value?.trim();
+
+    let savedCount = 0;
+
+    // Save OpenAI
+    if (openaiKey) {
+        localStorage.setItem(STORAGE_KEYS.openai, openaiKey);
+        AI_CONFIG.apiKey = openaiKey;
+        savedCount++;
+    }
+
+    // Save Twilio
+    if (twilioSid && twilioToken) {
+        localStorage.setItem(STORAGE_KEYS.twilio_sid, twilioSid);
+        localStorage.setItem(STORAGE_KEYS.twilio_token, twilioToken);
+        if (twilioPhone) localStorage.setItem(STORAGE_KEYS.twilio_phone, twilioPhone);
+        VOIP_CONFIG.apiKey = twilioSid;
+        VOIP_CONFIG.authToken = twilioToken;
+        VOIP_CONFIG.phoneNumber = twilioPhone;
+        savedCount++;
+    }
+
+    // Save DocuSign
+    if (docusignId && docusignSecret) {
+        localStorage.setItem(STORAGE_KEYS.docusign_id, docusignId);
+        localStorage.setItem(STORAGE_KEYS.docusign_secret, docusignSecret);
+        if (docusignUrl) localStorage.setItem(STORAGE_KEYS.docusign_url, docusignUrl);
+        E_SIGNATURE_CONFIG.apiKey = docusignId;
+        E_SIGNATURE_CONFIG.clientSecret = docusignSecret;
+        E_SIGNATURE_CONFIG.baseUrl = docusignUrl;
+        savedCount++;
+    }
+
+    // Save SendGrid
+    if (sendgridKey) {
+        localStorage.setItem(STORAGE_KEYS.sendgrid, sendgridKey);
+        EMAIL_CAMPAIGNS_CONFIG.apiKey = sendgridKey;
+        savedCount++;
+    }
+
+    // Save Clearbit
+    if (clearbitKey) {
+        localStorage.setItem(STORAGE_KEYS.clearbit, clearbitKey);
+        savedCount++;
+    }
+
+    if (savedCount > 0) {
+        console.log(`✅ Settings saved successfully (${savedCount} API(s) configured)`);
+        alert(`✅ Settings saved! ${savedCount} API credential(s) stored locally.`);
         closeSettingsModal();
     } else {
-        alert('⚠️ Please enter an API key');
+        alert('⚠️ Please enter at least one API key');
     }
 }
 
 function openSettingsModal() {
     const modal = document.getElementById('settingsModal');
-    const apiKeyInput = document.getElementById('aiApiKey');
-    if (modal && apiKeyInput) {
+    if (modal) {
         modal.style.display = 'block';
-        // Show masked key if it exists
-        if (AI_CONFIG.apiKey) {
-            apiKeyInput.value = '••••••••' + AI_CONFIG.apiKey.slice(-8);
-        }
+        
+        // Load and display saved values (masked)
+        const maskKey = (key) => key ? '••••••••' + key.slice(-8) : '';
+        
+        const openaiKey = localStorage.getItem(STORAGE_KEYS.openai);
+        if (openaiKey) document.getElementById('openaiApiKey').value = maskKey(openaiKey);
+        
+        const twilioSid = localStorage.getItem(STORAGE_KEYS.twilio_sid);
+        if (twilioSid) document.getElementById('twilioAccountSid').value = maskKey(twilioSid);
+        
+        const twilioToken = localStorage.getItem(STORAGE_KEYS.twilio_token);
+        if (twilioToken) document.getElementById('twilioAuthToken').value = maskKey(twilioToken);
+        
+        const twilioPhone = localStorage.getItem(STORAGE_KEYS.twilio_phone);
+        if (twilioPhone) document.getElementById('twilioPhoneNumber').value = twilioPhone;
+        
+        const docusignId = localStorage.getItem(STORAGE_KEYS.docusign_id);
+        if (docusignId) document.getElementById('docusignClientId').value = maskKey(docusignId);
+        
+        const docusignSecret = localStorage.getItem(STORAGE_KEYS.docusign_secret);
+        if (docusignSecret) document.getElementById('docusignSecret').value = maskKey(docusignSecret);
+        
+        const docusignUrl = localStorage.getItem(STORAGE_KEYS.docusign_url);
+        if (docusignUrl) document.getElementById('docusignBaseUrl').value = docusignUrl;
+        
+        const sendgridKey = localStorage.getItem(STORAGE_KEYS.sendgrid);
+        if (sendgridKey) document.getElementById('sendgridApiKey').value = maskKey(sendgridKey);
+        
+        const clearbitKey = localStorage.getItem(STORAGE_KEYS.clearbit);
+        if (clearbitKey) document.getElementById('clearbitApiKey').value = maskKey(clearbitKey);
     }
 }
 

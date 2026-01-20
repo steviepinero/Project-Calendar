@@ -1,5 +1,993 @@
 // Data structures
-// Cache buster: 2026-01-15-19:28
+// Cache buster: 2026-01-20-17:30
+
+// ===== AI SUMMARIZATION CONFIGURATION =====
+const AI_CONFIG = {
+    apiKey: '', // User will set this in settings
+    apiEndpoint: 'https://api.openai.com/v1/chat/completions',
+    model: 'gpt-4o-mini', // Cost-effective model
+    maxTokens: 500
+};
+
+// AI Summarization function
+async function summarizeText(text) {
+    if (!AI_CONFIG.apiKey) {
+        alert('⚠️ AI API key not configured. Please add your OpenAI API key in settings.');
+        return null;
+    }
+
+    if (!text || text.trim().length === 0) {
+        alert('Please enter some text to summarize.');
+        return null;
+    }
+
+    try {
+        const response = await fetch(AI_CONFIG.apiEndpoint, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${AI_CONFIG.apiKey}`
+            },
+            body: JSON.stringify({
+                model: AI_CONFIG.model,
+                messages: [
+                    {
+                        role: 'system',
+                        content: 'You are a helpful assistant that creates concise, professional summaries of business notes and client information. Keep summaries to 2-3 sentences maximum and focus on key action items and important details.'
+                    },
+                    {
+                        role: 'user',
+                        content: `Please summarize the following client/project notes concisely:\n\n${text}`
+                    }
+                ],
+                max_tokens: AI_CONFIG.maxTokens,
+                temperature: 0.7
+            })
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            console.error('OpenAI API Error:', error);
+            alert(`❌ AI Error: ${error.error?.message || 'Failed to summarize'}`);
+            return null;
+        }
+
+        const data = await response.json();
+        const summary = data.choices[0].message.content;
+        console.log('✅ Summarization successful:', summary);
+        return summary;
+    } catch (error) {
+        console.error('Summarization error:', error);
+        alert(`❌ Error: ${error.message}`);
+        return null;
+    }
+}
+
+// ===== END AI CONFIGURATION =====
+
+// ===== SETTINGS MANAGEMENT =====
+function loadSettings() {
+    const savedKey = localStorage.getItem('openai_api_key');
+    if (savedKey) {
+        AI_CONFIG.apiKey = savedKey;
+        console.log('✅ OpenAI API Key loaded from local storage');
+    }
+}
+
+function saveSettings() {
+    const apiKeyInput = document.getElementById('aiApiKey');
+    if (apiKeyInput && apiKeyInput.value) {
+        localStorage.setItem('openai_api_key', apiKeyInput.value);
+        AI_CONFIG.apiKey = apiKeyInput.value;
+        console.log('✅ Settings saved successfully');
+        alert('✅ Settings saved! API key is stored locally in your browser.');
+        closeSettingsModal();
+    } else {
+        alert('⚠️ Please enter an API key');
+    }
+}
+
+function openSettingsModal() {
+    const modal = document.getElementById('settingsModal');
+    const apiKeyInput = document.getElementById('aiApiKey');
+    if (modal && apiKeyInput) {
+        modal.style.display = 'block';
+        // Show masked key if it exists
+        if (AI_CONFIG.apiKey) {
+            apiKeyInput.value = '••••••••' + AI_CONFIG.apiKey.slice(-8);
+        }
+    }
+}
+
+function closeSettingsModal() {
+    const modal = document.getElementById('settingsModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+function setupSettingsEventListeners() {
+    const settingsBtn = document.getElementById('settingsBtn');
+    const closeSettingsBtn = document.getElementById('closeSettingsModal');
+    const cancelSettingsBtn = document.getElementById('cancelSettingsBtn');
+    const settingsForm = document.getElementById('settingsForm');
+    const summarizeNotesBtn = document.getElementById('summarizeNotesBtn');
+
+    // Settings modal
+    if (settingsBtn) {
+        settingsBtn.addEventListener('click', openSettingsModal);
+    }
+    if (closeSettingsBtn) {
+        closeSettingsBtn.addEventListener('click', closeSettingsModal);
+    }
+    if (cancelSettingsBtn) {
+        cancelSettingsBtn.addEventListener('click', closeSettingsModal);
+    }
+    if (settingsForm) {
+        settingsForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            saveSettings();
+        });
+    }
+
+    // Summarize notes button
+    if (summarizeNotesBtn) {
+        summarizeNotesBtn.addEventListener('click', async () => {
+            const notesTextarea = document.getElementById('editNotes');
+            if (notesTextarea) {
+                summarizeNotesBtn.disabled = true;
+                summarizeNotesBtn.textContent = '⏳ Summarizing...';
+                
+                const summary = await summarizeText(notesTextarea.value);
+                if (summary) {
+                    // Insert summary at the beginning of notes
+                    const currentNotes = notesTextarea.value;
+                    notesTextarea.value = `[Summary] ${summary}\n\n${currentNotes}`;
+                    notesTextarea.focus();
+                }
+                
+                summarizeNotesBtn.disabled = false;
+                summarizeNotesBtn.textContent = '✨ Summarize';
+            }
+        });
+    }
+
+    // Close modal when clicking outside
+    const modal = document.getElementById('settingsModal');
+    if (modal) {
+        window.addEventListener('click', (event) => {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    }
+}
+
+// ===== END SETTINGS MANAGEMENT =====
+
+// ===== COMPANY RESEARCH =====
+const COMPANY_RESEARCH_CONFIG = {
+    // Free APIs that don't require authentication or have generous free tiers
+    apis: {
+        clearbit: 'https://autocomplete.clearbit.com/v1/companies',
+        newsapi: 'https://newsapi.org/v2/everything',
+        ipapi: 'https://ipapi.co' // For company IP/location data
+    }
+};
+
+async function searchCompanyInfo(companyName) {
+    if (!companyName || companyName.trim().length === 0) {
+        alert('Please enter a company name');
+        return null;
+    }
+
+    console.log(`🔍 Searching for: ${companyName}`);
+    showCompanyLoading(true);
+    hideCompanyError();
+
+    try {
+        // Create a mock company profile from user input
+        // In a real scenario, you'd call APIs like Crunchbase, ZoomInfo, etc.
+        // For now, we'll show how the feature would work with real data
+        
+        const mockCompanyProfile = {
+            name: companyName,
+            domain: companyName.toLowerCase().replace(/\s+/g, '') + '.com',
+            category: { industry: 'Technology' },
+            location: 'United States',
+            type: 'Public',
+            founded_year: new Date().getFullYear() - 20,
+            metrics: { employees: 5000 },
+            description: `${companyName} is a leading company in the technology industry. Learn more by visiting their website or checking recent news for updates.`,
+            linkedin: `https://linkedin.com/company/${companyName.toLowerCase()}`,
+            twitter: companyName.toLowerCase(),
+            facebook: `https://facebook.com/${companyName}`
+        };
+
+        console.log('✅ Company data created:', mockCompanyProfile);
+        displayCompanyProfile(mockCompanyProfile);
+        showCompanyLoading(false);
+        showCompanyNote();
+
+        return mockCompanyProfile;
+    } catch (error) {
+        console.error('Company search error:', error);
+        showCompanyError(`Error searching for company: ${error.message}`);
+        showCompanyLoading(false);
+        return null;
+    }
+}
+
+function displayCompanyProfile(company) {
+    // Basic Information
+    document.getElementById('companyName').textContent = company.name || 'N/A';
+    
+    const website = company.domain || company.site?.email_provider || 'N/A';
+    const websiteLink = document.getElementById('companyWebsite');
+    if (website && website !== 'N/A') {
+        websiteLink.innerHTML = `<a href="https://${website}" target="_blank" style="color: #3498db; text-decoration: none;">${website}</a>`;
+    } else {
+        websiteLink.textContent = 'N/A';
+    }
+
+    document.getElementById('companyIndustry').textContent = company.category?.industry || company.sector || 'Unknown';
+    document.getElementById('companyLocation').textContent = company.location || company.geo?.city || 'Unknown';
+    document.getElementById('companySize').textContent = company.metrics?.employees ? `${company.metrics.employees}+ employees` : 'Unknown';
+    document.getElementById('companyFounded').textContent = company.founded_year || 'Unknown';
+    document.getElementById('companyType').textContent = company.type || 'Unknown';
+
+    // Description
+    if (company.description) {
+        document.getElementById('companyDescription').textContent = company.description;
+        document.getElementById('companyDescriptionCard').style.display = 'block';
+    } else {
+        document.getElementById('companyDescriptionCard').style.display = 'none';
+    }
+
+    // Social Media Links
+    const social = company.site?.social_profiles || [];
+    let hasSocial = false;
+
+    if (company.linkedin) {
+        document.getElementById('linkedinLink').href = company.linkedin;
+        document.getElementById('socialLinkedin').style.display = 'block';
+        hasSocial = true;
+    }
+    
+    if (company.twitter) {
+        document.getElementById('twitterLink').href = `https://twitter.com/${company.twitter}`;
+        document.getElementById('twitterLink').textContent = `@${company.twitter}`;
+        document.getElementById('socialTwitter').style.display = 'block';
+        hasSocial = true;
+    }
+    
+    if (company.facebook) {
+        document.getElementById('facebookLink').href = company.facebook;
+        document.getElementById('socialFacebook').style.display = 'block';
+        hasSocial = true;
+    }
+
+    if (hasSocial) {
+        document.getElementById('companySocialCard').style.display = 'block';
+    }
+
+    // Display results section
+    document.getElementById('companySearchResults').style.display = 'block';
+    
+    // Fetch news about the company (optional - can use free news API)
+    fetchCompanyNews(company.name);
+}
+
+function fetchCompanyNews(companyName) {
+    // For now, just show a note that news fetching is optional
+    const newsList = document.getElementById('companyNewsList');
+    newsList.innerHTML = `
+        <p style="color: #666; padding: 15px; background-color: #f5f5f5; border-radius: 4px; border-left: 3px solid #3498db;">
+            📰 <strong>News Integration:</strong> To show recent news, you can integrate NewsAPI.org (free tier available). 
+            For now, visit <a href="https://news.google.com" target="_blank" style="color: #3498db;">Google News</a> 
+            or <a href="https://www.crunchbase.com" target="_blank" style="color: #3498db;">Crunchbase</a> to search for recent updates.
+        </p>
+    `;
+}
+
+function showCompanyLoading(show) {
+    document.getElementById('companySearchLoading').style.display = show ? 'block' : 'none';
+}
+
+function hideCompanyError() {
+    document.getElementById('companySearchError').style.display = 'none';
+}
+
+function showCompanyError(message) {
+    document.getElementById('errorMessage').textContent = message;
+    document.getElementById('companySearchError').style.display = 'block';
+    document.getElementById('companySearchResults').style.display = 'none';
+}
+
+function showCompanyNote() {
+    const noteDiv = document.createElement('div');
+    noteDiv.style.cssText = 'background: #e8f4f8; padding: 15px; border-radius: 4px; border-left: 4px solid #3498db; margin-bottom: 20px;';
+    noteDiv.innerHTML = `
+        <strong style="color: #2980b9;">💡 Integration Note:</strong>
+        <p style="margin: 8px 0 0 0; color: #555; font-size: 13px;">
+            For full company research with real data, integrate APIs like:
+            <ul style="margin: 8px 0; padding-left: 20px;">
+                <li><strong>Crunchbase</strong> - Funding, investors, private company data</li>
+                <li><strong>Hunter.io</strong> - Email verification and employee contacts</li>
+                <li><strong>Apollo</strong> - B2B contact database and technographics</li>
+                <li><strong>SEC EDGAR</strong> - Public company financial filings (free!)</li>
+            </ul>
+            Each requires an API key, but many offer free tiers. Contact us to add these integrations!
+        </p>
+    `;
+    
+    const resultsDiv = document.getElementById('companySearchResults');
+    if (resultsDiv.firstChild) {
+        resultsDiv.insertBefore(noteDiv, resultsDiv.firstChild);
+    }
+}
+
+function setupCompanyResearchListeners() {
+    const searchBtn = document.getElementById('searchCompanyBtn');
+    const searchInput = document.getElementById('companySearchInput');
+
+    if (searchBtn) {
+        searchBtn.addEventListener('click', async () => {
+            const companyName = searchInput.value;
+            await searchCompanyInfo(companyName);
+        });
+    }
+
+    if (searchInput) {
+        searchInput.addEventListener('keypress', async (e) => {
+            if (e.key === 'Enter') {
+                const companyName = searchInput.value;
+                await searchCompanyInfo(companyName);
+            }
+        });
+    }
+}
+
+// ===== END COMPANY RESEARCH =====
+
+// ===== E-SIGNATURE =====
+const E_SIGNATURE_CONFIG = {
+    apiKey: '', // Will be set from Settings (DocuSign, SignNow, etc.)
+    provider: 'docusign', // docusign, signnow, or hellosign
+    documents: [],
+    stats: {
+        total: 0,
+        signed: 0,
+        pending: 0,
+        declined: 0
+    }
+};
+
+function setupESignatureListeners() {
+    const createBtn = document.getElementById('createDocumentBtn');
+    if (createBtn) {
+        createBtn.addEventListener('click', openCreateDocumentModal);
+    }
+}
+
+function openCreateDocumentModal() {
+    const documentName = prompt('Document name:');
+    if (!documentName) return;
+
+    const signerEmail = prompt('Signer email address:');
+    if (!signerEmail) return;
+
+    const documentType = prompt('Document type (e.g., Contract, Agreement, Form):');
+    if (!documentType) return;
+
+    createNewDocument({
+        name: documentName,
+        signerEmail: signerEmail,
+        type: documentType,
+        status: 'draft',
+        created: new Date().toLocaleString(),
+        signed: false,
+        declineReason: null
+    });
+}
+
+function createNewDocument(doc) {
+    E_SIGNATURE_CONFIG.documents.push(doc);
+    E_SIGNATURE_CONFIG.stats.total++;
+    E_SIGNATURE_CONFIG.stats.pending++;
+    renderDocumentsList();
+    alert(`✅ Document "${doc.name}" created successfully!\n\nTo send for signing:\n1. Add API key in Settings\n2. Configure signature fields\n3. Send to signer: ${doc.signerEmail}`);
+}
+
+function renderDocumentsList() {
+    const container = document.getElementById('documentsList');
+    if (!container) return;
+
+    if (E_SIGNATURE_CONFIG.documents.length === 0) {
+        container.innerHTML = `
+            <div style="padding: 20px; background-color: #f8f9fa; border-radius: 4px; text-align: center; color: #999;">
+                <p style="margin: 0;">📭 No documents yet. Create your first document to get started!</p>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = E_SIGNATURE_CONFIG.documents.map((doc, idx) => `
+        <div style="padding: 15px; background-color: #f8f9fa; border-radius: 4px; border-left: 3px solid ${doc.status === 'signed' ? '#27ae60' : doc.status === 'declined' ? '#e74c3c' : '#f39c12'};">
+            <div style="display: flex; justify-content: space-between; align-items: start;">
+                <div>
+                    <h4 style="margin: 0 0 8px 0; color: #2c3e50;">${doc.name}</h4>
+                    <p style="margin: 0 0 5px 0; font-size: 13px; color: #666;"><strong>Type:</strong> ${doc.type}</p>
+                    <p style="margin: 0 0 5px 0; font-size: 13px; color: #666;"><strong>Signer:</strong> ${doc.signerEmail}</p>
+                    <p style="margin: 0; font-size: 13px; color: #999;">Created: ${doc.created}</p>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <button onclick="sendDocumentForSigning(${idx})" style="padding: 8px 12px; background-color: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">
+                        Send
+                    </button>
+                    <button onclick="deleteDocument(${idx})" style="padding: 8px 12px; background-color: #e74c3c; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">
+                        Delete
+                    </button>
+                </div>
+            </div>
+            <div style="margin-top: 12px;">
+                <span style="display: inline-block; padding: 4px 10px; background-color: ${doc.status === 'signed' ? '#d5f4e6' : doc.status === 'declined' ? '#fadbd8' : '#fdebd0'}; color: ${doc.status === 'signed' ? '#27ae60' : doc.status === 'declined' ? '#e74c3c' : '#f39c12'}; border-radius: 3px; font-size: 12px; font-weight: 600;">
+                    ${doc.status.toUpperCase()}
+                </span>
+            </div>
+        </div>
+    `).join('');
+}
+
+function sendDocumentForSigning(idx) {
+    const doc = E_SIGNATURE_CONFIG.documents[idx];
+    if (!E_SIGNATURE_CONFIG.apiKey) {
+        alert('⚠️ API key not configured.\n\nTo send documents:\n1. Click Settings (⚙️)\n2. Add your DocuSign, SignNow, or HelloSign API key\n3. Try again');
+        return;
+    }
+    
+    alert(`📤 Sending "${doc.name}" to ${doc.signerEmail}...\n\nIn a production environment, this would:\n✓ Upload document to ${E_SIGNATURE_CONFIG.provider}\n✓ Add signature fields\n✓ Send signing request email\n✓ Track signing status\n✓ Get audit trail`);
+    
+    doc.status = 'sent';
+    renderDocumentsList();
+}
+
+function deleteDocument(idx) {
+    if (confirm('Are you sure you want to delete this document?')) {
+        const doc = E_SIGNATURE_CONFIG.documents[idx];
+        E_SIGNATURE_CONFIG.documents.splice(idx, 1);
+        E_SIGNATURE_CONFIG.stats.total--;
+        if (doc.status === 'signed') E_SIGNATURE_CONFIG.stats.signed--;
+        else if (doc.status === 'pending' || doc.status === 'draft') E_SIGNATURE_CONFIG.stats.pending--;
+        else if (doc.status === 'declined') E_SIGNATURE_CONFIG.stats.declined--;
+        renderDocumentsList();
+        alert('✅ Document deleted successfully');
+    }
+}
+
+// ===== END E-SIGNATURE =====
+
+// ===== VOIP CALLING =====
+const VOIP_CONFIG = {
+    apiKey: '', // Twilio Account SID or similar
+    authToken: '', // Twilio Auth Token
+    provider: 'twilio', // twilio, vonage, plivo
+    currentNumber: '',
+    isInCall: false,
+    callStartTime: null,
+    callDuration: 0,
+    durationInterval: null,
+    callHistory: [],
+    contacts: []
+};
+
+function setupVoIPListeners() {
+    // Dial button listeners
+    const dialBtns = document.querySelectorAll('.dial-btn');
+    dialBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const digit = btn.getAttribute('data-digit');
+            addDigitToDisplay(digit);
+        });
+    });
+
+    // Control buttons
+    const backspaceBtn = document.getElementById('backspaceBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const callBtn = document.getElementById('callBtn');
+    const hangupBtn = document.getElementById('hangupBtn');
+    const quickAddBtn = document.getElementById('quickAddBtn');
+
+    if (backspaceBtn) backspaceBtn.addEventListener('click', backspaceNumber);
+    if (clearBtn) clearBtn.addEventListener('click', clearNumber);
+    if (callBtn) callBtn.addEventListener('click', initiateCall);
+    if (hangupBtn) hangupBtn.addEventListener('click', endCall);
+    if (quickAddBtn) quickAddBtn.addEventListener('click', quickAddContact);
+
+    // Quick add phone on Enter
+    const quickAddPhone = document.getElementById('quickAddPhone');
+    if (quickAddPhone) {
+        quickAddPhone.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                quickAddContact();
+            }
+        });
+    }
+
+    renderCallHistory();
+}
+
+function addDigitToDisplay(digit) {
+    const maxLength = 20;
+    if (VOIP_CONFIG.currentNumber.length < maxLength) {
+        VOIP_CONFIG.currentNumber += digit;
+        updateDisplay();
+    }
+}
+
+function backspaceNumber() {
+    VOIP_CONFIG.currentNumber = VOIP_CONFIG.currentNumber.slice(0, -1);
+    updateDisplay();
+}
+
+function clearNumber() {
+    VOIP_CONFIG.currentNumber = '';
+    updateDisplay();
+}
+
+function updateDisplay() {
+    const display = document.getElementById('dialerDisplay');
+    if (display) {
+        display.textContent = VOIP_CONFIG.currentNumber || ' ';
+    }
+}
+
+function initiateCall() {
+    const phoneNumber = VOIP_CONFIG.currentNumber.trim();
+    
+    if (!phoneNumber) {
+        alert('Please enter a phone number');
+        return;
+    }
+
+    if (!VOIP_CONFIG.apiKey) {
+        alert('⚠️ VoIP credentials not configured.\n\nTo make calls:\n1. Click Settings (⚙️)\n2. Add your Twilio Account SID and Auth Token\n3. Try again');
+        return;
+    }
+
+    // Validate phone number format
+    const phoneRegex = /^[\d\+\-\(\)\s\*\#]+$/;
+    if (!phoneRegex.test(phoneNumber)) {
+        alert('Invalid phone number. Use digits, +, -, (), spaces, *, or #');
+        return;
+    }
+
+    // Simulate call initiation
+    VOIP_CONFIG.isInCall = true;
+    VOIP_CONFIG.callStartTime = new Date();
+    
+    const callBtn = document.getElementById('callBtn');
+    const hangupBtn = document.getElementById('hangupBtn');
+    const callStatus = document.getElementById('callStatus');
+    const callDuration = document.getElementById('callDuration');
+
+    if (callBtn) callBtn.style.display = 'none';
+    if (hangupBtn) hangupBtn.style.display = 'flex';
+    if (callStatus) {
+        callStatus.style.display = 'block';
+        callStatus.textContent = `📞 Calling ${phoneNumber}...`;
+        callStatus.style.background = '#fff3cd';
+        callStatus.style.color = '#856404';
+    }
+    if (callDuration) callDuration.style.display = 'block';
+
+    // Simulate call connect after 2 seconds
+    setTimeout(() => {
+        if (VOIP_CONFIG.isInCall && callStatus) {
+            callStatus.textContent = '✓ Connected';
+            callStatus.style.background = '#d4edda';
+            callStatus.style.color = '#155724';
+        }
+    }, 2000);
+
+    // Start duration counter
+    startCallDuration();
+
+    // Production: Would call Twilio API here
+    console.log(`📞 Initiating call to ${phoneNumber}...`);
+}
+
+function startCallDuration() {
+    if (VOIP_CONFIG.durationInterval) clearInterval(VOIP_CONFIG.durationInterval);
+    
+    VOIP_CONFIG.durationInterval = setInterval(() => {
+        if (VOIP_CONFIG.isInCall && VOIP_CONFIG.callStartTime) {
+            const elapsed = Math.floor((new Date() - VOIP_CONFIG.callStartTime) / 1000);
+            const minutes = Math.floor(elapsed / 60);
+            const seconds = elapsed % 60;
+            const durationDisplay = document.getElementById('callDuration');
+            if (durationDisplay) {
+                durationDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            }
+        }
+    }, 1000);
+}
+
+function endCall() {
+    const phoneNumber = VOIP_CONFIG.currentNumber;
+    const duration = VOIP_CONFIG.callStartTime ? Math.floor((new Date() - VOIP_CONFIG.callStartTime) / 1000) : 0;
+    
+    // Add to call history
+    VOIP_CONFIG.callHistory.unshift({
+        number: phoneNumber,
+        type: 'outgoing',
+        timestamp: new Date().toLocaleString(),
+        duration: duration,
+        status: 'completed'
+    });
+
+    // Reset UI
+    VOIP_CONFIG.isInCall = false;
+    VOIP_CONFIG.callStartTime = null;
+    if (VOIP_CONFIG.durationInterval) clearInterval(VOIP_CONFIG.durationInterval);
+
+    const callBtn = document.getElementById('callBtn');
+    const hangupBtn = document.getElementById('hangupBtn');
+    const callStatus = document.getElementById('callStatus');
+    const callDuration = document.getElementById('callDuration');
+
+    if (callBtn) callBtn.style.display = 'flex';
+    if (hangupBtn) hangupBtn.style.display = 'none';
+    if (callStatus) callStatus.style.display = 'none';
+    if (callDuration) callDuration.style.display = 'none';
+
+    clearNumber();
+    renderCallHistory();
+    
+    console.log(`✓ Call ended. Duration: ${duration}s`);
+}
+
+function quickAddContact() {
+    const phoneInput = document.getElementById('quickAddPhone');
+    if (!phoneInput) return;
+
+    const phone = phoneInput.value.trim();
+    if (!phone) {
+        alert('Please enter a phone number');
+        return;
+    }
+
+    // Check if already exists
+    const exists = VOIP_CONFIG.contacts.some(c => c.phone === phone);
+    if (exists) {
+        alert('This contact already exists');
+        return;
+    }
+
+    const name = prompt('Contact name:');
+    if (!name) return;
+
+    VOIP_CONFIG.contacts.push({
+        name: name,
+        phone: phone,
+        added: new Date().toLocaleString()
+    });
+
+    phoneInput.value = '';
+    renderCallHistory();
+    alert(`✓ Contact "${name}" added!`);
+}
+
+function renderCallHistory() {
+    const container = document.getElementById('recentCallsList');
+    if (!container) return;
+
+    if (VOIP_CONFIG.callHistory.length === 0 && VOIP_CONFIG.contacts.length === 0) {
+        container.innerHTML = `
+            <div style="padding: 20px; background-color: #f8f9fa; border-radius: 4px; text-align: center; color: #999; font-size: 13px;">
+                📭 No calls or contacts yet. Start calling!
+            </div>
+        `;
+        return;
+    }
+
+    let html = '';
+
+    // Contacts section
+    if (VOIP_CONFIG.contacts.length > 0) {
+        html += '<div style="margin-bottom: 20px;"><h4 style="margin: 0 0 10px 0; color: #2c3e50; font-size: 13px;">📇 Contacts</h4>';
+        html += VOIP_CONFIG.contacts.map((contact, idx) => `
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background-color: #f8f9fa; border-radius: 4px; margin-bottom: 8px;">
+                <div>
+                    <div style="font-weight: 600; color: #2c3e50; font-size: 13px;">${contact.name}</div>
+                    <div style="font-size: 11px; color: #7f8c8d;">${contact.phone}</div>
+                </div>
+                <div style="display: flex; gap: 5px;">
+                    <button onclick="callContact(${idx})" style="padding: 6px 10px; background-color: #27ae60; color: white; border: none; border-radius: 3px; cursor: pointer; font-size: 11px; font-weight: 600;">
+                        Call
+                    </button>
+                    <button onclick="deleteContact(${idx})" style="padding: 6px 10px; background-color: #e74c3c; color: white; border: none; border-radius: 3px; cursor: pointer; font-size: 11px;">
+                        ✕
+                    </button>
+                </div>
+            </div>
+        `).join('');
+        html += '</div>';
+    }
+
+    // Recent calls section
+    if (VOIP_CONFIG.callHistory.length > 0) {
+        html += '<div><h4 style="margin: 0 0 10px 0; color: #2c3e50; font-size: 13px;">📞 Recent Calls</h4>';
+        html += VOIP_CONFIG.callHistory.slice(0, 10).map((call, idx) => {
+            const minutes = Math.floor(call.duration / 60);
+            const seconds = call.duration % 60;
+            return `
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background-color: #f8f9fa; border-radius: 4px; margin-bottom: 8px;">
+                    <div style="flex: 1;">
+                        <div style="font-weight: 600; color: #2c3e50; font-size: 13px;">${call.type === 'incoming' ? '📥' : '📤'} ${call.number}</div>
+                        <div style="font-size: 11px; color: #7f8c8d;">
+                            ${call.timestamp} • ${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}
+                        </div>
+                    </div>
+                    <button onclick="redialNumber('${call.number}')" style="padding: 6px 10px; background-color: #3498db; color: white; border: none; border-radius: 3px; cursor: pointer; font-size: 11px; font-weight: 600;">
+                        Redial
+                    </button>
+                </div>
+            `;
+        }).join('');
+        html += '</div>';
+    }
+
+    container.innerHTML = html;
+}
+
+function callContact(idx) {
+    const contact = VOIP_CONFIG.contacts[idx];
+    VOIP_CONFIG.currentNumber = contact.phone;
+    updateDisplay();
+    initiateCall();
+}
+
+function deleteContact(idx) {
+    if (confirm('Delete this contact?')) {
+        VOIP_CONFIG.contacts.splice(idx, 1);
+        renderCallHistory();
+    }
+}
+
+function redialNumber(number) {
+    VOIP_CONFIG.currentNumber = number;
+    updateDisplay();
+    initiateCall();
+}
+
+// ===== END VOIP CALLING =====
+
+// ===== EMAIL CAMPAIGNS =====
+const EMAIL_CAMPAIGNS_CONFIG = {
+    apiKey: '', // Will be set from Settings
+    provider: 'sendgrid', // sendgrid, mailchimp, or brevo
+    campaigns: [],
+    templates: [
+        {
+            id: 'welcome',
+            name: 'Welcome Email',
+            subject: 'Welcome to our services!',
+            description: 'Greet new contacts and introduce your services',
+            content: `<h1>Welcome!</h1>
+<p>Thank you for choosing us. We're excited to work with you.</p>
+<p>Here's what you can expect:</p>
+<ul>
+<li>Expert support from our team</li>
+<li>Regular updates and insights</li>
+<li>Dedicated account management</li>
+</ul>
+<p><a href="#">Get Started</a></p>`
+        },
+        {
+            id: 'newsletter',
+            name: 'Monthly Newsletter',
+            subject: 'Your monthly update - {{month}}',
+            description: 'Share updates, tips, and industry news',
+            content: `<h1>Monthly Update</h1>
+<p>Hi {{firstName}},</p>
+<p>Here's what's new this month:</p>
+<h3>Latest News</h3>
+<p>[Add your news here]</p>
+<h3>Tips & Best Practices</h3>
+<p>[Add tips here]</p>
+<p>Best regards,<br>Your Team</p>`
+        },
+        {
+            id: 'announcement',
+            name: 'Service Announcement',
+            subject: 'Exciting news - New {{serviceName}} available!',
+            description: 'Announce new services or promotions',
+            content: `<h1>New Service Launch!</h1>
+<p>We're thrilled to announce the launch of {{serviceName}}.</p>
+<p>Key features:</p>
+<ul>
+<li>Feature 1</li>
+<li>Feature 2</li>
+<li>Feature 3</li>
+</ul>
+<p><a href="#">Learn More</a></p>`
+        },
+        {
+            id: 'followup',
+            name: 'Support Follow-up',
+            subject: 'How did we do? - Your feedback matters',
+            description: 'Check in after support ticket resolution',
+            content: `<h1>We'd love your feedback!</h1>
+<p>Hi {{firstName}},</p>
+<p>Thank you for contacting our support team. We hope we resolved your issue to your satisfaction.</p>
+<p>Could you take a moment to rate your experience?</p>
+<p style="text-align: center;">
+<a href="#" style="display: inline-block; padding: 10px 20px; background-color: #27ae60; color: white; text-decoration: none; border-radius: 4px;">Give Feedback</a>
+</p>`
+        }
+    ],
+    contactLists: [
+        { id: 'default', name: 'Default Contacts', count: 0 }
+    ]
+};
+
+function setupEmailCampaignsListeners() {
+    // Tab switching
+    const tabs = document.querySelectorAll('.campaign-tab');
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            const tabName = tab.getAttribute('data-tab');
+            
+            // Hide all tabs
+            document.querySelectorAll('.campaign-tab-content').forEach(t => {
+                t.style.display = 'none';
+            });
+            
+            // Show selected tab
+            const tabContent = document.getElementById(`${tabName}-tab`);
+            if (tabContent) {
+                tabContent.style.display = 'block';
+            }
+            
+            // Update active tab styling
+            tabs.forEach(t => {
+                t.style.color = '#555';
+                t.style.borderBottom = 'none';
+            });
+            tab.style.color = '#2c3e50';
+            tab.style.borderBottom = '3px solid #3498db';
+        });
+    });
+
+    // Create Campaign button
+    const createBtn = document.getElementById('createCampaignBtn');
+    if (createBtn) {
+        createBtn.addEventListener('click', openCampaignModal);
+    }
+
+    // Campaign Modal handlers
+    const campaignModal = document.getElementById('campaignModal');
+    const closeCampaignBtn = document.getElementById('closeCampaignModal');
+    const cancelCampaignBtn = document.getElementById('cancelCampaignBtn');
+    const campaignForm = document.getElementById('campaignForm');
+
+    if (closeCampaignBtn) {
+        closeCampaignBtn.addEventListener('click', closeCampaignModal);
+    }
+    if (cancelCampaignBtn) {
+        cancelCampaignBtn.addEventListener('click', closeCampaignModal);
+    }
+    if (campaignForm) {
+        campaignForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            submitCampaignForm();
+        });
+    }
+
+    // Import Contacts button
+    const importBtn = document.getElementById('importContactsBtn');
+    if (importBtn) {
+        importBtn.addEventListener('click', () => {
+            alert('📧 Import Contacts Feature\n\nTo import contacts:\n1. Prepare a CSV file with email addresses\n2. Upload via this dialog\n3. Contacts will be added to your list\n\nIntegration with SendGrid/Mailchimp coming soon!');
+        });
+    }
+
+    // Close modal when clicking outside
+    if (campaignModal) {
+        window.addEventListener('click', (event) => {
+            if (event.target === campaignModal) {
+                campaignModal.style.display = 'none';
+            }
+        });
+    }
+}
+
+function openCampaignModal() {
+    const modal = document.getElementById('campaignModal');
+    if (modal) {
+        modal.style.display = 'block';
+        document.getElementById('campaignName').focus();
+    }
+}
+
+function closeCampaignModal() {
+    const modal = document.getElementById('campaignModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+    // Clear form
+    document.getElementById('campaignForm').reset();
+}
+
+function submitCampaignForm() {
+    const campaign = {
+        name: document.getElementById('campaignName').value,
+        subject: document.getElementById('campaignSubject').value,
+        recipients: document.getElementById('campaignRecipients').value,
+        sendTime: document.getElementById('campaignSendTime').value,
+        template: 'welcome',
+        status: 'draft',
+        created: new Date().toLocaleString()
+    };
+
+    if (campaign.name && campaign.subject) {
+        EMAIL_CAMPAIGNS_CONFIG.campaigns.push(campaign);
+        renderCampaignsList();
+        closeCampaignModal();
+        alert(`✅ Campaign "${campaign.name}" created successfully!`);
+    }
+}
+
+function renderCampaignsList() {
+    const container = document.getElementById('campaignsList');
+    if (!container) return;
+
+    if (EMAIL_CAMPAIGNS_CONFIG.campaigns.length === 0) {
+        container.innerHTML = `
+            <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); text-align: center; color: #999;">
+                <p style="margin: 0;">📭 No campaigns yet. Create your first campaign to get started!</p>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = EMAIL_CAMPAIGNS_CONFIG.campaigns.map((campaign, idx) => `
+        <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px;">
+                <div>
+                    <h4 style="margin: 0 0 8px 0; color: #2c3e50;">${campaign.name}</h4>
+                    <p style="margin: 0 0 5px 0; font-size: 13px; color: #666;"><strong>Subject:</strong> ${campaign.subject}</p>
+                    <p style="margin: 0; font-size: 13px; color: #666;"><strong>Recipients:</strong> ${campaign.recipients || 'N/A'}</p>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <button onclick="alert('Edit functionality - coming soon with SendGrid integration!')" style="padding: 8px 12px; background-color: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">
+                        Edit
+                    </button>
+                    <button onclick="deleteCampaign(${idx})" style="padding: 8px 12px; background-color: #e74c3c; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">
+                        Delete
+                    </button>
+                </div>
+            </div>
+            <div style="padding-top: 15px; border-top: 1px solid #ecf0f1;">
+                <span style="display: inline-block; padding: 4px 8px; background-color: #d5f4e6; color: #27ae60; border-radius: 3px; font-size: 12px;">
+                    📅 ${campaign.sendTime || 'Not scheduled'}
+                </span>
+            </div>
+        </div>
+    `).join('');
+}
+
+function deleteCampaign(idx) {
+    if (confirm('Are you sure you want to delete this campaign?')) {
+        EMAIL_CAMPAIGNS_CONFIG.campaigns.splice(idx, 1);
+        renderCampaignsList();
+        alert('✅ Campaign deleted successfully');
+    }
+}
+
+// ===== END EMAIL CAMPAIGNS =====
+
 let projects = [];
 let selectedProjectId = null;
 let editingProjectId = null;
@@ -67,12 +1055,30 @@ function initializeApp() {
     document.getElementById('requestDate').valueAsDate = today;
     document.getElementById('assignedStartDate').valueAsDate = today;
     document.getElementById('preferredStartDate').valueAsDate = today;
+    
+    // Load and setup AI settings
+    loadSettings();
+    setupSettingsEventListeners();
+    
+    // Setup Company Research
+    setupCompanyResearchListeners();
+    
+    // Setup E-Signature
+    setupESignatureListeners();
+    
+    // Setup VoIP Calling
+    setupVoIPListeners();
+    
+    // Setup Email Campaigns
+    setupEmailCampaignsListeners();
+    
     renderEmployeeDropdowns();
     renderAllowList();
 }
 
 function setupNavigation() {
-    const navItems = document.querySelectorAll('.nav-item');
+    // Get all navigation links (both .nav-item and .sidebar-link)
+    const navItems = document.querySelectorAll('.nav-item, .sidebar-link');
     
     navItems.forEach(item => {
         item.addEventListener('click', (e) => {

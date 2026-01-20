@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdn.syncfusion.com/ej2/20.4.48/material.css">
     <link rel="stylesheet" href="https://cdn.syncfusion.com/ej2/20.4.48/material.css" id="theme">
     
-    <link rel="stylesheet" href="styles.css?v=20260115-1928">
+    <link rel="stylesheet" href="styles.css?v=20260120-1730">
 </head>
 <body>
     <div class="ej2-container">
@@ -20,10 +20,11 @@
                     <h1 class="appbar-title">MSP Project Calendar</h1>
                 </div>
                 <div class="appbar-right">
+                    <button id="settingsBtn" class="e-btn e-outline" title="Settings">⚙️ Settings</button>
                     <button id="addEmployeeBtn" class="e-btn e-outline">+ Add Employee</button>
                     <button id="addProjectBtn" class="e-btn e-primary">+ Add Project</button>
                     <button id="addTaskBtn" class="e-btn e-outline">+ Add Task</button>
-                </div>
+            </div>
             </div>
         </header>
 
@@ -33,9 +34,13 @@
                 <nav class="sidebar-nav">
                     <div class="sidebar-header">DASH BOARD</div>
                     <div class="sidebar-section">
-                        <div class="sidebar-category">ON BOARDING</div>
+                        <div class="sidebar-category">ONBOARDING</div>
                         <ul class="sidebar-menu">
-                            <li><a href="#" class="nav-item" data-page="scheduling">Scheduling</a></li>
+                            <li><a href="#" class="sidebar-link" data-page="scheduling">Scheduling</a></li>
+                            <li><a href="#" class="sidebar-link" data-page="company-research">Company Research</a></li>
+                            <li><a href="#" class="sidebar-link" data-page="email-campaigns">Email Campaigns</a></li>
+                            <li><a href="#" class="sidebar-link" data-page="e-signature">E-Signature</a></li>
+                            <li><a href="#" class="sidebar-link" data-page="voip-calling">VoIP Calling</a></li>
                             <li><a href="#" class="sidebar-link">Client Profile</a></li>
                             <li><a href="#" class="sidebar-link">Network Analysis</a></li>
                             <li><a href="#" class="sidebar-link">Proposal Generator</a></li>
@@ -77,105 +82,105 @@
             <div class="main-wrapper">
                 <!-- Page: Smart Scheduling (Gantt Chart) -->
                 <div id="page-scheduling" class="page-content active">
-                    <div class="main-content">
-                        <!-- Left Panel: Project List -->
-                        <div class="project-list">
-                            <div class="project-header">
-                                <h3>Projects & Tasks</h3>
-                            </div>
-                            <div id="projectTreeContainer" class="project-tree">
-                                <!-- Projects will be dynamically added here -->
-                            </div>
-                        </div>
+        <div class="main-content">
+            <!-- Left Panel: Project List -->
+            <div class="project-list">
+                <div class="project-header">
+                    <h3>Projects & Tasks</h3>
+                </div>
+                <div id="projectTreeContainer" class="project-tree">
+                    <!-- Projects will be dynamically added here -->
+                </div>
+            </div>
 
-                        <!-- Center Panel: Gantt Chart -->
-                        <div class="gantt-container">
-                            <div class="gantt-controls">
-                                <div class="view-toggle">
+            <!-- Center Panel: Gantt Chart -->
+            <div class="gantt-container">
+                <div class="gantt-controls">
+                    <div class="view-toggle">
                                     <button id="multiWeekViewBtn" class="e-btn e-outline active-view">Multi-Week View</button>
                                     <button id="singleWeekViewBtn" class="e-btn e-outline">Single Week View</button>
-                                </div>
-                                <div id="weekNavigation" class="week-navigation" style="display: none;">
+                    </div>
+                    <div id="weekNavigation" class="week-navigation" style="display: none;">
                                     <button id="prevWeekBtn" class="e-btn e-icon-btn">◀</button>
-                                    <span id="currentWeekDisplay" class="week-display"></span>
+                        <span id="currentWeekDisplay" class="week-display"></span>
                                     <button id="nextWeekBtn" class="e-btn e-icon-btn">▶</button>
                                     <button id="todayBtn" class="e-btn e-outline">Today</button>
-                                </div>
-                            </div>
-                            <div id="ganttHeader" class="gantt-header">
-                                <!-- Date headers will be dynamically generated -->
-                            </div>
-                            <div id="ganttBody" class="gantt-body">
-                                <!-- Gantt bars will be dynamically generated -->
-                            </div>
+                    </div>
+                </div>
+                <div id="ganttHeader" class="gantt-header">
+                    <!-- Date headers will be dynamically generated -->
+                </div>
+                <div id="ganttBody" class="gantt-body">
+                    <!-- Gantt bars will be dynamically generated -->
+                </div>
                             <!-- Tooltip for project details -->
                             <div id="ganttTooltip" class="gantt-tooltip" style="display: none;"></div>
-                        </div>
+            </div>
 
-                        <!-- Right Panel: Project Details -->
-                        <div class="details-panel">
-                            <div class="summary-section">
-                                <h3>SUMMARY</h3>
+            <!-- Right Panel: Project Details -->
+            <div class="details-panel">
+                <div class="summary-section">
+                    <h3>SUMMARY</h3>
                                 <textarea id="summaryText" class="e-field" placeholder="Project summary... 60 chars or less" maxlength="60"></textarea>
-                            </div>
+                </div>
 
-                            <div class="detail-section">
-                                <h3>DETAIL</h3>
+                <div class="detail-section">
+                    <h3>DETAIL</h3>
                                 <textarea id="detailText" class="e-field" placeholder="Project details and scope..."></textarea>
-                            </div>
+                </div>
 
-                            <div class="status-section">
-                                <h3>STATUS</h3>
-                                <div class="status-grid">
-                                    <div class="status-row">
-                                        <label>Status:</label>
+                <div class="status-section">
+                    <h3>STATUS</h3>
+                    <div class="status-grid">
+                        <div class="status-row">
+                            <label>Status:</label>
                                         <select id="projectStatus" class="e-field">
-                                            <option value="Active">Active</option>
-                                            <option value="Pending">Pending</option>
-                                            <option value="Completed">Completed</option>
-                                            <option value="On Hold">On Hold</option>
-                                        </select>
-                                    </div>
-                                    <div class="status-row">
-                                        <label>Request Date:</label>
+                                <option value="Active">Active</option>
+                                <option value="Pending">Pending</option>
+                                <option value="Completed">Completed</option>
+                                <option value="On Hold">On Hold</option>
+                            </select>
+                        </div>
+                        <div class="status-row">
+                            <label>Request Date:</label>
                                         <input type="date" id="requestDate" class="e-field">
-                                    </div>
-                                    <div class="status-row">
-                                        <label>Requested By:</label>
+                        </div>
+                        <div class="status-row">
+                            <label>Requested By:</label>
                                         <input type="text" id="requestedBy" class="e-field" placeholder="Name">
-                                    </div>
-                                    <div class="status-row">
-                                        <label>Hours Per Day:</label>
+                        </div>
+                        <div class="status-row">
+                            <label>Hours Per Day:</label>
                                         <input type="number" id="hoursPerDay" class="e-field" value="4.00" step="0.25" min="0" max="24">
-                                    </div>
-                                    <div class="status-row">
-                                        <label>Org/Estimated Hours:</label>
+                        </div>
+                        <div class="status-row">
+                            <label>Org/Estimated Hours:</label>
                                         <input type="number" id="estimatedHours" class="e-field" value="16.00" step="0.25" min="0">
-                                    </div>
-                                    <div class="status-row">
-                                        <label>Est/Remaining Hours:</label>
+                        </div>
+                        <div class="status-row">
+                            <label>Est/Remaining Hours:</label>
                                         <input type="number" id="remainingHours" class="e-field" value="10.00" step="0.25" min="0">
-                                    </div>
-                                    <div class="status-row">
-                                        <label>Assigned Start Date:</label>
+                        </div>
+                        <div class="status-row">
+                            <label>Assigned Start Date:</label>
                                         <input type="date" id="assignedStartDate" class="e-field">
-                                    </div>
-                                    <div class="status-row">
-                                        <label>Estimated Hours:</label>
+                        </div>
+                        <div class="status-row">
+                            <label>Estimated Hours:</label>
                                         <input type="number" id="estHours" class="e-field" value="10.00" step="0.25" min="0">
-                                    </div>
-                                    <div class="status-row">
-                                        <label>Actual Hours:</label>
+                        </div>
+                        <div class="status-row">
+                            <label>Actual Hours:</label>
                                         <input type="number" id="actualHours" class="e-field" value="10.00" step="0.25" min="0">
-                                    </div>
-                                </div>
-                            </div>
+                        </div>
+                    </div>
+                </div>
 
-                            <div class="checklist-section">
-                                <h3>CHECKLIST</h3>
-                                <div id="checklistItems">
-                                    <!-- Checklist items will be added here -->
-                                </div>
+                <div class="checklist-section">
+                    <h3>CHECKLIST</h3>
+                    <div id="checklistItems">
+                        <!-- Checklist items will be added here -->
+                    </div>
                                 <button id="addChecklistBtn" class="e-btn e-small">+ Add Item</button>
                             </div>
                         </div>
@@ -240,6 +245,388 @@
                         </div>
                         <div class="e-card-content">
                             <p>Software page content coming soon...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Page: E-Signature -->
+                <div id="page-e-signature" class="page-content">
+                    <div style="padding: 20px; max-width: 1400px; margin: 0 auto;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                            <h2 style="color: #2c3e50; margin: 0;">✍️ E-Signature</h2>
+                            <button id="createDocumentBtn" style="padding: 12px 24px; background-color: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 14px;">
+                                + Create Document
+                            </button>
+                        </div>
+
+                        <!-- Stats Cards -->
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px;">
+                            <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-left: 4px solid #3498db;">
+                                <div style="color: #999; font-size: 13px; margin-bottom: 5px;">Total Documents</div>
+                                <div style="font-size: 32px; font-weight: 700; color: #2c3e50;">0</div>
+                            </div>
+                            <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-left: 4px solid #27ae60;">
+                                <div style="color: #999; font-size: 13px; margin-bottom: 5px;">Signed</div>
+                                <div style="font-size: 32px; font-weight: 700; color: #2c3e50;">0</div>
+                            </div>
+                            <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-left: 4px solid #f39c12;">
+                                <div style="color: #999; font-size: 13px; margin-bottom: 5px;">Pending</div>
+                                <div style="font-size: 32px; font-weight: 700; color: #2c3e50;">0</div>
+                            </div>
+                            <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-left: 4px solid #e74c3c;">
+                                <div style="color: #999; font-size: 13px; margin-bottom: 5px;">Declined</div>
+                                <div style="font-size: 32px; font-weight: 700; color: #2c3e50;">0</div>
+                            </div>
+                        </div>
+
+                        <!-- Documents List -->
+                        <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                            <h3 style="margin: 0 0 20px 0; color: #2c3e50;">Recent Documents</h3>
+                            <div id="documentsList" style="display: grid; gap: 12px;">
+                                <div style="padding: 20px; background-color: #f8f9fa; border-radius: 4px; text-align: center; color: #999;">
+                                    <p style="margin: 0;">📭 No documents yet. Create your first document to get started!</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Integration Info -->
+                        <div style="background: #e8f4f8; padding: 20px; border-radius: 8px; border-left: 4px solid #3498db; margin-top: 30px;">
+                            <strong style="color: #2980b9; display: block; margin-bottom: 8px;">💡 E-Signature Feature</strong>
+                            <p style="margin: 0; color: #555; font-size: 13px; line-height: 1.6;">
+                                This e-signature manager allows you to create and send documents for signing.
+                                To enable actual signing, integrate with DocuSign, SignNow, or similar services by adding your API key in Settings.
+                                Features include document management, signer tracking, status updates, and audit trails.
+                            </p>
+                            <a href="#" style="color: #3498db; text-decoration: none; font-size: 13px; margin-top: 10px; display: inline-block;">
+                                📖 Learn how to integrate →
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Page: VoIP Calling -->
+                <div id="page-voip-calling" class="page-content">
+                    <div style="padding: 20px; max-width: 1400px; margin: 0 auto;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                            <h2 style="color: #2c3e50; margin: 0;">☎️ VoIP Calling</h2>
+                            <div style="display: flex; gap: 10px;">
+                                <button id="toggleCallHistoryBtn" style="padding: 10px 16px; background-color: #34495e; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 13px;">
+                                    📋 Call History
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Dialer Section -->
+                        <div style="display: grid; grid-template-columns: 350px 1fr; gap: 20px;">
+                            <!-- Dialer Panel -->
+                            <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); height: fit-content;">
+                                <h3 style="margin: 0 0 15px 0; color: #2c3e50; font-size: 16px;">Phone Number</h3>
+                                
+                                <!-- Display -->
+                                <div id="dialerDisplay" style="background-color: #34495e; color: #fff; padding: 15px; border-radius: 4px; text-align: right; font-size: 24px; font-weight: 600; margin-bottom: 15px; min-height: 45px; font-family: 'Courier New', monospace; overflow: hidden; text-overflow: ellipsis;">
+                                    
+                                </div>
+
+                                <!-- Keypad -->
+                                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 15px;">
+                                    <button class="dial-btn" data-digit="1">1</button>
+                                    <button class="dial-btn" data-digit="2">2<br><span style="font-size: 10px;">ABC</span></button>
+                                    <button class="dial-btn" data-digit="3">3<br><span style="font-size: 10px;">DEF</span></button>
+                                    <button class="dial-btn" data-digit="4">4<br><span style="font-size: 10px;">GHI</span></button>
+                                    <button class="dial-btn" data-digit="5">5<br><span style="font-size: 10px;">JKL</span></button>
+                                    <button class="dial-btn" data-digit="6">6<br><span style="font-size: 10px;">MNO</span></button>
+                                    <button class="dial-btn" data-digit="7">7<br><span style="font-size: 10px;">PQRS</span></button>
+                                    <button class="dial-btn" data-digit="8">8<br><span style="font-size: 10px;">TUV</span></button>
+                                    <button class="dial-btn" data-digit="9">9<br><span style="font-size: 10px;">WXYZ</span></button>
+                                    <button class="dial-btn" data-digit="*">*</button>
+                                    <button class="dial-btn" data-digit="0">0<br><span style="font-size: 10px;">+</span></button>
+                                    <button class="dial-btn" data-digit="#">#</button>
+                                </div>
+
+                                <!-- Control Buttons -->
+                                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 10px;">
+                                    <button id="backspaceBtn" style="padding: 12px; background-color: #e74c3c; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 14px;">
+                                        ← Backspace
+                                    </button>
+                                    <button id="clearBtn" style="padding: 12px; background-color: #95a5a6; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 14px;">
+                                        C Clear
+                                    </button>
+                                </div>
+
+                                <!-- Call Buttons -->
+                                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;">
+                                    <button id="callBtn" style="padding: 15px; background-color: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 700; font-size: 16px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                                        ☎️ Call
+                                    </button>
+                                    <button id="hangupBtn" style="padding: 15px; background-color: #e74c3c; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 700; font-size: 16px; display: none; align-items: center; justify-content: center; gap: 8px;">
+                                        ✕ Hangup
+                                    </button>
+                                </div>
+
+                                <!-- Call Status -->
+                                <div id="callStatus" style="margin-top: 15px; padding: 10px; background-color: #f8f9fa; border-radius: 4px; text-align: center; font-size: 12px; color: #666; display: none;">
+                                    
+                                </div>
+
+                                <!-- Call Duration -->
+                                <div id="callDuration" style="margin-top: 8px; text-align: center; font-size: 18px; font-weight: 700; color: #27ae60; display: none;">
+                                    00:00
+                                </div>
+                            </div>
+
+                            <!-- Call History / Contacts -->
+                            <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                                <!-- Recent Contacts / Favorites -->
+                                <h3 style="margin: 0 0 15px 0; color: #2c3e50; font-size: 16px;">Recent Calls & Contacts</h3>
+                                
+                                <!-- Quick Add Contact -->
+                                <div style="display: grid; grid-template-columns: 1fr 80px; gap: 8px; margin-bottom: 15px;">
+                                    <input type="text" id="quickAddPhone" placeholder="Quick add: +1 (555) 123-4567" style="padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px;">
+                                    <button id="quickAddBtn" style="padding: 10px; background-color: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 12px;">
+                                        + Add
+                                    </button>
+                                </div>
+
+                                <!-- Call Log -->
+                                <div id="recentCallsList" style="border-top: 1px solid #eee; padding-top: 15px;">
+                                    <div style="padding: 20px; background-color: #f8f9fa; border-radius: 4px; text-align: center; color: #999; font-size: 13px;">
+                                        📭 No calls yet. Start calling!
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Integration Info -->
+                        <div style="background: #e8f4f8; padding: 20px; border-radius: 8px; border-left: 4px solid #3498db; margin-top: 30px;">
+                            <strong style="color: #2980b9; display: block; margin-bottom: 8px;">☎️ VoIP Calling Feature</strong>
+                            <p style="margin: 0; color: #555; font-size: 13px; line-height: 1.6;">
+                                Make and receive calls directly from your browser using Twilio, Vonage, or Plivo APIs. Features include call recording, caller ID, call history, contacts, and integration with your MSP operations.
+                                To enable production calling, add your Twilio Account SID and Auth Token in Settings.
+                            </p>
+                            <a href="#" style="color: #3498db; text-decoration: none; font-size: 13px; margin-top: 10px; display: inline-block;">
+                                📖 How to set up Twilio →
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Page: Email Campaigns -->
+                <div id="page-email-campaigns" class="page-content">
+                    <div style="padding: 20px; max-width: 1400px; margin: 0 auto;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                            <h2 style="color: #2c3e50; margin: 0;">📧 Email Campaigns</h2>
+                            <button id="createCampaignBtn" style="padding: 12px 24px; background-color: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 14px;">
+                                + Create Campaign
+                            </button>
+                        </div>
+
+                        <!-- Tabs for navigation -->
+                        <div style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #ecf0f1;">
+                            <button class="campaign-tab active" data-tab="campaigns" style="padding: 12px 20px; background: none; border: none; color: #2c3e50; font-weight: 600; cursor: pointer; border-bottom: 3px solid #3498db; margin-bottom: -2px;">
+                                Campaigns
+                            </button>
+                            <button class="campaign-tab" data-tab="templates" style="padding: 12px 20px; background: none; border: none; color: #555; font-weight: 600; cursor: pointer;">
+                                Templates
+                            </button>
+                            <button class="campaign-tab" data-tab="contacts" style="padding: 12px 20px; background: none; border: none; color: #555; font-weight: 600; cursor: pointer;">
+                                Contact Lists
+                            </button>
+                        </div>
+
+                        <!-- Campaigns Tab -->
+                        <div id="campaigns-tab" class="campaign-tab-content">
+                            <div id="campaignsList" style="display: grid; gap: 15px;">
+                                <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); text-align: center; color: #999;">
+                                    <p style="margin: 0;">📭 No campaigns yet. Create your first campaign to get started!</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Templates Tab -->
+                        <div id="templates-tab" class="campaign-tab-content" style="display: none;">
+                            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px;">
+                                <!-- Welcome Email Template -->
+                                <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                                    <h4 style="margin: 0 0 10px 0; color: #2c3e50;">Welcome Email</h4>
+                                    <p style="margin: 0 0 15px 0; font-size: 13px; color: #666;">Greet new contacts and introduce your services</p>
+                                    <button style="width: 100%; padding: 10px; background-color: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 13px;">
+                                        Use Template
+                                    </button>
+                                </div>
+
+                                <!-- Newsletter Template -->
+                                <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                                    <h4 style="margin: 0 0 10px 0; color: #2c3e50;">Monthly Newsletter</h4>
+                                    <p style="margin: 0 0 15px 0; font-size: 13px; color: #666;">Share updates, tips, and industry news</p>
+                                    <button style="width: 100%; padding: 10px; background-color: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 13px;">
+                                        Use Template
+                                    </button>
+                                </div>
+
+                                <!-- Service Announcement Template -->
+                                <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                                    <h4 style="margin: 0 0 10px 0; color: #2c3e50;">Service Announcement</h4>
+                                    <p style="margin: 0 0 15px 0; font-size: 13px; color: #666;">Announce new services or promotions</p>
+                                    <button style="width: 100%; padding: 10px; background-color: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 13px;">
+                                        Use Template
+                                    </button>
+                                </div>
+
+                                <!-- Support Follow-up Template -->
+                                <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                                    <h4 style="margin: 0 0 10px 0; color: #2c3e50;">Support Follow-up</h4>
+                                    <p style="margin: 0 0 15px 0; font-size: 13px; color: #666;">Check in after support ticket resolution</p>
+                                    <button style="width: 100%; padding: 10px; background-color: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 13px;">
+                                        Use Template
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contact Lists Tab -->
+                        <div id="contacts-tab" class="campaign-tab-content" style="display: none;">
+                            <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                                    <h3 style="margin: 0; color: #2c3e50;">Your Contact Lists</h3>
+                                    <button id="importContactsBtn" style="padding: 10px 18px; background-color: #9b59b6; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 13px;">
+                                        + Import Contacts
+                                    </button>
+                                </div>
+                                <div id="contactListsContainer" style="display: grid; gap: 12px;">
+                                    <div style="padding: 15px; background-color: #f8f9fa; border-radius: 4px; border-left: 4px solid #3498db;">
+                                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                                            <div>
+                                                <strong style="color: #2c3e50; display: block; margin-bottom: 5px;">Default Contacts</strong>
+                                                <span style="font-size: 13px; color: #666;">0 contacts</span>
+                                            </div>
+                                            <div style="display: flex; gap: 8px;">
+                                                <button style="padding: 8px 12px; background-color: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">
+                                                    Edit
+                                                </button>
+                                                <button style="padding: 8px 12px; background-color: #e74c3c; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">
+                                                    Delete
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Info Box -->
+                        <div style="background: #e8f4f8; padding: 20px; border-radius: 8px; border-left: 4px solid #3498db; margin-top: 30px;">
+                            <strong style="color: #2980b9; display: block; margin-bottom: 8px;">💡 Email Campaigns Feature</strong>
+                            <p style="margin: 0; color: #555; font-size: 13px; line-height: 1.6;">
+                                This email campaigns manager allows you to create and schedule professional email campaigns.
+                                To send emails, integrate with SendGrid, Mailchimp, or Brevo API by adding your API key in Settings.
+                                Features include campaign templates, contact list management, scheduling, and analytics tracking.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Page: Company Research -->
+                <div id="page-company-research" class="page-content">
+                    <div style="padding: 20px; max-width: 1200px; margin: 0 auto;">
+                        <h2 style="color: #2c3e50; margin-bottom: 20px;">🔍 Company Research</h2>
+                        
+                        <!-- Search Section -->
+                        <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                            <div style="display: flex; gap: 10px; align-items: flex-end;">
+                                <div style="flex: 1;">
+                                    <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Company Name:</label>
+                                    <input type="text" id="companySearchInput" placeholder="Enter company name..." style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px;">
+                                </div>
+                                <button id="searchCompanyBtn" style="padding: 10px 20px; background-color: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600;">
+                                    Search
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Loading State -->
+                        <div id="companySearchLoading" style="display: none; text-align: center; padding: 40px;">
+                            <p style="color: #666; font-size: 16px;">⏳ Searching for company information...</p>
+                        </div>
+
+                        <!-- Results Section -->
+                        <div id="companySearchResults" style="display: none;">
+                            <!-- Company Profile Card -->
+                            <div id="companyProfileCard" style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                                    <div>
+                                        <h3 id="companyName" style="color: #2c3e50; margin: 0 0 15px 0;"></h3>
+                                        <div style="display: grid; gap: 10px;">
+                                            <div>
+                                                <strong style="color: #555;">Website:</strong>
+                                                <p id="companyWebsite" style="margin: 0; color: #3498db;"></p>
+                                            </div>
+                                            <div>
+                                                <strong style="color: #555;">Industry:</strong>
+                                                <p id="companyIndustry" style="margin: 0; color: #666;"></p>
+                                            </div>
+                                            <div>
+                                                <strong style="color: #555;">Headquarters:</strong>
+                                                <p id="companyLocation" style="margin: 0; color: #666;"></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div style="display: grid; gap: 10px;">
+                                            <div>
+                                                <strong style="color: #555;">Company Size:</strong>
+                                                <p id="companySize" style="margin: 0; color: #666;"></p>
+                                            </div>
+                                            <div>
+                                                <strong style="color: #555;">Founded:</strong>
+                                                <p id="companyFounded" style="margin: 0; color: #666;"></p>
+                                            </div>
+                                            <div>
+                                                <strong style="color: #555;">Type:</strong>
+                                                <p id="companyType" style="margin: 0; color: #666;"></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Company Description -->
+                            <div id="companyDescriptionCard" style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); display: none;">
+                                <h4 style="color: #2c3e50; margin-top: 0;">About</h4>
+                                <p id="companyDescription" style="color: #666; line-height: 1.6;"></p>
+                            </div>
+
+                            <!-- Social Media & Contacts -->
+                            <div id="companySocialCard" style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); display: none;">
+                                <h4 style="color: #2c3e50; margin-top: 0;">Contact & Social Media</h4>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
+                                    <div id="socialLinkedin" style="display: none;">
+                                        <strong>LinkedIn:</strong>
+                                        <a id="linkedinLink" target="_blank" style="color: #3498db; text-decoration: none;">View Profile</a>
+                                    </div>
+                                    <div id="socialTwitter" style="display: none;">
+                                        <strong>Twitter:</strong>
+                                        <a id="twitterLink" target="_blank" style="color: #3498db; text-decoration: none;">@handle</a>
+                                    </div>
+                                    <div id="socialFacebook" style="display: none;">
+                                        <strong>Facebook:</strong>
+                                        <a id="facebookLink" target="_blank" style="color: #3498db; text-decoration: none;">View Page</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- News & Recent Updates -->
+                            <div id="companyNewsCard" style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                                <h4 style="color: #2c3e50; margin-top: 0;">Recent News & Updates</h4>
+                                <div id="companyNewsList" style="display: grid; gap: 15px;">
+                                    <p style="color: #999; text-align: center;">Loading news...</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Error Message -->
+                        <div id="companySearchError" style="display: none; background: #fee; padding: 20px; border-radius: 8px; border-left: 4px solid #e74c3c;">
+                            <strong style="color: #e74c3c;">⚠️ Search Error</strong>
+                            <p id="errorMessage" style="margin: 10px 0 0 0; color: #c0392b;"></p>
                         </div>
                     </div>
                 </div>
@@ -487,7 +874,7 @@
             <h2 id="editModalTitle">Edit Project</h2>
             <form id="editForm">
                 <div class="e-form-group">
-                    <label>Project/Task Name:</label>
+                        <label>Project/Task Name:</label>
                     <input type="text" id="editProjectName" class="e-field" required>
                 </div>
                 <div class="form-row-split">
@@ -538,7 +925,12 @@
                 </div>
                 <div class="e-form-group">
                     <label>Notes:</label>
-                    <textarea id="editNotes" class="e-field" rows="3" placeholder="Additional notes..."></textarea>
+                    <div style="display: flex; gap: 8px; align-items: flex-start;">
+                        <textarea id="editNotes" class="e-field" rows="3" placeholder="Additional notes..." style="flex: 1;"></textarea>
+                        <button type="button" id="summarizeNotesBtn" class="e-btn e-outline" title="Summarize notes with AI" style="height: 80px; white-space: nowrap;">
+                            ✨ Summarize
+                        </button>
+                    </div>
                 </div>
                 <div class="form-actions">
                     <button type="submit" class="e-btn e-primary">Update</button>
@@ -549,10 +941,68 @@
         </div>
     </div>
 
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <span class="close" id="closeSettingsModal">&times;</span>
+            <h2>Settings</h2>
+            <form id="settingsForm" style="display: flex; flex-direction: column; gap: 15px;">
+                <div class="e-form-group">
+                    <label for="aiApiKey">OpenAI API Key:</label>
+                    <input type="password" id="aiApiKey" class="e-field" placeholder="sk-..." style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                    <small style="display: block; margin-top: 5px; color: #666;">
+                        Get your key from <a href="https://platform.openai.com/api-keys" target="_blank" style="color: #3498db;">OpenAI API Keys</a>
+                    </small>
+                </div>
+                <div style="background-color: #f0f8ff; padding: 10px; border-radius: 4px; border-left: 4px solid #3498db;">
+                    <strong>💡 Why API Key?</strong>
+                    <p style="margin: 5px 0; font-size: 13px;">
+                        AI summarization uses OpenAI's GPT models. You need an API key for this feature to work.
+                        This key is stored <strong>only in your browser's local storage</strong> and never sent to our servers.
+                    </p>
+                </div>
+                <div style="display: flex; gap: 8px; justify-content: flex-end;">
+                    <button type="button" id="cancelSettingsBtn" class="e-btn e-outline">Cancel</button>
+                    <button type="submit" class="e-btn e-primary">Save Settings</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Campaign Creation Modal -->
+    <div id="campaignModal" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <span class="close" id="closeCampaignModal">&times;</span>
+            <h2>Create New Campaign</h2>
+            <form id="campaignForm" style="display: flex; flex-direction: column; gap: 15px;">
+                <div class="e-form-group">
+                    <label for="campaignName">Campaign Name:</label>
+                    <input type="text" id="campaignName" class="e-field" placeholder="e.g., Q1 2026 Promotion" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                </div>
+                <div class="e-form-group">
+                    <label for="campaignSubject">Email Subject:</label>
+                    <input type="text" id="campaignSubject" class="e-field" placeholder="e.g., Special offer just for you!" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                </div>
+                <div class="e-form-group">
+                    <label for="campaignRecipients">Number of Recipients:</label>
+                    <input type="number" id="campaignRecipients" class="e-field" placeholder="100" min="1" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                </div>
+                <div class="e-form-group">
+                    <label for="campaignSendTime">Send Time:</label>
+                    <input type="datetime-local" id="campaignSendTime" class="e-field" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                </div>
+                <div style="display: flex; gap: 8px; justify-content: flex-end;">
+                    <button type="button" id="cancelCampaignBtn" class="e-btn e-outline">Cancel</button>
+                    <button type="submit" class="e-btn e-primary">Create Campaign</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Syncfusion JS - Using working CDN links -->
     <script src="https://cdn.syncfusion.com/ej2/20.4.48/dist/ej2.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="app.js?v=20260115-1928"></script>
+    <script src="app.js?v=20260120-1730"></script>
 </body>
 </html>

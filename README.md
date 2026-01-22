@@ -1,6 +1,5 @@
 # 🎉 MSP Project Calendar - Complete Platform
 
-A comprehensive, feature-rich **Managed Service Provider (MSP)** management platform built with modern web technologies. Streamline operations, manage teams, and deliver exceptional service to clients.
 
 ---
 
@@ -383,11 +382,7 @@ Built with:
 - **Node Version:** 14.0+
 - **Browser Support:** Modern browsers (2018+)
 
----
 
-**Built with ❤️ for MSPs everywhere**
-
----
 
 ### Quick Links
 

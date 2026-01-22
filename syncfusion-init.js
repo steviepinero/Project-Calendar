@@ -704,11 +704,8 @@ function initializeSidebarAccordion() {
                 console.log('Current classes:', accordionElement.className);
             }
             
-            // Re-setup navigation after accordion is fully initialized
-            if (typeof setupNavigation === 'function') {
-                console.log('🔗 [ACCORDION] Re-initializing navigation...');
-                setupNavigation();
-            }
+            // Navigation will be set up by app.js after it loads
+            console.log('✅ [ACCORDION] Accordion ready for navigation setup');
         }, 500);
         
         // Setup toggle button

@@ -188,11 +188,10 @@ function saveSettings() {
 }
 
 function openSettingsModal() {
-    const modal = document.getElementById('settingsModal');
-    if (modal) {
-        modal.style.display = 'block';
-        
-        // Load and display saved values (masked)
+    console.log('⚙️ Opening settings modal');
+    showDialog('settingsModal');
+    
+    // Load and display saved values (masked)
         const maskKey = (key) => key ? '••••••••' + key.slice(-8) : '';
         
         const openaiKey = localStorage.getItem(STORAGE_KEYS.openai);
@@ -221,14 +220,11 @@ function openSettingsModal() {
         
         const clearbitKey = localStorage.getItem(STORAGE_KEYS.clearbit);
         if (clearbitKey) document.getElementById('clearbitApiKey').value = maskKey(clearbitKey);
-    }
 }
 
 function closeSettingsModal() {
-    const modal = document.getElementById('settingsModal');
-    if (modal) {
-        modal.style.display = 'none';
-    }
+    console.log('⚙️ Closing settings modal');
+    hideDialog('settingsModal');
 }
 
 function setupSettingsEventListeners() {
@@ -1029,18 +1025,17 @@ function setupEmailCampaignsListeners() {
 }
 
 function openCampaignModal() {
-    const modal = document.getElementById('campaignModal');
-    if (modal) {
-        modal.style.display = 'block';
-        document.getElementById('campaignName').focus();
-    }
+    console.log('📧 Opening campaign modal');
+    showDialog('campaignModal');
+    setTimeout(() => {
+        const nameInput = document.getElementById('campaignName');
+        if (nameInput) nameInput.focus();
+    }, 100);
 }
 
 function closeCampaignModal() {
-    const modal = document.getElementById('campaignModal');
-    if (modal) {
-        modal.style.display = 'none';
-    }
+    console.log('📧 Closing campaign modal');
+    hideDialog('campaignModal');
     // Clear form
     document.getElementById('campaignForm').reset();
 }
@@ -1171,15 +1166,28 @@ let newlyCreatedProjectId = null;
 document.addEventListener('DOMContentLoaded', function() {
     initializeApp();
     setupEventListeners();
-    setupNavigation();
+    
+    // Wait for accordion to finish initializing before setting up navigation
+    setTimeout(function() {
+        console.log('🔗 Setting up navigation after page load...');
+        setupNavigation();
+    }, 1500);
+    
     loadSampleData();
 });
 
 function initializeApp() {
     const today = new Date();
-    document.getElementById('requestDate').valueAsDate = today;
-    document.getElementById('assignedStartDate').valueAsDate = today;
-    document.getElementById('preferredStartDate').valueAsDate = today;
+    const todayString = today.toISOString().split('T')[0];
+    
+    // Set date values for Syncfusion date inputs
+    const requestDate = document.getElementById('requestDate');
+    const assignedStartDate = document.getElementById('assignedStartDate');
+    const preferredStartDate = document.getElementById('preferredStartDate');
+    
+    if (requestDate) requestDate.value = todayString;
+    if (assignedStartDate) assignedStartDate.value = todayString;
+    if (preferredStartDate) preferredStartDate.value = todayString;
     
     // Load and setup AI settings
     loadSettings();
@@ -1203,14 +1211,11 @@ function initializeApp() {
 
 // Track if navigation has been set up (prevent duplicate listeners)
 let navigationSetup = false;
+// Make it globally accessible for accordion re-initialization
+window.navigationSetup = navigationSetup;
 
 function setupNavigation() {
-    if (navigationSetup) {
-        console.log('✅ Navigation already set up, skipping...');
-        return;
-    }
-    
-    console.log('🔗 Setting up navigation...');
+    console.log('🔗 Setting up navigation (attempt)...');
     
     const sidebar = document.querySelector('.sidebar');
     if (!sidebar) {
@@ -1218,33 +1223,44 @@ function setupNavigation() {
         return;
     }
     
-    // Use event delegation on the sidebar to handle all link clicks
-    // This works even after accordion reinitializes
-    sidebar.addEventListener('click', (e) => {
-        // Check if clicked element is a navigation link
-        const link = e.target.closest('.nav-item, .sidebar-link');
-        if (!link) return;
-        
-        e.preventDefault();
-        e.stopPropagation();
-        
+    // Find all navigation links
+    const navLinks = document.querySelectorAll('.nav-item[data-page], .sidebar-link[data-page]');
+    console.log('📊 Found', navLinks.length, 'navigation links with data-page');
+    
+    if (navLinks.length === 0) {
+        console.error('❌ No navigation links found! Retrying in 500ms...');
+        setTimeout(setupNavigation, 500);
+        return;
+    }
+    
+    // Attach direct event listeners to each link
+    navLinks.forEach((link, index) => {
         const pageName = link.getAttribute('data-page');
-        if (pageName) {
-            console.log('🔗 Navigating to page:', pageName);
+        console.log(`  ${index + 1}. "${link.textContent.trim()}" → ${pageName}`);
+        
+        // Remove any existing listeners
+        const newLink = link.cloneNode(true);
+        link.parentNode.replaceChild(newLink, link);
+        
+        // Attach new listener
+        newLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            console.log('🔗 Link clicked:', newLink.textContent.trim(), '→', pageName);
             switchPage(pageName);
             
-            // Update active nav item
-            document.querySelectorAll('.nav-item, .sidebar-link').forEach(nav => {
+            // Update active state
+            document.querySelectorAll('.nav-item, .sidebar-link').forEach(function(nav) {
                 nav.classList.remove('active');
             });
-            link.classList.add('active');
-        } else {
-            console.log('⚠️ Link has no data-page attribute:', link.textContent);
-        }
+            newLink.classList.add('active');
+        });
     });
     
     navigationSetup = true;
-    console.log('✅ Navigation setup complete with event delegation');
+    window.navigationSetup = true;
+    console.log('✅ Navigation setup complete - direct listeners attached to', navLinks.length, 'links');
 }
 
 function switchPage(pageName) {
@@ -1277,9 +1293,15 @@ function switchPage(pageName) {
     // Initialize page-specific content
     if (pageName === 'scheduling') {
         console.log('📊 Initializing scheduling page (Gantt chart)');
-        // Render gantt chart
-        renderGanttChart();
-        renderProjectTree();
+        console.log('📊 Projects available:', projects.length);
+        
+        // Add small delay to ensure page is visible
+        setTimeout(() => {
+            console.log('📊 Rendering Gantt chart and project tree...');
+            renderGanttChart();
+            renderProjectTree();
+            console.log('✅ Scheduling page initialization complete');
+        }, 100);
     }
     
     if (pageName === 'network') {
@@ -1331,60 +1353,80 @@ function setupEventListeners() {
     // Navigation setup
     setupNavigation();
     
-    // Add Modal controls
-    const modal = document.getElementById('projectModal');
+    // Add Modal controls (using Syncfusion Dialogs)
     const addProjectBtn = document.getElementById('addProjectBtn');
     const addTaskBtn = document.getElementById('addTaskBtn');
-    const closeBtn = document.getElementById('closeAddModal');
-    const cancelBtn = document.getElementById('cancelBtn');
+    const addEmployeeBtn = document.getElementById('addEmployeeBtn');
     const projectForm = document.getElementById('projectForm');
 
-    addProjectBtn.onclick = () => openModal('project');
-    addTaskBtn.onclick = () => openModal('task');
-    closeBtn.onclick = () => modal.style.display = 'none';
-    cancelBtn.onclick = () => modal.style.display = 'none';
+    if (addProjectBtn) {
+        addProjectBtn.onclick = () => {
+            console.log('📝 Add Project button clicked');
+            openModal('project');
+        };
+    }
     
-    projectForm.onsubmit = (e) => {
-        e.preventDefault();
-        saveProject();
-        modal.style.display = 'none';
-    };
+    if (addTaskBtn) {
+        addTaskBtn.onclick = () => {
+            console.log('📝 Add Task button clicked');
+            openModal('task');
+        };
+    }
+    
+    if (addEmployeeBtn) {
+        addEmployeeBtn.onclick = () => {
+            console.log('👤 Add Employee button clicked');
+            showDialog('employeeModal');
+        };
+    }
+    
+    if (projectForm) {
+        projectForm.onsubmit = (e) => {
+            e.preventDefault();
+            console.log('💾 Saving project...');
+            saveProject();
+            hideDialog('projectModal');
+        };
+    }
 
-    // Edit Modal controls
-    const editModal = document.getElementById('editModal');
+    // Edit Modal controls (using Syncfusion Dialog)
     const closeEditBtn = document.getElementById('closeEditModal');
     const cancelEditBtn = document.getElementById('cancelEditBtn');
     const deleteBtn = document.getElementById('deleteBtn');
     const editForm = document.getElementById('editForm');
 
-    closeEditBtn.onclick = () => editModal.style.display = 'none';
-    cancelEditBtn.onclick = () => editModal.style.display = 'none';
-    deleteBtn.onclick = () => deleteProject();
+    if (closeEditBtn) {
+        closeEditBtn.onclick = () => {
+            console.log('✖️ Closing edit modal');
+            hideDialog('editModal');
+        };
+    }
     
-    editForm.onsubmit = (e) => {
-        e.preventDefault();
-        updateProject();
-        editModal.style.display = 'none';
-    };
+    if (cancelEditBtn) {
+        cancelEditBtn.onclick = () => {
+            console.log('❌ Canceling edit');
+            hideDialog('editModal');
+        };
+    }
+    
+    if (deleteBtn) {
+        deleteBtn.onclick = () => {
+            console.log('🗑️ Deleting project');
+            deleteProject();
+        };
+    }
+    
+    if (editForm) {
+        editForm.onsubmit = (e) => {
+            e.preventDefault();
+            console.log('💾 Updating project');
+            updateProject();
+            hideDialog('editModal');
+        };
+    }
 
-    // Window click to close modals
-    window.onclick = (event) => {
-        if (event.target == modal) {
-            modal.style.display = 'none';
-        }
-        if (event.target == editModal) {
-            editModal.style.display = 'none';
-        }
-        if (event.target == employeeModal) {
-            employeeModal.style.display = 'none';
-        }
-        if (event.target == blockModal) {
-            blockModal.style.display = 'none';
-        }
-        if (event.target == addMacModal) {
-            addMacModal.style.display = 'none';
-        }
-    };
+    // Syncfusion dialogs handle backdrop clicks automatically
+    // No need for manual window.onclick event handling anymore
 
     // Checklist button
     document.getElementById('addChecklistBtn').onclick = addChecklistItem;
@@ -1400,7 +1442,7 @@ function setupEventListeners() {
 
     // Employee Modal controls
     const employeeModal = document.getElementById('employeeModal');
-    const addEmployeeBtn = document.getElementById('addEmployeeBtn');
+    // addEmployeeBtn already declared above
     const closeEmployeeBtn = document.getElementById('closeEmployeeModal');
     const cancelEmployeeBtn = document.getElementById('cancelEmployeeBtn');
     const employeeForm = document.getElementById('employeeForm');
@@ -1528,18 +1570,32 @@ function updateWeekDisplay() {
 }
 
 function openModal(type) {
-    const modal = document.getElementById('projectModal');
+    console.log('🔓 openModal called with type:', type);
+    
     const modalTitle = document.getElementById('modalTitle');
     const projectType = document.getElementById('projectType');
     
-    modalTitle.textContent = type === 'project' ? 'Add New Project' : 'Add New Task';
-    projectType.value = type;
-    modal.style.display = 'block';
+    if (modalTitle) {
+        modalTitle.textContent = type === 'project' ? 'Add New Project' : 'Add New Task';
+    }
+    
+    if (projectType) {
+        projectType.value = type;
+    }
+    
+    // Show the Syncfusion dialog
+    showDialog('projectModal');
     
     // Reset form
-    document.getElementById('projectForm').reset();
+    const form = document.getElementById('projectForm');
+    if (form) {
+        form.reset();
+    }
+    
     const today = new Date();
-    document.getElementById('preferredStartDate').valueAsDate = today;
+    const todayString = today.toISOString().split('T')[0];
+    const preferredStartDate = document.getElementById('preferredStartDate');
+    if (preferredStartDate) preferredStartDate.value = todayString;
 }
 
 function saveProject() {
@@ -1663,12 +1719,22 @@ function openEditModal(projectId) {
     document.getElementById('editStatus').value = project.status;
     document.getElementById('editDailyHourLimit').value = project.dailyLimit;
     document.getElementById('editTaskDuration').value = project.duration;
-    document.getElementById('editStartDate').valueAsDate = project.startDate;
+    
+    // Set date for Syncfusion date input
+    const editStartDate = document.getElementById('editStartDate');
+    if (editStartDate && project.startDate) {
+        const dateString = project.startDate instanceof Date 
+            ? project.startDate.toISOString().split('T')[0]
+            : new Date(project.startDate).toISOString().split('T')[0];
+        editStartDate.value = dateString;
+    }
+    
     document.getElementById('editProjectType').value = project.type;
     document.getElementById('editDescription').value = project.description || '';
     document.getElementById('editNotes').value = project.notes || '';
     
-    modal.style.display = 'block';
+    console.log('✏️ Opening edit modal for project:', project.id);
+    showDialog('editModal');
 }
 
 function updateProject() {
@@ -1892,23 +1958,49 @@ function selectProject(projectId) {
         document.getElementById('hoursPerDay').value = project.dailyLimit;
         document.getElementById('estimatedHours').value = project.duration;
         document.getElementById('remainingHours').value = project.duration;
-        document.getElementById('assignedStartDate').valueAsDate = project.startDate;
+        
+        // Set date for Syncfusion date input
+        const assignedStartDate = document.getElementById('assignedStartDate');
+        if (assignedStartDate && project.startDate) {
+            const dateString = project.startDate instanceof Date 
+                ? project.startDate.toISOString().split('T')[0]
+                : new Date(project.startDate).toISOString().split('T')[0];
+            assignedStartDate.value = dateString;
+        }
     }
     
     renderProjectTree();
 }
 
 function renderGanttChart() {
+    console.log('📊 renderGanttChart() called');
+    console.log('📊 Projects count:', projects.length);
+    
     const header = document.getElementById('ganttHeader');
     const body = document.getElementById('ganttBody');
+    
+    if (!header) {
+        console.error('❌ ganttHeader element not found!');
+        return;
+    }
+    
+    if (!body) {
+        console.error('❌ ganttBody element not found!');
+        return;
+    }
+    
+    console.log('✅ Gantt elements found');
     
     header.innerHTML = '';
     body.innerHTML = '';
 
     if (projects.length === 0) {
+        console.log('⚠️ No projects to display');
         body.innerHTML = '<div style="padding: 40px; text-align: center; color: #999;">No projects scheduled. Click "Add Project" to get started.</div>';
         return;
     }
+    
+    console.log('📊 Rendering', projects.length, 'projects');
 
     // Calculate date range
     const dates = generateDateRange();

@@ -1271,13 +1271,8 @@ function switchPage(pageName) {
         console.log('Available pages:', Array.from(pages).map(p => p.id));
     }
     
-    // Show/hide header based on page
-    const header = document.querySelector('header');
-    if (pageName === 'scheduling') {
-        header.classList.remove('hidden');
-    } else {
-        header.classList.add('hidden');
-    }
+    // Header is now always visible across all pages
+    // No need to show/hide it anymore
     
     // Initialize page-specific content
     if (pageName === 'scheduling') {

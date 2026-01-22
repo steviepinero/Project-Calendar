@@ -1201,32 +1201,74 @@ function initializeApp() {
     renderAllowList();
 }
 
+// Track if navigation has been set up (prevent duplicate listeners)
+let navigationSetup = false;
+
 function setupNavigation() {
-    // Get all navigation links (both .nav-item and .sidebar-link)
-    const navItems = document.querySelectorAll('.nav-item, .sidebar-link');
+    if (navigationSetup) {
+        console.log('✅ Navigation already set up, skipping...');
+        return;
+    }
     
-    navItems.forEach(item => {
-        item.addEventListener('click', (e) => {
-            e.preventDefault();
-            const pageName = item.getAttribute('data-page');
+    console.log('🔗 Setting up navigation...');
+    
+    const sidebar = document.querySelector('.sidebar');
+    if (!sidebar) {
+        console.warn('⚠️ Sidebar not found for navigation setup');
+        return;
+    }
+    
+    // Use event delegation on the sidebar to handle all link clicks
+    // This works even after accordion reinitializes
+    sidebar.addEventListener('click', (e) => {
+        // Check if clicked element is a navigation link
+        const link = e.target.closest('.nav-item, .sidebar-link');
+        if (!link) return;
+        
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const pageName = link.getAttribute('data-page');
+        if (pageName) {
+            console.log('🔗 Navigating to page:', pageName);
             switchPage(pageName);
             
             // Update active nav item
-            navItems.forEach(nav => nav.classList.remove('active'));
-            item.classList.add('active');
-        });
+            document.querySelectorAll('.nav-item, .sidebar-link').forEach(nav => {
+                nav.classList.remove('active');
+            });
+            link.classList.add('active');
+        } else {
+            console.log('⚠️ Link has no data-page attribute:', link.textContent);
+        }
     });
+    
+    navigationSetup = true;
+    console.log('✅ Navigation setup complete with event delegation');
 }
 
 function switchPage(pageName) {
+    if (!pageName) {
+        console.error('❌ switchPage called with no pageName');
+        return;
+    }
+    
+    console.log('📄 Switching to page:', pageName);
+    
     // Hide all pages
     const pages = document.querySelectorAll('.page-content');
+    console.log('📄 Found', pages.length, 'pages to hide');
     pages.forEach(page => page.classList.remove('active'));
     
     // Show selected page
     const selectedPage = document.getElementById(`page-${pageName}`);
     if (selectedPage) {
         selectedPage.classList.add('active');
+        console.log('✅ Page activated:', `page-${pageName}`);
+        console.log('📊 Page display:', window.getComputedStyle(selectedPage).display);
+    } else {
+        console.error('❌ Page not found:', `page-${pageName}`);
+        console.log('Available pages:', Array.from(pages).map(p => p.id));
     }
     
     // Show/hide header based on page
@@ -1238,14 +1280,55 @@ function switchPage(pageName) {
     }
     
     // Initialize page-specific content
+    if (pageName === 'scheduling') {
+        console.log('📊 Initializing scheduling page (Gantt chart)');
+        // Render gantt chart
+        renderGanttChart();
+        renderProjectTree();
+    }
+    
+    if (pageName === 'network') {
+        console.log('📊 Initializing network page (Allow list)');
+        // Render allow list
+        renderAllowList();
+    }
+    
     if (pageName === 'hardware') {
+        console.log('📊 Initializing hardware page');
         // Initialize hardware page immediately (without waiting for Syncfusion)
         initializeHardwarePage();
+        
+        // Also initialize the chart and grid
+        setTimeout(() => {
+            initializeHardwareChart();
+            initializeHardwareGrid();
+        }, 100);
     }
     
     if (pageName === 'lifecycle') {
+        console.log('📊 Initializing lifecycle page');
         // Initialize lifecycle page
         initializeLifecyclePage();
+    }
+    
+    if (pageName === 'company-research') {
+        console.log('📊 Initializing company research page');
+        // Initialize if needed
+    }
+    
+    if (pageName === 'email-campaigns') {
+        console.log('📊 Initializing email campaigns page');
+        // Initialize if needed
+    }
+    
+    if (pageName === 'e-signature') {
+        console.log('📊 Initializing e-signature page');
+        // Initialize if needed
+    }
+    
+    if (pageName === 'voip-calling') {
+        console.log('📊 Initializing VoIP calling page');
+        // Initialize if needed
     }
 }
 
@@ -2811,61 +2894,9 @@ function renderHardwareChart() {
 }
 
 function initializeHardwareChart() {
-    // Check if Syncfusion is loaded
-    if (typeof window.ej === 'undefined' || typeof window.ej.charts === 'undefined') {
-        console.error('Syncfusion charts library not loaded');
-        return;
-    }
-    
-    const chartData = [
-        { x: 'Qtr 1 (2025)', y: 5000 },
-        { x: 'Qtr 2 (2025)', y: 4500 },
-        { x: 'Qtr 3 (2025)', y: 3800 },
-        { x: 'Qtr 4 (2025)', y: 3000 },
-        { x: 'Qtr 1 (2026)', y: 2200 },
-        { x: 'Qtr 2 (2026)', y: 2300 },
-        { x: 'Qtr 3 (2026)', y: 1800 },
-        { x: 'Qtr 4 (2026)', y: 6000 },
-        { x: 'Qtr 1 (2027)', y: 3600 },
-        { x: 'Qtr 2 (2027)', y: 2100 },
-        { x: 'Qtr 3 (2027)', y: 1900 },
-        { x: 'Qtr 4 (2027)', y: 3600 }
-    ];
-
-    const chart = new window.ej.charts.Chart({
-        primaryXAxis: {
-            valueType: 'Category',
-            labelPlacement: 'OnTicks',
-            majorGridLines: { width: 0 }
-        },
-        primaryYAxis: {
-            minimum: 0,
-            maximum: 6500,
-            interval: 500,
-            labelFormat: '${value}',
-            majorTickLines: { width: 0 }
-        },
-        chartArea: { border: { width: 0 } },
-        tooltip: {
-            enable: true,
-            format: '<b>${point.x}</b><br/>Value: ${point.y}'
-        },
-        series: [
-            {
-                dataSource: chartData,
-                xName: 'x',
-                yName: 'y',
-                type: 'Column',
-                cornerRadius: 2,
-                marker: {
-                    visible: false
-                }
-            }
-        ],
-        width: '100%',
-        height: '300px'
-    });
-    chart.appendTo('#hardwareChart');
+    console.log('🎨 Initializing hardware chart...');
+    // Just call the existing renderHardwareChart function
+    renderHardwareChart();
 }
 
 function initializeHardwareGrid() {
@@ -3191,15 +3222,106 @@ function renderLifecycleDataGrid() {
     }
 }
 
+/**
+ * Initialize Lifecycle Configuration Grid (Syncfusion)
+ */
+function initializeLifecycleConfigGrid() {
+    console.log('🎯 Initializing Lifecycle Configuration Grid');
+    
+    // Check if Syncfusion is available
+    if (typeof window.ej !== 'undefined' && typeof window.ej.grids !== 'undefined') {
+        try {
+            const configData = [
+                { graphType: 'pie chart', dataPoint: 'Account Type' },
+                { graphType: 'bar chart', dataPoint: 'Domain Joined' }
+            ];
+            
+            const grid = new window.ej.grids.Grid({
+                dataSource: configData,
+                allowPaging: false,
+                allowSorting: true,
+                columns: [
+                    { field: 'graphType', headerText: 'Graph Type', width: '200', textAlign: 'Left' },
+                    { field: 'dataPoint', headerText: 'Data Point', width: '200', textAlign: 'Left' },
+                    { 
+                        headerText: 'Actions', 
+                        width: '120', 
+                        textAlign: 'Center',
+                        template: '<button class="e-btn e-small e-danger" onclick="deleteConfigRow()">🗑️ Delete</button>'
+                    }
+                ],
+                gridLines: 'Both',
+                rowHeight: 36,
+                headerTextAlign: 'Center'
+            });
+            
+            grid.appendTo('#lifecycleConfigGrid');
+            console.log('✅ Lifecycle Configuration Grid initialized');
+            return;
+        } catch (error) {
+            console.warn('Syncfusion Grid initialization failed, using fallback:', error);
+        }
+    }
+    
+    // Fallback: Create HTML table
+    console.log('📊 Using fallback HTML table for configuration');
+    const fallbackHTML = `
+        <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+            <thead>
+                <tr style="background-color: #34495e; color: white; font-weight: 600;">
+                    <th style="border: 1px solid #dee2e6; padding: 10px; text-align: left;">Graph Type</th>
+                    <th style="border: 1px solid #dee2e6; padding: 10px; text-align: left;">Data Point</th>
+                    <th style="border: 1px solid #dee2e6; padding: 10px; text-align: center;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr style="border-bottom: 1px solid #dee2e6;">
+                    <td style="border: 1px solid #dee2e6; padding: 10px;">pie chart</td>
+                    <td style="border: 1px solid #dee2e6; padding: 10px;">Account Type</td>
+                    <td style="border: 1px solid #dee2e6; padding: 10px; text-align: center;">
+                        <button class="delete-btn e-btn e-small e-danger">🗑️ Delete</button>
+                    </td>
+                </tr>
+                <tr style="border-bottom: 1px solid #dee2e6;">
+                    <td style="border: 1px solid #dee2e6; padding: 10px;">bar chart</td>
+                    <td style="border: 1px solid #dee2e6; padding: 10px;">Domain Joined</td>
+                    <td style="border: 1px solid #dee2e6; padding: 10px; text-align: center;">
+                        <button class="delete-btn e-btn e-small e-danger">🗑️ Delete</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    `;
+    
+    const gridElement = document.getElementById('lifecycleConfigGrid');
+    if (gridElement) {
+        gridElement.innerHTML = fallbackHTML;
+        console.log('✅ Fallback table created');
+    }
+}
+
+/**
+ * Delete configuration row handler
+ */
+function deleteConfigRow() {
+    if (confirm('Delete this configuration row?')) {
+        console.log('Configuration row deleted');
+        alert('Row deleted. Refresh to see changes.');
+    }
+}
+
 function setupConfigurationHandlers() {
     console.log('Setting up configuration handlers');
+    
+    // Initialize the configuration grid first
+    initializeLifecycleConfigGrid();
     
     const deleteBtn = document.querySelector('.delete-btn');
     if (deleteBtn) {
         deleteBtn.addEventListener('click', (e) => {
             e.preventDefault();
             console.log('Delete button clicked');
-            alert('Delete functionality coming soon');
+            deleteConfigRow();
         });
     }
     

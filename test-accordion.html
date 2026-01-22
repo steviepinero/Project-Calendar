@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Syncfusion Accordion Test</title>
+    
+    <!-- Syncfusion CSS -->
+    <link rel="stylesheet" href="https://cdn.syncfusion.com/ej2/20.4.48/material.css">
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .test-section {
+            margin-bottom: 40px;
+            border: 1px solid #ddd;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        
+        .test-section h2 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        
+        #accordion1 {
+            margin-top: 20px;
+        }
+        
+        .menu-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .menu-item:last-child {
+            border-bottom: none;
+        }
+        
+        .status {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #e8f4f8;
+            border-left: 4px solid #3498db;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Syncfusion Accordion Test</h1>
+    
+    <!-- Test Section 1: Basic Accordion -->
+    <div class="test-section">
+        <h2>Test 1: Basic Accordion Structure</h2>
+        <p>This accordion should expand/collapse when you click the headers.</p>
+        
+        <div id="accordion1" class="e-accordion">
+            <div class="e-acrdn-item">
+                <div class="e-acrdn-header">
+                    📋 Section 1
+                </div>
+                <div class="e-acrdn-panel">
+                    <div class="e-acrdn-content">
+                        <div class="menu-item">Item 1.1</div>
+                        <div class="menu-item">Item 1.2</div>
+                        <div class="menu-item">Item 1.3</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="e-acrdn-item">
+                <div class="e-acrdn-header">
+                    ⚙️ Section 2
+                </div>
+                <div class="e-acrdn-panel">
+                    <div class="e-acrdn-content">
+                        <div class="menu-item">Item 2.1</div>
+                        <div class="menu-item">Item 2.2</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="e-acrdn-item">
+                <div class="e-acrdn-header">
+                    ⚡ Section 3
+                </div>
+                <div class="e-acrdn-panel">
+                    <div class="e-acrdn-content">
+                        <div class="menu-item">Item 3.1</div>
+                        <div class="menu-item">Item 3.2</div>
+                        <div class="menu-item">Item 3.3</div>
+                        <div class="menu-item">Item 3.4</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="status" id="status1">Status: Not initialized</div>
+    </div>
+    
+    <!-- Syncfusion JS -->
+    <script src="https://cdn.syncfusion.com/ej2/20.4.48/dist/ej2.min.js"></script>
+    
+    <script>
+        // Test 1: Basic Accordion
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Starting Accordion Test');
+            
+            // Check if Syncfusion is loaded
+            if (typeof ej === 'undefined') {
+                document.getElementById('status1').innerHTML = '❌ Error: Syncfusion not loaded!';
+                console.error('Syncfusion library not loaded');
+                return;
+            }
+            
+            console.log('✅ Syncfusion loaded:', ej);
+            
+            // Check if Accordion is available
+            if (typeof ej.navigations === 'undefined' || typeof ej.navigations.Accordion === 'undefined') {
+                document.getElementById('status1').innerHTML = '❌ Error: Accordion component not available!';
+                console.error('Accordion component not available');
+                return;
+            }
+            
+            console.log('✅ Accordion component available');
+            
+            try {
+                // Initialize Accordion
+                const accordion = new ej.navigations.Accordion({
+                    expandMode: 'Multiple',
+                    animation: {
+                        collapse: { effect: 'SlideUp', duration: 300, easing: 'ease' },
+                        expand: { effect: 'SlideDown', duration: 300, easing: 'ease' }
+                    },
+                    expandedIndices: [0],  // First item expanded
+                    expanding: function(args) {
+                        console.log('🔽 Expanding item:', args.index);
+                    },
+                    expanded: function(args) {
+                        console.log('✅ Expanded item:', args.index);
+                    },
+                    collapsing: function(args) {
+                        console.log('🔼 Collapsing item:', args.index);
+                    },
+                    collapsed: function(args) {
+                        console.log('✅ Collapsed item:', args.index);
+                    }
+                });
+                
+                accordion.appendTo('#accordion1');
+                
+                document.getElementById('status1').innerHTML = '✅ Accordion initialized successfully! Try clicking the section headers.';
+                console.log('✅ Accordion initialized:', accordion);
+                
+                // Store globally for debugging
+                window.testAccordion = accordion;
+                
+            } catch (error) {
+                document.getElementById('status1').innerHTML = '❌ Error initializing accordion: ' + error.message;
+                console.error('Error initializing accordion:', error);
+            }
+        });
+    </script>
+</body>
+</html>
+

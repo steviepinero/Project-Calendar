@@ -28,54 +28,104 @@
         </header>
 
         <div class="layout-wrapper">
-            <!-- Sidebar Navigation -->
+            <!-- Sidebar Navigation with Syncfusion Accordion -->
             <aside class="sidebar">
                 <nav class="sidebar-nav">
-                    <div class="sidebar-header">DASH BOARD</div>
-                    <div class="sidebar-section">
-                        <div class="sidebar-category">ONBOARDING</div>
-                        <ul class="sidebar-menu">
-                            <li><a href="#" class="sidebar-link" data-page="scheduling">Scheduling</a></li>
-                            <li><a href="#" class="sidebar-link" data-page="company-research">Company Research</a></li>
-                            <li><a href="#" class="sidebar-link" data-page="email-campaigns">Email Campaigns</a></li>
-                            <li><a href="#" class="sidebar-link" data-page="e-signature">E-Signature</a></li>
-                            <li><a href="#" class="sidebar-link" data-page="voip-calling">VoIP Calling</a></li>
-                            <li><a href="#" class="sidebar-link">Client Profile</a></li>
-                            <li><a href="#" class="sidebar-link">Network Analysis</a></li>
-                            <li><a href="#" class="sidebar-link">Proposal Generator</a></li>
-                        </ul>
+                    <div class="sidebar-header">
+                        <span>📊 DASHBOARD</span>
+                        <button id="toggleSidebarBtn" class="e-btn e-icon-btn sidebar-toggle" title="Toggle Sidebar">
+                            <span id="sidebarToggleIcon">−</span>
+                        </button>
                     </div>
-                    <div class="sidebar-section">
-                        <div class="sidebar-category">CONFIGURATION</div>
-                        <ul class="sidebar-menu">
-                            <li><a href="#" class="sidebar-link">Filter Management</a></li>
-                            <li><a href="#" class="sidebar-link">Data Points</a></li>
-                        </ul>
+                    
+                    <!-- Syncfusion Accordion for Navigation -->
+                    <div id="sidebarAccordion" class="e-accordion">
+                        <!-- ONBOARDING Section -->
+                        <div class="e-acrdn-item">
+                            <div class="e-acrdn-header">
+                                <span class="accordion-icon">📋</span> ONBOARDING
+                            </div>
+                            <div class="e-acrdn-panel">
+                                <div class="e-acrdn-content">
+                                    <ul class="sidebar-menu">
+                                        <li><a href="#" class="sidebar-link" data-page="scheduling">Scheduling</a></li>
+                                        <li><a href="#" class="sidebar-link" data-page="company-research">Company Research</a></li>
+                                        <li><a href="#" class="sidebar-link" data-page="email-campaigns">Email Campaigns</a></li>
+                                        <li><a href="#" class="sidebar-link" data-page="e-signature">E-Signature</a></li>
+                                        <li><a href="#" class="sidebar-link" data-page="voip-calling">VoIP Calling</a></li>
+                                        <li><a href="#" class="sidebar-link">Client Profile</a></li>
+                                        <li><a href="#" class="sidebar-link">Network Analysis</a></li>
+                                        <li><a href="#" class="sidebar-link">Proposal Generator</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- CONFIGURATION Section -->
+                        <div class="e-acrdn-item">
+                            <div class="e-acrdn-header">
+                                <span class="accordion-icon">⚙️</span> CONFIGURATION
+                            </div>
+                            <div class="e-acrdn-panel">
+                                <div class="e-acrdn-content">
+                                    <ul class="sidebar-menu">
+                                        <li><a href="#" class="sidebar-link">Filter Management</a></li>
+                                        <li><a href="#" class="sidebar-link">Data Points</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- OPERATIONS Section -->
+                        <div class="e-acrdn-item">
+                            <div class="e-acrdn-header">
+                                <span class="accordion-icon">⚡</span> OPERATIONS
+                            </div>
+                            <div class="e-acrdn-panel">
+                                <div class="e-acrdn-content">
+                                    <ul class="sidebar-menu">
+                                        <li><a href="#" class="nav-item" data-page="network">Network Access</a></li>
+                                        <li><a href="#" class="nav-item" data-page="billing">Billing</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ANALYSIS Section -->
+                        <div class="e-acrdn-item">
+                            <div class="e-acrdn-header">
+                                <span class="accordion-icon">📊</span> ANALYSIS
+                            </div>
+                            <div class="e-acrdn-panel">
+                                <div class="e-acrdn-content">
+                                    <ul class="sidebar-menu">
+                                        <li><a href="#" class="nav-item" data-page="hardware">Endpoint</a></li>
+                                        <li><a href="#" class="nav-item" data-page="lifecycle">Lifecycle</a></li>
+                                        <li><a href="#" class="nav-item" data-page="software">Software</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- BEST PRACTICES Section -->
+                        <div class="e-acrdn-item">
+                            <div class="e-acrdn-header">
+                                <span class="accordion-icon">⭐</span> BEST PRACTICES
+                            </div>
+                            <div class="e-acrdn-panel">
+                                <div class="e-acrdn-content">
+                                    <ul class="sidebar-menu">
+                                        <li><a href="#" class="sidebar-link">Reports</a></li>
+                                        <li><a href="#" class="sidebar-link">Documentation</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="sidebar-section">
-                        <div class="sidebar-category">OPERATIONS</div>
-                        <ul class="sidebar-menu">
-                            <li><a href="#" class="nav-item" data-page="network">Network Access</a></li>
-                            <li><a href="#" class="nav-item" data-page="billing">Billing</a></li>
-                        </ul>
-                    </div>
-                    <div class="sidebar-section">
-                        <div class="sidebar-category">ANALYSIS</div>
-                        <ul class="sidebar-menu">
-                            <li><a href="#" class="nav-item" data-page="hardware">Endpoint</a></li>
-                            <li><a href="#" class="nav-item" data-page="lifecycle">Lifecycle</a></li>
-                            <li><a href="#" class="nav-item" data-page="software">Software</a></li>
-                        </ul>
-                    </div>
-                    <div class="sidebar-section">
-                        <div class="sidebar-category">BEST PRACTICES</div>
-                        <ul class="sidebar-menu">
-                            <li><a href="#" class="sidebar-link">Reports</a></li>
-                            <li><a href="#" class="sidebar-link">Documentation</a></li>
-                        </ul>
-                    </div>
-                    <div class="sidebar-section" style="margin-top: auto; border-top: 1px solid #dee2e6; padding-top: 15px;">
-                        <button id="settingsBtn" style="width: 100%; padding: 12px; background-color: #34495e; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+
+                    <!-- Settings Button at Bottom -->
+                    <div class="sidebar-section sidebar-footer">
+                        <button id="settingsBtn" class="e-btn e-primary" style="width: 100%;">
                             ⚙️ Settings
                         </button>
                     </div>
@@ -218,11 +268,11 @@
                             <div class="e-card-content">
                                 <div class="config-group">
                                     <label>RMM</label>
-                                    <input type="text" placeholder="connection string..." class="e-field" id="rmmConfig">
+                                    <input type="text" placeholder="RMM connection string..." class="e-field" id="rmmConfig">
                                 </div>
                                 <div class="config-group">
                                     <label>Watchguard</label>
-                                    <input type="text" placeholder="connection string..." class="e-field" id="watchguardConfig">
+                                    <input type="text" placeholder="Watchguard connection string..." class="e-field" id="watchguardConfig">
                                 </div>
                             </div>
                         </div>
@@ -385,7 +435,7 @@
                                 
                                 <!-- Quick Add Contact -->
                                 <div style="display: grid; grid-template-columns: 1fr 80px; gap: 8px; margin-bottom: 15px;">
-                                    <input type="text" id="quickAddPhone" placeholder="Quick add: +1 (555) 123-4567" style="padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px;">
+                                    <input type="text" id="quickAddPhone" class="e-field" placeholder="Quick add: +1 (555) 123-4567" style="padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px;">
                                     <button id="quickAddBtn" style="padding: 10px; background-color: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 12px;">
                                         + Add
                                     </button>
@@ -539,7 +589,7 @@
                             <div style="display: flex; gap: 10px; align-items: flex-end;">
                                 <div style="flex: 1;">
                                     <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Company Name:</label>
-                                    <input type="text" id="companySearchInput" placeholder="Enter company name..." style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px;">
+                                    <input type="text" id="companySearchInput" class="e-field" placeholder="Enter company name..." style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px;">
                                 </div>
                                 <button id="searchCompanyBtn" style="padding: 10px 20px; background-color: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600;">
                                     Search
@@ -638,39 +688,10 @@
                 <!-- Page: Lifecycle -->
                 <div id="page-lifecycle" class="page-content">
                     <div class="lifecycle-page">
-                        <!-- Configuration Table -->
+                        <!-- Configuration Grid -->
                         <div class="lifecycle-config-section">
                             <h3>Configuration</h3>
-                            <table class="config-table">
-                                <thead>
-                                    <tr>
-                                        <th>Graph Type</th>
-                                        <th>Data Point</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr class="highlight-row">
-                                        <td>
-                                            <select id="graphType" class="config-select">
-                                                <option>data</option>
-                                                <option>bar chart</option>
-                                                <option>pie chart</option>
-                                            </select>
-                                        </td>
-                                        <td>
-                                            <select id="dataPoint" class="config-select">
-                                                <option>n/a</option>
-                                                <option>Account Type</option>
-                                                <option>Domain Joined</option>
-                                            </select>
-                                        </td>
-                                        <td class="config-actions">
-                                            <button class="delete-btn" title="Delete">🗑️</button>
-                                            <button class="add-btn" title="Add">➕</button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                            <div id="lifecycleConfigGrid" class="lifecycle-config-grid"></div>
                         </div>
 
                         <!-- Charts and Data Section -->
@@ -1097,10 +1118,15 @@
         </div>
     </div>
 
-    <!-- Syncfusion JS - Using working CDN links -->
-    <script src="https://cdn.syncfusion.com/ej2/20.4.48/dist/ej2.umd.min.js"></script>
+    <!-- Syncfusion JS - CORRECTED CDN -->
+    <script src="https://cdn.syncfusion.com/ej2/20.4.48/dist/ej2.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="app.js?v=20260120-1830"></script>
+    
+    <!-- Syncfusion Initialization Manager -->
+    <script src="syncfusion-init.js?v=20260122-0200"></script>
+    
+    <!-- Application Script -->
+    <script src="app.js?v=20260122-0200"></script>
 </body>
 </html>

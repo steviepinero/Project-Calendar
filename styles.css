@@ -1888,3 +1888,651 @@ header h1 {
 }
 
 /* ===== END VOIP CALLING ===== */
+
+/* ============================================
+   SYNCFUSION CONTROL CUSTOMIZATION
+   ============================================ */
+
+/* TextBox & Form Fields */
+.e-field {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+    font-size: 14px !important;
+    border-radius: 4px !important;
+    border: 1px solid #d0d0d0 !important;
+    transition: all 0.3s ease !important;
+}
+
+.e-field:hover {
+    border-color: #999 !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05) !important;
+}
+
+.e-field:focus {
+    border-color: #3498db !important;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1) !important;
+    outline: none !important;
+}
+
+.e-field-focus {
+    border-color: #3498db !important;
+}
+
+/* TextBox - Syncfusion Enhancement */
+.e-textbox {
+    padding: 10px 12px !important;
+}
+
+.e-input-group.e-success .e-input-group-icon {
+    color: #27ae60 !important;
+}
+
+/* NumericTextBox */
+.e-numerictextbox {
+    padding: 10px 12px !important;
+}
+
+.e-num-input {
+    padding: 10px 12px !important;
+}
+
+/* DropDownList */
+.e-dropdownlist {
+    border-radius: 4px !important;
+}
+
+.e-ddl {
+    border: 1px solid #d0d0d0 !important;
+    border-radius: 4px !important;
+    transition: border-color 0.3s ease !important;
+}
+
+.e-ddl:hover {
+    border-color: #999 !important;
+}
+
+.e-ddl.e-active,
+.e-ddl:focus {
+    border-color: #3498db !important;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1) !important;
+}
+
+.e-ddl-popup {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+    border-radius: 4px !important;
+}
+
+.e-ddl-item:hover {
+    background-color: #e8f4f8 !important;
+}
+
+.e-ddl-item.e-active {
+    background-color: #3498db !important;
+    color: white !important;
+}
+
+/* DatePicker */
+.e-datepicker,
+.e-calendar {
+    border-radius: 4px !important;
+}
+
+.e-calendar .e-header {
+    background-color: #34495e !important;
+    color: white !important;
+}
+
+.e-calendar .e-today {
+    color: #3498db !important;
+    font-weight: 600 !important;
+}
+
+.e-calendar .e-selected {
+    background-color: #3498db !important;
+    color: white !important;
+}
+
+.e-calendar .e-day:hover {
+    background-color: #ecf0f1 !important;
+}
+
+/* CheckBox */
+.e-checkbox-wrapper {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+}
+
+.e-checkbox {
+    accent-color: #3498db !important;
+}
+
+/* Buttons - Enhanced */
+.e-btn {
+    font-weight: 600 !important;
+    border-radius: 4px !important;
+    padding: 10px 20px !important;
+    transition: all 0.2s ease !important;
+    border: none !important;
+    cursor: pointer !important;
+}
+
+.e-btn:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+}
+
+.e-btn:active {
+    transform: translateY(0) !important;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1) !important;
+}
+
+.e-btn.e-primary {
+    background-color: #3498db !important;
+    color: white !important;
+}
+
+.e-btn.e-primary:hover {
+    background-color: #2980b9 !important;
+}
+
+.e-btn.e-outline {
+    border: 2px solid #3498db !important;
+    color: #3498db !important;
+    background-color: transparent !important;
+}
+
+.e-btn.e-outline:hover {
+    background-color: #e8f4f8 !important;
+}
+
+.e-btn.e-secondary {
+    background-color: #95a5a6 !important;
+    color: white !important;
+}
+
+.e-btn:disabled {
+    opacity: 0.6 !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+}
+
+/* Dialog (Modal) */
+.e-dialog {
+    border-radius: 8px !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2) !important;
+}
+
+.e-dlg-header {
+    background-color: #34495e !important;
+    color: white !important;
+    border-radius: 8px 8px 0 0 !important;
+    padding: 15px 20px !important;
+}
+
+.e-dlg-header-content {
+    font-weight: 600 !important;
+    font-size: 16px !important;
+}
+
+.e-dlg-content {
+    padding: 20px !important;
+}
+
+.e-dlg-footer {
+    padding: 15px 20px !important;
+    border-top: 1px solid #ecf0f1 !important;
+    display: flex !important;
+    justify-content: flex-end !important;
+    gap: 10px !important;
+    background-color: #f9f9f9 !important;
+    border-radius: 0 0 8px 8px !important;
+}
+
+.e-dlg-closeicon-btn {
+    color: white !important;
+}
+
+/* Grid */
+.e-grid {
+    font-size: 13px !important;
+    border-radius: 4px !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05) !important;
+}
+
+.e-grid .e-headercell {
+    background-color: #34495e !important;
+    color: white !important;
+    font-weight: 600 !important;
+    border-color: #2c3e50 !important;
+}
+
+.e-grid .e-rowcell {
+    border-color: #ecf0f1 !important;
+    padding: 10px !important;
+}
+
+.e-grid .e-row:hover {
+    background-color: #f5f5f5 !important;
+}
+
+.e-grid .e-row.e-selectionbackground {
+    background-color: #e8f4f8 !important;
+}
+
+.e-grid .e-summarycell {
+    background-color: #ecf0f1 !important;
+    font-weight: 600 !important;
+}
+
+/* ListView */
+.e-listview {
+    border-radius: 4px !important;
+    border: 1px solid #ecf0f1 !important;
+}
+
+.e-list-item {
+    padding: 12px 15px !important;
+    border-bottom: 1px solid #ecf0f1 !important;
+    transition: background-color 0.2s ease !important;
+}
+
+.e-list-item:hover {
+    background-color: #f5f5f5 !important;
+}
+
+.e-list-item.e-active {
+    background-color: #e8f4f8 !important;
+    border-left: 4px solid #3498db !important;
+}
+
+/* Card */
+.e-card {
+    border-radius: 8px !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
+    border: none !important;
+    background-color: white !important;
+    transition: box-shadow 0.3s ease !important;
+}
+
+.e-card:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12) !important;
+}
+
+.e-card-header {
+    background-color: #f9f9f9 !important;
+    border-bottom: 1px solid #ecf0f1 !important;
+    border-radius: 8px 8px 0 0 !important;
+    padding: 15px 20px !important;
+}
+
+.e-card-header-title {
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    color: #34495e !important;
+}
+
+.e-card-content {
+    padding: 20px !important;
+}
+
+/* Tooltip */
+.e-tooltip {
+    border-radius: 4px !important;
+    font-size: 12px !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2) !important;
+}
+
+/* Input Focus Effects */
+.e-input-group:not(.e-float-input) > input.e-input:focus {
+    border-color: #3498db !important;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1) !important;
+}
+
+/* Form Group Styling */
+.e-form-group {
+    margin-bottom: 15px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 6px !important;
+}
+
+.e-form-group label {
+    font-weight: 500 !important;
+    color: #34495e !important;
+    font-size: 13px !important;
+}
+
+.e-form-text {
+    font-size: 12px !important;
+    color: #7f8c8d !important;
+}
+
+/* Info Message */
+.e-info-message {
+    background-color: #e8f4f8 !important;
+    border-left: 4px solid #3498db !important;
+    padding: 10px 12px !important;
+    border-radius: 4px !important;
+    font-size: 12px !important;
+    color: #2c3e50 !important;
+    margin-top: 8px !important;
+}
+
+.e-info-message strong {
+    color: #3498db !important;
+}
+
+/* Success Message */
+.e-success-message {
+    background-color: #e8f8e8 !important;
+    border-left: 4px solid #27ae60 !important;
+    padding: 10px 12px !important;
+    border-radius: 4px !important;
+    font-size: 12px !important;
+    color: #27ae60 !important;
+}
+
+/* Error Message */
+.e-error-message {
+    background-color: #f8e8e8 !important;
+    border-left: 4px solid #e74c3c !important;
+    padding: 10px 12px !important;
+    border-radius: 4px !important;
+    font-size: 12px !important;
+    color: #c0392b !important;
+}
+
+/* Syncfusion Loading Animation */
+.e-loading {
+    opacity: 0.6 !important;
+    pointer-events: none !important;
+}
+
+.e-spinnercontainer {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 20px !important;
+}
+
+/* Responsive Syncfusion Controls */
+@media (max-width: 768px) {
+    .e-field {
+        font-size: 16px !important; /* Prevents zoom on mobile */
+    }
+    
+    .e-btn {
+        padding: 12px 16px !important;
+        min-height: 44px !important; /* Touch target size */
+    }
+    
+    .e-ddl-popup {
+        min-width: 90vw !important;
+    }
+}
+
+/* ============================================
+   SYNCFUSION SIDEBAR ACCORDION STYLING
+   ============================================ */
+
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
+    color: white;
+    font-weight: 700;
+    font-size: 14px;
+    border-bottom: 2px solid #2c3e50;
+}
+
+.sidebar-toggle {
+    background: transparent !important;
+    color: white !important;
+    border: none !important;
+    padding: 5px 10px !important;
+    min-width: 30px !important;
+    font-size: 18px !important;
+    cursor: pointer !important;
+}
+
+.sidebar-toggle:hover {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    border-radius: 4px !important;
+}
+
+/* Syncfusion Accordion in Sidebar */
+#sidebarAccordion {
+    overflow-y: auto;
+    flex: 1;
+    padding: 0;
+}
+
+#sidebarAccordion.e-accordion {
+    border: none !important;
+    box-shadow: none !important;
+    background-color: transparent !important;
+}
+
+/* Accordion Item */
+#sidebarAccordion .e-acrdn-item {
+    border: none !important;
+    border-bottom: 1px solid #ecf0f1 !important;
+}
+
+/* Accordion Header */
+#sidebarAccordion .e-acrdn-header {
+    background-color: #f5f5f5 !important;
+    color: #2c3e50 !important;
+    border: none !important;
+    padding: 12px 20px !important;
+    font-weight: 600 !important;
+    font-size: 13px !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    min-height: 44px !important;
+}
+
+#sidebarAccordion .e-acrdn-header:hover {
+    background-color: #efefef !important;
+    color: #34495e !important;
+}
+
+#sidebarAccordion .e-acrdn-header.e-select,
+#sidebarAccordion .e-acrdn-header.e-selected {
+    background-color: #e8f4f8 !important;
+    color: #3498db !important;
+    border-left: 4px solid #3498db !important;
+    padding-left: 16px !important;
+}
+
+.accordion-icon {
+    margin-right: 8px;
+    font-size: 14px;
+}
+
+/* Accordion Panel */
+#sidebarAccordion .e-acrdn-panel {
+    border: none !important;
+    background-color: white !important;
+}
+
+/* Accordion Content */
+#sidebarAccordion .e-acrdn-content {
+    background-color: white !important;
+    border: none !important;
+    padding: 0 !important;
+}
+
+#sidebarAccordion .e-acrdn-content .sidebar-menu {
+    list-style: none;
+    margin: 0;
+    padding: 8px 0;
+}
+
+#sidebarAccordion .e-acrdn-content .sidebar-menu li {
+    margin: 0;
+    padding: 0;
+}
+
+#sidebarAccordion .e-acrdn-content .sidebar-menu a {
+    display: block;
+    padding: 10px 30px;
+    color: #555;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    font-size: 13px;
+    border-left: 3px solid transparent;
+}
+
+#sidebarAccordion .e-acrdn-content .sidebar-menu a:hover {
+    background-color: #f9f9f9;
+    color: #3498db;
+    border-left-color: #3498db;
+    padding-left: 28px;
+}
+
+#sidebarAccordion .e-acrdn-content .sidebar-menu a.active {
+    background-color: #e8f4f8;
+    color: #3498db;
+    border-left-color: #3498db;
+    font-weight: 600;
+    padding-left: 28px;
+}
+
+/* Hide default Syncfusion accordion icons */
+#sidebarAccordion .e-acrdn-header .e-toggle-icon {
+    font-size: 12px !important;
+    color: #7f8c8d !important;
+}
+
+#sidebarAccordion .e-acrdn-header.e-select .e-toggle-icon,
+#sidebarAccordion .e-acrdn-header.e-selected .e-toggle-icon {
+    color: #3498db !important;
+}
+
+/* Sidebar Footer */
+.sidebar-footer {
+    padding: 15px 20px !important;
+    margin-top: auto !important;
+    border-top: 1px solid #dee2e6 !important;
+    background-color: #f9f9f9 !important;
+}
+
+.sidebar-footer .e-btn {
+    width: 100% !important;
+    padding: 10px 12px !important;
+    font-size: 13px !important;
+}
+
+/* Collapsed Sidebar State */
+.sidebar-collapsed {
+    width: 60px;
+    padding: 0;
+}
+
+.sidebar-collapsed .sidebar-header {
+    flex-direction: column;
+    gap: 10px;
+    font-size: 12px;
+    padding: 10px 8px;
+}
+
+.sidebar-collapsed .sidebar-header span {
+    display: none;
+}
+
+.sidebar-collapsed .sidebar-toggle {
+    width: 100%;
+    padding: 5px !important;
+}
+
+.sidebar-collapsed #sidebarAccordion {
+    padding: 5px 0;
+}
+
+.sidebar-collapsed .e-accordion-header {
+    padding: 8px 10px !important;
+    font-size: 20px;
+    text-align: center;
+}
+
+.sidebar-collapsed .e-accordion-content .sidebar-menu a {
+    padding: 8px 15px;
+    font-size: 11px;
+    text-align: center;
+}
+
+.sidebar-collapsed .e-accordion-content .sidebar-menu a:hover {
+    padding-left: 15px;
+}
+
+.sidebar-collapsed .sidebar-footer {
+    padding: 10px 8px !important;
+}
+
+.sidebar-collapsed .sidebar-footer .e-btn {
+    padding: 8px 4px !important;
+    font-size: 12px !important;
+}
+
+/* Animation for Accordion */
+.e-accordion .e-item .e-content {
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Sidebar Accordion */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 250px;
+    }
+    
+    .sidebar-collapsed {
+        width: 60px;
+    }
+    
+    .e-accordion-header {
+        font-size: 12px !important;
+    }
+    
+    .e-accordion-content .sidebar-menu a {
+        padding: 8px 25px !important;
+        font-size: 12px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .sidebar {
+        width: 60px;
+        position: fixed;
+        left: 0;
+        top: 0;
+        height: 100vh;
+        z-index: 100;
+    }
+    
+    .layout-wrapper {
+        margin-left: 60px;
+    }
+    
+    .e-accordion-header {
+        padding: 8px 10px !important;
+        font-size: 16px !important;
+    }
+}
+
+/* ============================================
+   END SIDEBAR ACCORDION STYLING
+   ============================================ */

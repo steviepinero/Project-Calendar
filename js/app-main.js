@@ -205,6 +205,11 @@ function switchPage(pageName) {
     
     // Initialize page-specific content based on page name
     setTimeout(() => {
+        if (pageName === 'leads' && window.initializeLeadsPage) {
+            console.log('🎯 Initializing leads page');
+            window.initializeLeadsPage();
+        }
+        
         if (pageName === 'scheduling' && window.Scheduling) {
             console.log('📊 Initializing scheduling page');
             window.Scheduling.renderGanttChart();

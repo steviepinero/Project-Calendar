@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MSP Project Calendar</title>
     
-    <!-- Syncfusion CSS -->
-    <link rel="stylesheet" href="https://cdn.syncfusion.com/ej2/20.4.48/material.css">
-    <link rel="stylesheet" href="https://cdn.syncfusion.com/ej2/20.4.48/material.css" id="theme">
+    <!-- Syncfusion CSS - Version 32.1.48 -->
+    <link rel="stylesheet" href="https://cdn.syncfusion.com/ej2/32.1.48/material.css">
+    <link rel="stylesheet" href="https://cdn.syncfusion.com/ej2/32.1.48/material.css" id="theme">
     
-    <link rel="stylesheet" href="styles.css?v=20260123-0600">
+    <link rel="stylesheet" href="styles.css?v=20260123-0900">
 </head>
 <body>
     <div class="ej2-container">
@@ -48,6 +48,7 @@
                             <div class="e-acrdn-panel">
                                 <div class="e-acrdn-content">
                                     <ul class="sidebar-menu">
+                                        <li><a href="#" class="sidebar-link" data-page="leads">Leads</a></li>
                                         <li><a href="#" class="sidebar-link" data-page="scheduling">Scheduling</a></li>
                                         <li><a href="#" class="sidebar-link" data-page="company-research">Company Research</a></li>
                                         <li><a href="#" class="sidebar-link" data-page="email-campaigns">Email Campaigns</a></li>
@@ -134,6 +135,44 @@
 
             <!-- Main Content Area -->
             <div class="main-wrapper">
+                <!-- Page: Leads/CRM -->
+                <div id="page-leads" class="page-content">
+                    <!-- Leads List View -->
+                    <div id="leadsListView" class="leads-list-view">
+                        <div class="leads-header">
+                            <h2>🎯 Blue Heron Capital - ALL</h2>
+                            <div class="leads-filters">
+                                <span class="filter-label">probability</span>
+                                <span class="filter-label">expected close date</span>
+                                <span class="filter-label">initial contact</span>
+                            </div>
+                        </div>
+                        <div id="leadsGrid" style="width: 100%; height: calc(100vh - 200px);"></div>
+                    </div>
+                    
+                    <!-- Lead Detail View -->
+                    <div id="leadDetailView" class="lead-detail-view" style="display: none;">
+                        <div class="lead-detail-layout">
+                            <!-- Left Sidebar: Company List -->
+                            <div class="lead-companies-sidebar">
+                                <div class="companies-header">
+                                    <h3>🎯 Blue Heron Capital - ALL</h3>
+                                </div>
+                                <div id="companiesList" class="companies-list">
+                                    <!-- Company list will be populated here -->
+                                </div>
+                            </div>
+                            
+                            <!-- Right Content: Detail Tabs -->
+                            <div class="lead-detail-content">
+                                <button id="backToLeadsBtn" class="e-btn e-outline" style="margin-bottom: 10px;">← Back to List</button>
+                                <h2 id="leadCompanyName" style="margin-bottom: 20px;">Company Name</h2>
+                                <div id="leadDetailTabs" style="width: 100%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Page: Smart Scheduling (Gantt Chart) -->
                 <div id="page-scheduling" class="page-content active">
         <div class="main-content">
@@ -1103,26 +1142,31 @@
         </form>
     </div>
 
-    <!-- Syncfusion JS - CORRECTED CDN -->
-    <script src="https://cdn.syncfusion.com/ej2/20.4.48/dist/ej2.min.js"></script>
+    <!-- Syncfusion JS - Version 32.1.48 -->
+    <script src="https://cdn.syncfusion.com/ej2/32.1.48/dist/ej2.min.js"></script>
+    
+    <!-- Syncfusion License Key (gitignored, manually deploy to production) -->
+    <script src="syncfusion-license.js"></script>
+    
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     
     <!-- Syncfusion Initialization Manager -->
-    <script src="syncfusion-init.js?v=20260123-0500"></script>
+    <script src="syncfusion-init.js?v=20260123-0900"></script>
     
     <!-- Application Modules -->
-    <script src="js/utils.js?v=20260123-0500"></script>
-    <script src="js/scheduling.js?v=20260123-0500"></script>
-    <script src="js/network-access.js?v=20260123-0500"></script>
-    <script src="js/endpoint.js?v=20260123-0500"></script>
-    <script src="js/lifecycle-page.js?v=20260123-0500"></script>
-    <script src="js/company-research.js?v=20260123-0500"></script>
-    <script src="js/email-campaigns.js?v=20260123-0500"></script>
-    <script src="js/e-signature.js?v=20260123-0500"></script>
-    <script src="js/voip.js?v=20260123-0500"></script>
+    <script src="js/utils.js?v=20260123-0900"></script>
+    <script src="js/scheduling.js?v=20260123-0900"></script>
+    <script src="js/network-access.js?v=20260123-0900"></script>
+    <script src="js/endpoint.js?v=20260123-0900"></script>
+    <script src="js/lifecycle-page.js?v=20260123-0900"></script>
+    <script src="js/company-research.js?v=20260123-0900"></script>
+    <script src="js/email-campaigns.js?v=20260123-0900"></script>
+    <script src="js/e-signature.js?v=20260123-0900"></script>
+    <script src="js/voip.js?v=20260123-0900"></script>
+    <script src="js/leads.js?v=20260123-0900"></script>
     
     <!-- Main Application Coordinator -->
-    <script src="js/app-main.js?v=20260123-0500"></script>
+    <script src="js/app-main.js?v=20260123-0900"></script>
 </body>
 </html>

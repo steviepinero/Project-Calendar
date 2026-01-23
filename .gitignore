@@ -7,6 +7,9 @@
 **/api-keys.js
 **/config/keys.js
 
+# Syncfusion License (excluded from repo, but deploy to production)
+syncfusion-license.js
+
 # IDE and editor files
 .vscode/
 .idea/

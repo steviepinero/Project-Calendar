@@ -45,7 +45,14 @@ See `DEPLOYMENT_GUIDE.md` for setting up automated deployment with GitHub Action
 
 ---
 
-## Your License Key:
+## Your License Keys:
+
+### Version 24.x (Currently Active):
+```
+Ngo9BigBOggjHTQxAR8/V1NAaF5cWWJCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdlWX5cc3VQQmVcVk1xV0pWYU0=
+```
+
+### Version 32.x (For Future Use):
 ```
 Ngo9BigBOggjHTQxAR8/V1JGaF5cXGpCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdlWX5cc3VQR2hYVU11XEBWYEs=
 ```

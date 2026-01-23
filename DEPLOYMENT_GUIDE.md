@@ -49,7 +49,9 @@ jobs:
 
 Then add your Syncfusion license as a repository secret:
 1. Go to your repo → Settings → Secrets and variables → Actions
-2. Add new secret: `SYNCFUSION_LICENSE` = `Ngo9BigBOggjHTQxAR8/V1JGaF5cXGpCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdlWX5cc3VQR2hYVU11XEBWYEs=`
+2. Add new secret: `SYNCFUSION_LICENSE` = `Ngo9BigBOggjHTQxAR8/V1NAaF5cWWJCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdlWX5cc3VQQmVcVk1xV0pWYU0=`
+
+**Note**: This is the v24.x license key. If you upgrade to v32.x in the future, you'll need to update this secret with the v32 key.
 
 #### Option 3: Environment Variable in Build Process
 If using a build tool (Vite, Webpack, etc.), you can inject the license at build time.

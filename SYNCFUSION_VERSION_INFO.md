@@ -1,15 +1,17 @@
 # Syncfusion Version Information
 
-## Current Version: 32.1.48
+## Current Version: 24.2.9
 
-This application uses **Syncfusion Essential Studio v32.x.x**.
+This application uses **Syncfusion Essential Studio v24.2.9** (verified working on CDN).
 
 ### CDN Links:
-- **CSS**: `https://cdn.syncfusion.com/ej2/32.1.48/material.css`
-- **JavaScript**: `https://cdn.syncfusion.com/ej2/32.1.48/dist/ej2.min.js`
+- **CSS**: `https://cdn.syncfusion.com/ej2/24.2.9/material.css`
+- **JavaScript**: `https://cdn.syncfusion.com/ej2/24.2.9/dist/ej2.min.js`
 
 ### License Key Version:
-Your license key is specifically for **v32.x.x** of Syncfusion Essential Studio Enterprise Edition.
+Currently using license key for **v24.x** of Syncfusion Essential Studio Enterprise Edition.
+
+**Note**: You also have a v32.x license key available when that version becomes accessible on the public CDN.
 
 ### Components Used:
 - **Grid** (Data grids for leads, touches, network access, hardware)

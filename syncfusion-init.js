@@ -462,29 +462,56 @@ window.dialogInstances = {
     campaign: null
 };
 
+window.dialogsReady = false;
+
 /**
  * Initialize all Syncfusion Dialogs
  */
 function initializeDialogs() {
     console.log('🎯 Initializing Syncfusion Dialogs...');
     
+    // Check if Syncfusion Dialog is available
+    if (typeof ej === 'undefined' || typeof ej.popups === 'undefined' || typeof ej.popups.Dialog === 'undefined') {
+        console.error('❌ Syncfusion Dialog not available! ej.popups.Dialog is undefined');
+        console.log('Available ej object:', typeof ej !== 'undefined' ? Object.keys(ej) : 'ej is undefined');
+        return;
+    }
+    
+    console.log('✅ Syncfusion Dialog class is available');
+    
     try {
         // Project Modal
         const projectModalEl = document.getElementById('projectModal');
         if (projectModalEl) {
-            console.log('✅ Found projectModal element');
-            window.dialogInstances.project = new ej.popups.Dialog({
-                header: 'Add/Edit Project',
-                showCloseIcon: true,
-                visible: false,
-                isModal: true,
-                width: '600px',
-                position: { X: 'center', Y: 'center' },
-                animationSettings: { effect: 'Zoom', duration: 400 },
-                zIndex: 1050
-            });
-            window.dialogInstances.project.appendTo('#projectModal');
-            console.log('✅ Project dialog initialized');
+            console.log('✅ Found projectModal element:', projectModalEl);
+            try {
+                console.log('📦 Creating Dialog with ej.popups.Dialog...');
+                const projectDialog = new ej.popups.Dialog({
+                    header: 'Add/Edit Project',
+                    showCloseIcon: true,
+                    visible: false,
+                    isModal: true,
+                    width: '600px',
+                    position: { X: 'center', Y: 'center' },
+                    animationSettings: { effect: 'Zoom', duration: 400 },
+                    zIndex: 1050
+                });
+                console.log('✅ Project dialog created:', projectDialog);
+                console.log('📦 Dialog type:', typeof projectDialog);
+                console.log('📦 Dialog has show method:', typeof projectDialog.show);
+                
+                console.log('📦 Calling appendTo...');
+                projectDialog.appendTo(projectModalEl);
+                console.log('✅ appendTo completed');
+                
+                window.dialogInstances.project = projectDialog;
+                console.log('✅ Project dialog stored in window.dialogInstances.project');
+                console.log('✅ Stored instance:', window.dialogInstances.project);
+                console.log('✅ Has show method:', typeof window.dialogInstances.project.show);
+            } catch (error) {
+                console.error('❌ Error creating project dialog:', error);
+                console.error('❌ Error stack:', error.stack);
+            }
         } else {
             console.warn('⚠️ projectModal element not found');
         }
@@ -492,21 +519,28 @@ function initializeDialogs() {
         // Settings Modal
         const settingsModalEl = document.getElementById('settingsModal');
         if (settingsModalEl) {
-            console.log('✅ Found settingsModal element');
-            window.dialogInstances.settings = new ej.popups.Dialog({
-                header: '⚙️ Settings & API Configuration',
-                showCloseIcon: true,
-                visible: false,
-                isModal: true,
-                width: '650px',
-                height: '80vh',
-                position: { X: 'center', Y: 'center' },
-                animationSettings: { effect: 'Zoom', duration: 400 },
-                allowDragging: true,
-                zIndex: 1050
-            });
-            window.dialogInstances.settings.appendTo('#settingsModal');
-            console.log('✅ Settings dialog initialized');
+            console.log('✅ Found settingsModal element:', settingsModalEl);
+            try {
+                const settingsDialog = new ej.popups.Dialog({
+                    header: '⚙️ Settings & API Configuration',
+                    showCloseIcon: true,
+                    visible: false,
+                    isModal: true,
+                    width: '650px',
+                    height: '80vh',
+                    position: { X: 'center', Y: 'center' },
+                    animationSettings: { effect: 'Zoom', duration: 400 },
+                    allowDragging: true,
+                    zIndex: 1050
+                });
+                console.log('✅ Settings dialog created:', settingsDialog);
+                settingsDialog.appendTo(settingsModalEl);
+                window.dialogInstances.settings = settingsDialog;
+                console.log('✅ Settings dialog stored:', window.dialogInstances.settings);
+            } catch (error) {
+                console.error('❌ Error creating settings dialog:', error);
+                console.error('❌ Error stack:', error.stack);
+            }
         } else {
             console.warn('⚠️ settingsModal element not found');
         }
@@ -596,8 +630,11 @@ function initializeDialogs() {
         }
         
         console.log('✅ All Dialogs Initialized');
+        window.dialogsReady = true;
+        console.log('✅ Dialogs are now ready for use');
     } catch (error) {
         console.error('Error initializing dialogs:', error);
+        window.dialogsReady = false;
     }
 }
 
@@ -606,12 +643,33 @@ function initializeDialogs() {
  */
 function showDialog(dialogName) {
     console.log(`📊 Attempting to show dialog: ${dialogName}`);
-    if (window.dialogInstances[dialogName]) {
-        console.log(`✅ Dialog instance found, calling show()`);
-        window.dialogInstances[dialogName].show();
-        console.log(`✅ Dialog show() called, visible:`, window.dialogInstances[dialogName].visible);
+    console.log(`📊 Dialogs ready:`, window.dialogsReady);
+    
+    // If dialogs aren't ready yet, wait and retry
+    if (!window.dialogsReady) {
+        console.log(`⏳ Dialogs not ready yet, waiting...`);
+        setTimeout(() => showDialog(dialogName), 100);
+        return;
+    }
+    
+    console.log(`📊 Dialog instances:`, window.dialogInstances);
+    console.log(`📊 Specific instance for '${dialogName}':`, window.dialogInstances[dialogName]);
+    
+    const dialogInstance = window.dialogInstances[dialogName];
+    
+    if (dialogInstance && typeof dialogInstance.show === 'function') {
+        console.log(`✅ Dialog instance found and has show() method`);
+        try {
+            dialogInstance.show();
+            console.log(`✅ Dialog show() called successfully, visible:`, dialogInstance.visible);
+        } catch (error) {
+            console.error(`❌ Error calling show():`, error);
+        }
     } else {
-        console.error(`❌ Dialog '${dialogName}' not found in instances:`, Object.keys(window.dialogInstances));
+        console.error(`❌ Dialog '${dialogName}' not found or invalid`);
+        console.error(`   Instance value:`, dialogInstance);
+        console.error(`   Available keys:`, Object.keys(window.dialogInstances));
+        console.error(`   Instance has show method:`, dialogInstance && typeof dialogInstance.show === 'function');
     }
 }
 
@@ -628,15 +686,46 @@ function hideDialog(dialogName) {
 // AUTO-INITIALIZE DIALOGS ON DOM READY
 // ============================================
 
+let syncfusionWaitCount = 0;
+
+function waitForSyncfusionAndInitialize() {
+    syncfusionWaitCount++;
+    
+    if (typeof ej !== 'undefined' && ej.popups && ej.popups.Dialog) {
+        console.log(`✅ Syncfusion is ready (waited ${syncfusionWaitCount} times), initializing dialogs...`);
+        console.log(`📦 Syncfusion version:`, ej.base ? ej.base.version : 'unknown');
+        initializeDialogs();
+    } else {
+        if (syncfusionWaitCount === 1 || syncfusionWaitCount % 10 === 0) {
+            console.log(`⏳ Waiting for Syncfusion to load... (attempt ${syncfusionWaitCount})`);
+            console.log(`   typeof ej:`, typeof ej);
+            console.log(`   ej.popups:`, typeof ej !== 'undefined' ? typeof ej.popups : 'N/A');
+            console.log(`   ej.popups.Dialog:`, typeof ej !== 'undefined' && ej.popups ? typeof ej.popups.Dialog : 'N/A');
+        }
+        
+        if (syncfusionWaitCount > 50) {
+            console.error('❌ Syncfusion failed to load after 5 seconds');
+            console.error('   Check Network tab for CDN loading errors');
+            console.error('   Current ej object:', typeof ej !== 'undefined' ? ej : 'undefined');
+            return;
+        }
+        
+        setTimeout(waitForSyncfusionAndInitialize, 100);
+    }
+}
+
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
-        console.log('📄 Initializing Dialogs on DOM Ready');
-        initializeDialogs();
+        console.log('📄 DOM Ready, waiting for Syncfusion...');
+        waitForSyncfusionAndInitialize();
     });
 } else {
-    console.log('📄 Initializing Dialogs (DOM already loaded)');
-    initializeDialogs();
+    console.log('📄 DOM already loaded, waiting for Syncfusion...');
+    waitForSyncfusionAndInitialize();
 }
+
+// Expose function globally for manual reinitialization if needed
+window.reinitializeDialogs = initializeDialogs;
 
 // ============================================
 // SIDEBAR ACCORDION INITIALIZATION
@@ -799,6 +888,11 @@ if (document.readyState === 'loading') {
 // ============================================
 // EXPORT FOR USE IN OTHER FILES
 // ============================================
+
+// Expose functions globally for browser use
+window.showDialog = showDialog;
+window.hideDialog = hideDialog;
+window.initializeDialogs = initializeDialogs;
 
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = { syncfusionManager, getFieldValue, setFieldValue, setFieldEnabled, showMessageDialog, showConfirmDialog, initializeDialogs, showDialog, hideDialog, initializeSidebarAccordion, setupSidebarToggle };

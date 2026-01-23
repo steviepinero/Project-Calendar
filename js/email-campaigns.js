@@ -22,7 +22,7 @@ function setupEmailCampaignsEventListeners() {
 function openCreateCampaignModal() {
     console.log('Opening create campaign modal');
     if (typeof window.showDialog === 'function') {
-        window.showDialog('createCampaignModal');
+        window.showDialog('campaign');  // Use 'campaign' not 'createCampaignModal'
     }
 }
 
@@ -49,7 +49,7 @@ function createCampaign() {
     renderEmailCampaigns();
     
     if (typeof window.hideDialog === 'function') {
-        window.hideDialog('createCampaignModal');
+        window.hideDialog('campaign');  // Use 'campaign' not 'createCampaignModal'
     }
     
     alert('Campaign created successfully!');

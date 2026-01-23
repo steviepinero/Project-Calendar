@@ -472,13 +472,63 @@ function initializeDialogs() {
         // Project Modal
         const projectModalEl = document.getElementById('projectModal');
         if (projectModalEl) {
+            console.log('✅ Found projectModal element');
             window.dialogInstances.project = new ej.popups.Dialog({
                 header: 'Add/Edit Project',
                 showCloseIcon: true,
                 visible: false,
+                isModal: true,
                 width: '600px',
-                animationSettings: { effect: 'Zoom', duration: 400 }
-            }, projectModalEl);
+                position: { X: 'center', Y: 'center' },
+                animationSettings: { effect: 'Zoom', duration: 400 },
+                zIndex: 1050
+            });
+            window.dialogInstances.project.appendTo('#projectModal');
+            console.log('✅ Project dialog initialized');
+        } else {
+            console.warn('⚠️ projectModal element not found');
+        }
+        
+        // Settings Modal
+        const settingsModalEl = document.getElementById('settingsModal');
+        if (settingsModalEl) {
+            console.log('✅ Found settingsModal element');
+            window.dialogInstances.settings = new ej.popups.Dialog({
+                header: '⚙️ Settings & API Configuration',
+                showCloseIcon: true,
+                visible: false,
+                isModal: true,
+                width: '650px',
+                height: '80vh',
+                position: { X: 'center', Y: 'center' },
+                animationSettings: { effect: 'Zoom', duration: 400 },
+                allowDragging: true,
+                zIndex: 1050
+            });
+            window.dialogInstances.settings.appendTo('#settingsModal');
+            console.log('✅ Settings dialog initialized');
+        } else {
+            console.warn('⚠️ settingsModal element not found');
+        }
+        
+        // Edit Modal (Large)
+        const editModalEl = document.getElementById('editModal');
+        if (editModalEl) {
+            console.log('✅ Found editModal element');
+            window.dialogInstances.edit = new ej.popups.Dialog({
+                header: 'Edit Project/Task',
+                showCloseIcon: true,
+                visible: false,
+                isModal: true,
+                width: '700px',
+                position: { X: 'center', Y: 'center' },
+                animationSettings: { effect: 'Zoom', duration: 400 },
+                zIndex: 1050
+            });
+            window.dialogInstances.edit.appendTo('#editModal');
+            console.log('✅ Edit dialog initialized');
+        } else {
+            console.warn('⚠️ editModal element not found');
         }
         
         // Employee Modal
@@ -488,35 +538,13 @@ function initializeDialogs() {
                 header: 'Add New Employee',
                 showCloseIcon: true,
                 visible: false,
+                isModal: true,
                 width: '500px',
-                animationSettings: { effect: 'Zoom', duration: 400 }
-            }, employeeModalEl);
-        }
-        
-        // Edit Modal (Large)
-        const editModalEl = document.getElementById('editModal');
-        if (editModalEl) {
-            window.dialogInstances.edit = new ej.popups.Dialog({
-                header: 'Edit Project/Task',
-                showCloseIcon: true,
-                visible: false,
-                width: '700px',
-                animationSettings: { effect: 'Zoom', duration: 400 }
-            }, editModalEl);
-        }
-        
-        // Settings Modal
-        const settingsModalEl = document.getElementById('settingsModal');
-        if (settingsModalEl) {
-            window.dialogInstances.settings = new ej.popups.Dialog({
-                header: '⚙️ Settings & API Configuration',
-                showCloseIcon: true,
-                visible: false,
-                width: '650px',
-                height: '80vh',
+                position: { X: 'center', Y: 'center' },
                 animationSettings: { effect: 'Zoom', duration: 400 },
-                allowDragging: true
-            }, settingsModalEl);
+                zIndex: 1050
+            });
+            window.dialogInstances.employee.appendTo('#employeeModal');
         }
         
         // Block MAC Modal
@@ -526,9 +554,13 @@ function initializeDialogs() {
                 header: 'Block MAC Address',
                 showCloseIcon: true,
                 visible: false,
+                isModal: true,
                 width: '500px',
-                animationSettings: { effect: 'Zoom', duration: 400 }
-            }, blockModalEl);
+                position: { X: 'center', Y: 'center' },
+                animationSettings: { effect: 'Zoom', duration: 400 },
+                zIndex: 1050
+            });
+            window.dialogInstances.blockMac.appendTo('#blockModal');
         }
         
         // Add MAC Modal
@@ -538,9 +570,13 @@ function initializeDialogs() {
                 header: 'Add MAC Address',
                 showCloseIcon: true,
                 visible: false,
+                isModal: true,
                 width: '500px',
-                animationSettings: { effect: 'Zoom', duration: 400 }
-            }, addMacModalEl);
+                position: { X: 'center', Y: 'center' },
+                animationSettings: { effect: 'Zoom', duration: 400 },
+                zIndex: 1050
+            });
+            window.dialogInstances.addMac.appendTo('#addMacModal');
         }
         
         // Campaign Modal
@@ -550,9 +586,13 @@ function initializeDialogs() {
                 header: 'Create New Campaign',
                 showCloseIcon: true,
                 visible: false,
+                isModal: true,
                 width: '600px',
-                animationSettings: { effect: 'Zoom', duration: 400 }
-            }, campaignModalEl);
+                position: { X: 'center', Y: 'center' },
+                animationSettings: { effect: 'Zoom', duration: 400 },
+                zIndex: 1050
+            });
+            window.dialogInstances.campaign.appendTo('#campaignModal');
         }
         
         console.log('✅ All Dialogs Initialized');
@@ -565,10 +605,13 @@ function initializeDialogs() {
  * Helper to show a dialog by name
  */
 function showDialog(dialogName) {
+    console.log(`📊 Attempting to show dialog: ${dialogName}`);
     if (window.dialogInstances[dialogName]) {
+        console.log(`✅ Dialog instance found, calling show()`);
         window.dialogInstances[dialogName].show();
+        console.log(`✅ Dialog show() called, visible:`, window.dialogInstances[dialogName].visible);
     } else {
-        console.warn(`Dialog '${dialogName}' not found`);
+        console.error(`❌ Dialog '${dialogName}' not found in instances:`, Object.keys(window.dialogInstances));
     }
 }
 

@@ -1,24 +1,6 @@
 // Shared Utilities for MSP Project Calendar
 // Note: Settings management is handled in app-main.js
-
-// ===== SYNCFUSION DIALOG HELPERS =====
-function showDialog(dialogId) {
-    if (typeof window.showDialog === 'function') {
-        window.showDialog(dialogId);
-    } else {
-        const modal = document.getElementById(dialogId);
-        if (modal) modal.style.display = 'block';
-    }
-}
-
-function hideDialog(dialogId) {
-    if (typeof window.hideDialog === 'function') {
-        window.hideDialog(dialogId);
-    } else {
-        const modal = document.getElementById(dialogId);
-        if (modal) modal.style.display = 'none';
-    }
-}
+// Note: Dialog helpers (showDialog/hideDialog) are in syncfusion-init.js
 
 // ===== DATE UTILITIES =====
 function formatDate(date) {
@@ -79,8 +61,6 @@ async function apiCall(url, options = {}) {
 // Export for use in other modules
 if (typeof window !== 'undefined') {
     window.Utils = {
-        showDialog,
-        hideDialog,
         formatDate,
         getWeekDates,
         getMonday,

@@ -207,7 +207,7 @@ function openEditModal(projectId) {
     
     console.log('✏️ Opening edit modal for project:', project.id);
     if (typeof window.showDialog === 'function') {
-        window.showDialog('editModal');
+        window.showDialog('edit');  // Use 'edit' not 'editModal'
     }
 }
 
@@ -259,7 +259,7 @@ function deleteProject() {
     }
     
     if (typeof window.hideDialog === 'function') {
-        window.hideDialog('editModal');
+        window.hideDialog('edit');  // Use 'edit' not 'editModal'
     }
     renderAll();
 }

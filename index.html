@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdn.syncfusion.com/ej2/20.4.48/material.css">
     <link rel="stylesheet" href="https://cdn.syncfusion.com/ej2/20.4.48/material.css" id="theme">
     
-    <link rel="stylesheet" href="styles.css?v=20260120-1830">
+    <link rel="stylesheet" href="styles.css?v=20260123-0600">
 </head>
 <body>
     <div class="ej2-container">
@@ -772,10 +772,8 @@
     </div>
 
     <!-- Modal for Blocking MAC Address -->
-    <div id="blockModal" class="e-dialog" style="display: none;">
-        <div class="modal-content">
-            <span class="close" id="closeBlockModal">&times;</span>
-            <h2>Block MAC Address</h2>
+    <div id="blockModal">
+        <div style="padding: 20px;">
             <form id="blockForm">
                 <div class="e-form-group">
                     <label>MAC Address:</label>
@@ -803,10 +801,8 @@
     </div>
 
     <!-- Modal for Adding MAC Address Manually -->
-    <div id="addMacModal" class="e-dialog" style="display: none;">
-        <div class="modal-content">
-            <span class="close" id="closeAddMacModal">&times;</span>
-            <h2>Add MAC Address</h2>
+    <div id="addMacModal">
+        <div style="padding: 20px;">
             <form id="addMacForm">
                 <div class="e-form-group">
                     <label>MAC Address:</label>
@@ -826,10 +822,8 @@
     </div>
 
     <!-- Modal for Adding Projects/Tasks -->
-    <div id="projectModal" class="e-dialog" style="display: none;">
-        <div class="modal-content">
-            <span class="close" id="closeAddModal">&times;</span>
-            <h2 id="modalTitle">Add New Project</h2>
+    <div id="projectModal">
+        <div style="padding: 20px;">
             <form id="projectForm">
                 <div class="e-form-group">
                     <label>Project/Task Name:</label>
@@ -871,10 +865,8 @@
     </div>
 
     <!-- Modal for Adding Employees -->
-    <div id="employeeModal" class="e-dialog" style="display: none;">
-        <div class="modal-content">
-            <span class="close" id="closeEmployeeModal">&times;</span>
-            <h2>Add New Employee</h2>
+    <div id="employeeModal">
+        <div style="padding: 20px;">
             <form id="employeeForm">
                 <div class="e-form-group">
                     <label>Employee Name:</label>
@@ -893,9 +885,8 @@
     </div>
 
     <!-- Modal for Editing Projects/Tasks -->
-    <div id="editModal" class="e-dialog" style="display: none;">
-        <div class="modal-content modal-content-large">
-            <span class="close" id="closeEditModal">&times;</span>
+    <div id="editModal">
+        <div style="padding: 20px;">
             <h2 id="editModalTitle">Edit Project</h2>
             <form id="editForm">
                 <div class="e-form-group">
@@ -967,11 +958,9 @@
     </div>
 
     <!-- Settings Modal -->
-    <div id="settingsModal" class="modal">
-        <div class="modal-content" style="max-width: 650px; max-height: 80vh; overflow-y: auto;">
-            <span class="close" id="closeSettingsModal">&times;</span>
-            <h2>⚙️ Settings & API Configuration</h2>
-            <p style="color: #666; font-size: 13px; margin: -10px 0 20px 0;">
+    <div id="settingsModal">
+        <div style="padding: 20px;">
+            <p style="color: #666; font-size: 13px; margin: 0 0 20px 0;">
                 Add your API credentials below to enable advanced features. Keys are stored securely in your browser.
             </p>
             <form id="settingsForm" style="display: flex; flex-direction: column; gap: 20px;">
@@ -1089,33 +1078,29 @@
     </div>
 
     <!-- Campaign Creation Modal -->
-    <div id="campaignModal" class="modal">
-        <div class="modal-content" style="max-width: 600px;">
-            <span class="close" id="closeCampaignModal">&times;</span>
-            <h2>Create New Campaign</h2>
-            <form id="campaignForm" style="display: flex; flex-direction: column; gap: 15px;">
-                <div class="e-form-group">
-                    <label for="campaignName">Campaign Name:</label>
-                    <input type="text" id="campaignName" class="e-field" placeholder="e.g., Q1 2026 Promotion" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
-                </div>
-                <div class="e-form-group">
-                    <label for="campaignSubject">Email Subject:</label>
-                    <input type="text" id="campaignSubject" class="e-field" placeholder="e.g., Special offer just for you!" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
-                </div>
-                <div class="e-form-group">
-                    <label for="campaignRecipients">Number of Recipients:</label>
-                    <input type="number" id="campaignRecipients" class="e-field" placeholder="100" min="1" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
-                </div>
-                <div class="e-form-group">
-                    <label for="campaignSendTime">Send Time:</label>
-                    <input type="datetime-local" id="campaignSendTime" class="e-field" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
-                </div>
-                <div style="display: flex; gap: 8px; justify-content: flex-end;">
-                    <button type="button" id="cancelCampaignBtn" class="e-btn e-outline">Cancel</button>
-                    <button type="submit" class="e-btn e-primary">Create Campaign</button>
-                </div>
-            </form>
-        </div>
+    <div id="campaignModal">
+        <form id="campaignForm" style="display: flex; flex-direction: column; gap: 15px; padding: 20px;">
+            <div class="e-form-group">
+                <label for="campaignName">Campaign Name:</label>
+                <input type="text" id="campaignName" class="e-field" placeholder="e.g., Q1 2026 Promotion" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+            </div>
+            <div class="e-form-group">
+                <label for="campaignSubject">Email Subject:</label>
+                <input type="text" id="campaignSubject" class="e-field" placeholder="e.g., Special offer just for you!" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+            </div>
+            <div class="e-form-group">
+                <label for="campaignRecipients">Number of Recipients:</label>
+                <input type="number" id="campaignRecipients" class="e-field" placeholder="100" min="1" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+            </div>
+            <div class="e-form-group">
+                <label for="campaignSendTime">Send Time:</label>
+                <input type="datetime-local" id="campaignSendTime" class="e-field" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+            </div>
+            <div style="display: flex; gap: 8px; justify-content: flex-end;">
+                <button type="button" id="cancelCampaignBtn" class="e-btn e-outline">Cancel</button>
+                <button type="submit" class="e-btn e-primary">Create Campaign</button>
+            </div>
+        </form>
     </div>
 
     <!-- Syncfusion JS - CORRECTED CDN -->
@@ -1124,20 +1109,20 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     
     <!-- Syncfusion Initialization Manager -->
-    <script src="syncfusion-init.js?v=20260122-0300"></script>
+    <script src="syncfusion-init.js?v=20260123-0500"></script>
     
     <!-- Application Modules -->
-    <script src="js/utils.js?v=20260122-0300"></script>
-    <script src="js/scheduling.js?v=20260122-0300"></script>
-    <script src="js/network-access.js?v=20260122-0300"></script>
-    <script src="js/endpoint.js?v=20260122-0300"></script>
-    <script src="js/lifecycle-page.js?v=20260122-0300"></script>
-    <script src="js/company-research.js?v=20260122-0300"></script>
-    <script src="js/email-campaigns.js?v=20260122-0300"></script>
-    <script src="js/e-signature.js?v=20260122-0300"></script>
-    <script src="js/voip.js?v=20260122-0300"></script>
+    <script src="js/utils.js?v=20260123-0500"></script>
+    <script src="js/scheduling.js?v=20260123-0500"></script>
+    <script src="js/network-access.js?v=20260123-0500"></script>
+    <script src="js/endpoint.js?v=20260123-0500"></script>
+    <script src="js/lifecycle-page.js?v=20260123-0500"></script>
+    <script src="js/company-research.js?v=20260123-0500"></script>
+    <script src="js/email-campaigns.js?v=20260123-0500"></script>
+    <script src="js/e-signature.js?v=20260123-0500"></script>
+    <script src="js/voip.js?v=20260123-0500"></script>
     
     <!-- Main Application Coordinator -->
-    <script src="js/app-main.js?v=20260122-0300"></script>
+    <script src="js/app-main.js?v=20260123-0500"></script>
 </body>
 </html>

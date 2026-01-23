@@ -90,7 +90,7 @@ function openBlockModal(macAddress) {
     document.getElementById('blockDuration').value = 'permanent';
     
     if (typeof window.showDialog === 'function') {
-        window.showDialog('blockModal');
+        window.showDialog('blockMac');  // Use 'blockMac' not 'blockModal'
     } else {
         document.getElementById('blockModal').style.display = 'block';
     }
@@ -121,7 +121,7 @@ function confirmBlockMacAddress() {
     renderAllowList();
     
     if (typeof window.hideDialog === 'function') {
-        window.hideDialog('blockModal');
+        window.hideDialog('blockMac');  // Use 'blockMac' not 'blockModal'
     }
 }
 
@@ -162,7 +162,7 @@ function addNewMacAddress() {
     alert(`✓ MAC address ${normalizedMac} has been added to the allow list`);
     
     if (typeof window.hideDialog === 'function') {
-        window.hideDialog('addMacModal');
+        window.hideDialog('addMac');  // Use 'addMac' not 'addMacModal'
     }
 }
 

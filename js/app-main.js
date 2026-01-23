@@ -110,7 +110,7 @@ function saveSettings() {
 
     alert('✅ Settings saved successfully!');
     if (typeof window.hideDialog === 'function') {
-        window.hideDialog('settingsModal');
+        window.hideDialog('settings');  // Use 'settings' not 'settingsModal'
     } else {
         document.getElementById('settingsModal').style.display = 'none';
     }
@@ -120,11 +120,20 @@ function saveSettings() {
 }
 
 function openSettingsModal() {
+    console.log('⚙️ Opening settings modal...');
     displaySettingsInModal();
     if (typeof window.showDialog === 'function') {
-        window.showDialog('settingsModal');
+        console.log('📊 Using Syncfusion dialog for settings');
+        window.showDialog('settings');  // Use 'settings' not 'settingsModal'
     } else {
-        document.getElementById('settingsModal').style.display = 'block';
+        console.log('📊 Using direct style for settings modal');
+        const modal = document.getElementById('settingsModal');
+        if (modal) {
+            modal.style.display = 'block';
+            console.log('✅ Settings modal opened');
+        } else {
+            console.error('❌ settingsModal element not found');
+        }
     }
 }
 
@@ -248,56 +257,118 @@ function setupEventListeners() {
     // Settings button
     const settingsBtn = document.getElementById('settingsBtn');
     if (settingsBtn) {
-        settingsBtn.addEventListener('click', openSettingsModal);
+        console.log('✅ Found settings button');
+        settingsBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('⚙️ Settings button clicked');
+            openSettingsModal();
+        });
+    } else {
+        console.warn('⚠️ Settings button not found');
     }
     
     // Save settings button
     const saveSettingsBtn = document.getElementById('saveSettingsBtn');
     if (saveSettingsBtn) {
-        saveSettingsBtn.addEventListener('click', saveSettings);
+        console.log('✅ Found save settings button');
+        saveSettingsBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('💾 Save settings button clicked');
+            saveSettings();
+        });
+    } else {
+        console.warn('⚠️ Save settings button not found');
     }
     
     // Add Project button
     const addProjectBtn = document.getElementById('addProjectBtn');
-    if (addProjectBtn && window.Scheduling) {
-        addProjectBtn.addEventListener('click', () => {
+    if (addProjectBtn) {
+        console.log('✅ Found add project button');
+        addProjectBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('➕ Add project button clicked');
             if (typeof window.showDialog === 'function') {
-                window.showDialog('projectModal');
+                console.log('📊 Opening project modal via Syncfusion');
+                window.showDialog('project');  // Use 'project' not 'projectModal'
+            } else {
+                console.log('📊 Opening project modal via direct style');
+                const modal = document.getElementById('projectModal');
+                if (modal) {
+                    modal.style.display = 'block';
+                } else {
+                    console.error('❌ projectModal not found');
+                }
             }
         });
+    } else {
+        console.warn('⚠️ Add project button not found');
     }
     
     // Save Project button
     const saveProjectBtn = document.getElementById('saveProjectBtn');
-    if (saveProjectBtn && window.Scheduling) {
-        saveProjectBtn.addEventListener('click', () => {
-            window.Scheduling.saveProject();
-            if (typeof window.hideDialog === 'function') {
-                window.hideDialog('projectModal');
+    if (saveProjectBtn) {
+        console.log('✅ Found save project button');
+        saveProjectBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('💾 Save project button clicked');
+            if (window.Scheduling) {
+                window.Scheduling.saveProject();
+                if (typeof window.hideDialog === 'function') {
+                    window.hideDialog('project');  // Use 'project' not 'projectModal'
+                } else {
+                    const modal = document.getElementById('projectModal');
+                    if (modal) modal.style.display = 'none';
+                }
+            } else {
+                console.error('❌ Scheduling module not loaded');
             }
         });
+    } else {
+        console.warn('⚠️ Save project button not found');
     }
     
     // Update Project button
     const updateProjectBtn = document.getElementById('updateProjectBtn');
-    if (updateProjectBtn && window.Scheduling) {
-        updateProjectBtn.addEventListener('click', () => {
-            window.Scheduling.updateProject();
-            if (typeof window.hideDialog === 'function') {
-                window.hideDialog('editModal');
+    if (updateProjectBtn) {
+        console.log('✅ Found update project button');
+        updateProjectBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('✏️ Update project button clicked');
+            if (window.Scheduling) {
+                window.Scheduling.updateProject();
+                if (typeof window.hideDialog === 'function') {
+                    window.hideDialog('edit');  // Use 'edit' not 'editModal'
+                } else {
+                    const modal = document.getElementById('editModal');
+                    if (modal) modal.style.display = 'none';
+                }
+            } else {
+                console.error('❌ Scheduling module not loaded');
             }
         });
+    } else {
+        console.warn('⚠️ Update project button not found');
     }
     
     // Delete Project button
     const deleteProjectBtn = document.getElementById('deleteProjectBtn');
-    if (deleteProjectBtn && window.Scheduling) {
-        deleteProjectBtn.addEventListener('click', () => {
-            window.Scheduling.deleteProject();
+    if (deleteProjectBtn) {
+        console.log('✅ Found delete project button');
+        deleteProjectBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('🗑️ Delete project button clicked');
+            if (window.Scheduling) {
+                window.Scheduling.deleteProject();
+            } else {
+                console.error('❌ Scheduling module not loaded');
+            }
         });
+    } else {
+        console.warn('⚠️ Delete project button not found');
     }
     
     console.log('✅ Event listeners setup complete');
+    console.log('📊 Checking for Syncfusion dialog functions:', typeof window.showDialog, typeof window.hideDialog);
 }
 
 // ===== INITIALIZATION =====

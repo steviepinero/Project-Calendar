@@ -38,6 +38,7 @@ const leadsData = [
 let leadsGridInstance = null;
 let currentLeadIndex = null;
 let touchesGridInstance = null;
+let leadDetailTabsInstance = null; // Store the tabs instance
 
 // Sample touch history data for each company
 const touchHistoryData = {
@@ -229,6 +230,9 @@ function populateCompaniesSidebar() {
             // Update detail view
             currentLeadIndex = index;
             document.getElementById('leadCompanyName').textContent = lead.Company;
+            
+            // Refresh the current tab's content
+            refreshCurrentTabContent();
         });
         companiesList.appendChild(item);
     });
@@ -263,7 +267,7 @@ function initializeLeadDetailTabs() {
             },
             {
                 header: { text: 'Proposals' },
-                content: '<div class="tab-content-section"><h3>Proposals</h3><p>All proposals sent to this lead will be displayed here.</p></div>'
+                content: '<div class="tab-content-section proposals-tab" id="proposalsTabContent"></div>'
             }
         ];
         
@@ -275,10 +279,17 @@ function initializeLeadDetailTabs() {
                 if (args.selectedIndex === 1) {
                     initializeTouchesGrid();
                 }
+                // When Proposals tab is selected, initialize the proposals interface
+                if (args.selectedIndex === 3) {
+                    initializeProposalsTab();
+                }
             }
         });
         
         tabObj.appendTo('#leadDetailTabs');
+        
+        // Store the tab instance globally for later access
+        leadDetailTabsInstance = tabObj;
         
         console.log('✅ Lead Detail Tabs initialized');
     } catch (error) {
@@ -293,12 +304,6 @@ function initializeTouchesGrid() {
     const gridContainer = document.getElementById('touchesGrid');
     if (!gridContainer) {
         console.warn('⚠️ touchesGrid container not found');
-        return;
-    }
-    
-    // Don't reinitialize if already exists
-    if (touchesGridInstance && gridContainer.querySelector('.e-grid')) {
-        console.log('✅ Touches grid already initialized');
         return;
     }
     
@@ -321,6 +326,7 @@ function initializeTouchesGrid() {
         // Destroy existing grid if it exists
         if (touchesGridInstance) {
             touchesGridInstance.destroy();
+            touchesGridInstance = null;
         }
         
         touchesGridInstance = new ej.grids.Grid({
@@ -342,7 +348,7 @@ function initializeTouchesGrid() {
         
         touchesGridInstance.appendTo('#touchesGrid');
         
-        console.log('✅ Touches Grid initialized with', touches.length, 'touches');
+        console.log('✅ Touches Grid initialized with', touches.length, 'touches for', currentCompany.Company);
     } catch (error) {
         console.error('❌ Error initializing Touches Grid:', error);
     }
@@ -359,6 +365,204 @@ function setupLeadsEventListeners() {
             document.getElementById('leadDetailView').style.display = 'none';
             document.getElementById('leadsListView').style.display = 'block';
             currentLeadIndex = null;
+        });
+    }
+}
+
+/**
+ * Initialize the Proposals Tab
+ */
+function initializeProposalsTab() {
+    const proposalsContainer = document.getElementById('proposalsTabContent');
+    if (!proposalsContainer) {
+        console.warn('⚠️ proposalsTabContent container not found');
+        return;
+    }
+    
+    // Clear existing content to force refresh
+    proposalsContainer.innerHTML = '';
+    
+    const currentCompany = leadsData[currentLeadIndex];
+    
+    // Build the proposals interface HTML
+    const proposalsHTML = `
+        <div class="proposals-layout">
+            <div class="proposals-left">
+                <!-- Documents To Include Section -->
+                <div class="proposals-section">
+                    <h3>Documents To Include</h3>
+                    <div class="document-checklist">
+                        <label class="document-item">
+                            <input type="checkbox" class="e-checkbox" id="doc-cover" checked>
+                            <span>Cover Letter</span>
+                        </label>
+                        <label class="document-item">
+                            <input type="checkbox" class="e-checkbox" id="doc-executive">
+                            <span>#VALUE! Executive Summary</span>
+                        </label>
+                        <label class="document-item">
+                            <input type="checkbox" class="e-checkbox" id="doc-problem">
+                            <span>Problem Statement</span>
+                        </label>
+                        <label class="document-item">
+                            <input type="checkbox" class="e-checkbox" id="doc-solution">
+                            <span>#VALUE! Proposed Solution</span>
+                        </label>
+                        <label class="document-item">
+                            <input type="checkbox" class="e-checkbox" id="doc-deliverables">
+                            <span>Deliverables</span>
+                        </label>
+                        <label class="document-item">
+                            <input type="checkbox" class="e-checkbox" id="doc-timeline">
+                            <span>#VALUE! Timeline</span>
+                        </label>
+                        <label class="document-item">
+                            <input type="checkbox" class="e-checkbox" id="doc-budget">
+                            <span>#VALUE! Budget</span>
+                        </label>
+                        <label class="document-item">
+                            <input type="checkbox" class="e-checkbox" id="doc-team">
+                            <span>About The Team</span>
+                        </label>
+                        <label class="document-item">
+                            <input type="checkbox" class="e-checkbox" id="doc-press">
+                            <span>Press Releases</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- Variables Section -->
+                <div class="proposals-section">
+                    <h3>Variables</h3>
+                    <div id="proposalVariablesGrid"></div>
+                </div>
+                
+                <div class="proposals-actions">
+                    <button id="generateProposalBtn" class="e-btn e-primary">Generate Proposal</button>
+                    <button id="previewProposalBtn" class="e-btn e-outline">Preview</button>
+                </div>
+            </div>
+            
+            <div class="proposals-right">
+                <div class="proposal-preview" id="proposalPreview">
+                    <div class="proposal-document">
+                        <div class="proposal-header">
+                            <div class="proposal-logo">
+                                <div class="handshake-icon">🤝</div>
+                            </div>
+                            <h1>Cover Letter</h1>
+                            <h2>of Business Proposal</h2>
+                        </div>
+                        
+                        <div class="proposal-body">
+                            <p class="proposal-greeting">Dear <span class="variable">XYZ</span>,</p>
+                            
+                            <p class="proposal-intro">
+                                Here you will give a one-liner about your company, brief background information about how your company came to be, and a short overview of what makes your company better than the rest. Make it friendly and encourage your reader to reach out with any questions.
+                            </p>
+                            
+                            <div class="proposal-signature">
+                                <p><strong>Regards,</strong></p>
+                                <p class="signature-name">User Name</p>
+                                <p class="signature-title">Designation</p>
+                                <p class="signature-company">Company Name</p>
+                            </div>
+                        </div>
+                        
+                        <div class="proposal-footer">
+                            <p class="proposal-note">This slide is 100% editable. Adapt it to your needs and capture your audience's attention.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    proposalsContainer.innerHTML = proposalsHTML;
+    
+    // Initialize the variables grid
+    initializeProposalVariablesGrid(currentCompany);
+    
+    // Set up event listeners
+    setupProposalEventListeners();
+    
+    console.log('✅ Proposals tab initialized');
+}
+
+/**
+ * Initialize Variables Grid
+ */
+function initializeProposalVariablesGrid(company) {
+    const gridContainer = document.getElementById('proposalVariablesGrid');
+    if (!gridContainer) return;
+    
+    const variablesData = [
+        { Field: 'Client Name', Value: company.Company },
+        { Field: 'Address', Value: company.City },
+        { Field: 'Date Of Next Meeting', Value: company.FollowUp }
+    ];
+    
+    if (typeof window.ej !== 'undefined' && typeof window.ej.grids !== 'undefined') {
+        try {
+            const grid = new ej.grids.Grid({
+                dataSource: variablesData,
+                allowSorting: false,
+                allowPaging: false,
+                editSettings: { allowEditing: true, allowAdding: true, allowDeleting: true, mode: 'Normal' },
+                columns: [
+                    { field: 'Field', headerText: 'Field', width: 150, textAlign: 'Left' },
+                    { field: 'Value', headerText: 'Value', width: 250, textAlign: 'Left' }
+                ],
+                height: 200
+            });
+            
+            grid.appendTo('#proposalVariablesGrid');
+            console.log('✅ Proposal Variables Grid initialized');
+        } catch (error) {
+            console.error('❌ Error initializing Variables Grid:', error);
+        }
+    }
+}
+
+/**
+ * Refresh the current tab content when company changes
+ */
+function refreshCurrentTabContent() {
+    if (!leadDetailTabsInstance) {
+        console.warn('⚠️ Tab instance not available');
+        return;
+    }
+    
+    const selectedIndex = leadDetailTabsInstance.selectedItem;
+    console.log('🔄 Refreshing tab content for tab index:', selectedIndex);
+    
+    // Refresh based on which tab is currently active
+    if (selectedIndex === 1) {
+        // Touch's tab - reinitialize the grid with new company data
+        initializeTouchesGrid();
+    } else if (selectedIndex === 3) {
+        // Proposals tab - reinitialize the proposals with new company data
+        initializeProposalsTab();
+    }
+    // Profile and Site Overview tabs are static, no need to refresh
+}
+
+/**
+ * Set up event listeners for proposal buttons
+ */
+function setupProposalEventListeners() {
+    const generateBtn = document.getElementById('generateProposalBtn');
+    const previewBtn = document.getElementById('previewProposalBtn');
+    
+    if (generateBtn) {
+        generateBtn.addEventListener('click', () => {
+            alert('Proposal generation coming soon! This will create a PDF document with all selected sections.');
+        });
+    }
+    
+    if (previewBtn) {
+        previewBtn.addEventListener('click', () => {
+            alert('Preview functionality coming soon! This will show a full preview of the proposal document.');
         });
     }
 }

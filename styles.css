@@ -2704,6 +2704,16 @@ header h1 {
 }
 
 /* Lead Grid custom styling */
+#leadsGrid .e-grid .e-headercelldiv {
+    font-weight: 600 !important;
+    font-size: 13px !important;
+    color: white !important;
+}
+
+#leadsGrid .e-grid .e-headercell {
+    background-color: #34495e !important;
+}
+
 .e-grid .e-rowcell {
     padding: 10px !important;
     font-size: 13px !important;
@@ -2726,6 +2736,271 @@ header h1 {
     color: #2980b9;
 }
 
+/* Proposals Tab Styles */
+.proposals-tab {
+    padding: 0 !important;
+}
+
+.proposals-layout {
+    display: grid;
+    grid-template-columns: 400px 1fr;
+    gap: 20px;
+    min-height: 600px;
+}
+
+.proposals-left {
+    background: white;
+    padding: 20px;
+    border-right: 1px solid #ddd;
+    overflow-y: auto;
+}
+
+.proposals-section {
+    margin-bottom: 30px;
+}
+
+.proposals-section h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #3498db;
+}
+
+.document-checklist {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.document-item {
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.document-item:hover {
+    background-color: #f8f9fa;
+}
+
+.document-item input[type="checkbox"] {
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.document-item span {
+    font-size: 14px;
+    color: #2c3e50;
+}
+
+#proposalVariablesGrid {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.proposals-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.proposals-actions button {
+    flex: 1;
+}
+
+.proposals-right {
+    background: #f5f5f5;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.proposal-preview {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.proposal-document {
+    background: white;
+    width: 100%;
+    max-width: 700px;
+    min-height: 800px;
+    padding: 60px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.proposal-header {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.proposal-logo {
+    margin-bottom: 30px;
+}
+
+.handshake-icon {
+    width: 180px;
+    height: 180px;
+    margin: 0 auto;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 80px;
+    box-shadow: 0 10px 40px rgba(102, 126, 234, 0.4);
+}
+
+.proposal-header h1 {
+    font-size: 32px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin: 10px 0 5px 0;
+}
+
+.proposal-header h2 {
+    font-size: 20px;
+    font-weight: 400;
+    color: #7f8c8d;
+    margin: 0;
+}
+
+.proposal-body {
+    margin-bottom: 60px;
+}
+
+.proposal-greeting {
+    font-size: 18px;
+    color: #3498db;
+    font-weight: 600;
+    margin-bottom: 25px;
+}
+
+.proposal-greeting .variable {
+    color: #e74c3c;
+}
+
+.proposal-intro {
+    font-size: 15px;
+    line-height: 1.8;
+    color: #555;
+    text-align: justify;
+}
+
+.proposal-signature {
+    margin-top: 40px;
+}
+
+.proposal-signature p {
+    margin: 5px 0;
+    font-size: 14px;
+    color: #2c3e50;
+}
+
+.proposal-signature strong {
+    font-size: 16px;
+    color: #3498db;
+}
+
+.signature-name {
+    font-weight: 600;
+    font-size: 15px !important;
+}
+
+.signature-title {
+    color: #7f8c8d !important;
+    font-style: italic;
+}
+
+.signature-company {
+    color: #3498db !important;
+    font-weight: 500;
+}
+
+.proposal-footer {
+    margin-top: 60px;
+    padding-top: 20px;
+    border-top: 1px solid #ecf0f1;
+}
+
+.proposal-note {
+    font-size: 11px;
+    color: #95a5a6;
+    text-align: center;
+    font-style: italic;
+}
+
 /* ============================================
    END LEADS/CRM PAGE STYLES
+   ============================================ */
+
+/* ============================================
+   BILLING PAGE STYLES
+   ============================================ */
+
+.billing-page {
+    padding: 20px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.billing-header {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #3498db;
+}
+
+.billing-header h2 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0;
+}
+
+#billingMonthYear {
+    color: #3498db;
+    font-style: italic;
+}
+
+#billingTabs {
+    flex: 1;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.billing-tab-content {
+    padding: 20px;
+    height: calc(100vh - 250px);
+}
+
+#billingImportGrid,
+#billingProcessedGrid {
+    height: 100%;
+    background: white;
+}
+
+/* Billing Grid Customization */
+.billing-tab-content .e-grid {
+    border: none !important;
+}
+
+.billing-tab-content .e-grid .e-headercelldiv {
+    font-weight: 600 !important;
+    font-size: 13px !important;
+    color: #2c3e50 !important;
+}
+
+.billing-tab-content .e-grid .e-rowcell {
+    padding: 10px !important;
+    font-size: 13px !important;
+}
+
+/* ============================================
+   END BILLING PAGE STYLES
    ============================================ */

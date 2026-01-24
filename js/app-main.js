@@ -252,6 +252,11 @@ function switchPage(pageName) {
             console.log('📞 Initializing VoIP calling page');
             window.VoIP.initializeVoIPPage();
         }
+        
+        if (pageName === 'billing' && window.Billing) {
+            console.log('💰 Initializing billing page');
+            window.Billing.initializeBillingPage();
+        }
     }, 100);
 }
 

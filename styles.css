@@ -2956,49 +2956,44 @@ header h1 {
 }
 
 .billing-header h2 {
-    font-size: 20px;
+    font-size: 22px;
     font-weight: 600;
     color: #2c3e50;
     margin: 0;
 }
 
-#billingMonthYear {
-    color: #3498db;
-    font-style: italic;
-}
-
-#billingTabs {
+.billing-grid-container {
     flex: 1;
     background: white;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.billing-tab-content {
     padding: 20px;
-    height: calc(100vh - 250px);
 }
 
-#billingImportGrid,
-#billingProcessedGrid {
-    height: 100%;
-    background: white;
+/* Billing TreeGrid Customization */
+#billingOverviewGrid .e-treegrid {
+    border: 1px solid #e0e0e0 !important;
 }
 
-/* Billing Grid Customization */
-.billing-tab-content .e-grid {
-    border: none !important;
+#billingOverviewGrid .e-gridheader {
+    background: #455a64 !important;
 }
 
-.billing-tab-content .e-grid .e-headercelldiv {
+#billingOverviewGrid .e-headercelldiv {
     font-weight: 600 !important;
     font-size: 13px !important;
-    color: #2c3e50 !important;
+    color: white !important;
 }
 
-.billing-tab-content .e-grid .e-rowcell {
-    padding: 10px !important;
+#billingOverviewGrid .e-rowcell {
+    padding: 8px 12px !important;
     font-size: 13px !important;
+    border-bottom: 1px solid #e0e0e0 !important;
+}
+
+#billingOverviewGrid .e-treegridexpand,
+#billingOverviewGrid .e-treegridcollapse {
+    color: #3498db !important;
 }
 
 /* ============================================

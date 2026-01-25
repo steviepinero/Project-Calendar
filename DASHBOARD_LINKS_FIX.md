@@ -328,3 +328,4 @@ Both should now work smoothly together - accordion expands/collapses AND links n
 *Solution: Removed stopPropagation, added capture phase*  
 *Status: Complete & Working* ✅
 
+

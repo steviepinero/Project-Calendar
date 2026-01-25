@@ -378,3 +378,4 @@ It will now show on every page you navigate to.
 *Component: Global Application Header*  
 *Status: Complete & Visible* ✅
 
+

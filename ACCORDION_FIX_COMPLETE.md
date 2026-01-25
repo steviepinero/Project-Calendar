@@ -351,3 +351,4 @@ Users can click section headers to expand and collapse content with smooth anima
 *Component: Syncfusion Accordion*  
 *Status: Fully Functional* ✅
 
+

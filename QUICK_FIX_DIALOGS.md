@@ -76,3 +76,4 @@ Click: X button in top-right
 
 All dialogs should be hidden until you click their buttons.
 
+

@@ -356,3 +356,4 @@ The modal should now appear with a smooth zoom animation!
 *Solution: Updated to Syncfusion Dialog API*  
 *Status: Complete & All Buttons Working* ✅
 
+

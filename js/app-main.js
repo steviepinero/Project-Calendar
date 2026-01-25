@@ -147,6 +147,7 @@ function setupNavigation() {
         return;
     }
 
+    // Query for all navigation links, including those in collapsed accordion panels
     const navLinks = document.querySelectorAll('.nav-item[data-page], .sidebar-link[data-page]');
     console.log('📊 Found', navLinks.length, 'navigation links with data-page');
 
@@ -156,28 +157,30 @@ function setupNavigation() {
         return;
     }
 
-    navLinks.forEach(function(link, index) {
-        const pageName = link.getAttribute('data-page');
-        console.log(`  ${index + 1}. "${link.textContent.trim()}" → ${pageName}`);
-
-        const newLink = link.cloneNode(true);
-        link.parentNode.replaceChild(newLink, link);
-
-        newLink.addEventListener('click', function(e) {
+    // Use event delegation on the sidebar instead of individual links
+    sidebar.addEventListener('click', function(e) {
+        // Find the closest link with data-page
+        const link = e.target.closest('.nav-item[data-page], .sidebar-link[data-page]');
+        
+        if (link) {
             e.preventDefault();
-
-            console.log('🔗 Link clicked:', newLink.textContent.trim(), '→', pageName);
+            e.stopPropagation();
+            
+            const pageName = link.getAttribute('data-page');
+            console.log('🔗 Link clicked:', link.textContent.trim(), '→', pageName);
+            
             switchPage(pageName);
-
+            
+            // Update active state
             document.querySelectorAll('.nav-item, .sidebar-link').forEach(function(nav) {
                 nav.classList.remove('active');
             });
-            newLink.classList.add('active');
-        });
-    });
+            link.classList.add('active');
+        }
+    }, true); // Use capture phase
 
     window.navigationSetup = true;
-    console.log('✅ Navigation setup complete - direct listeners attached to', navLinks.length, 'links');
+    console.log('✅ Navigation setup complete - event delegation on sidebar for all', navLinks.length, 'links');
 }
 
 function switchPage(pageName) {

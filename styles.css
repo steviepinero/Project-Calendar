@@ -2067,6 +2067,32 @@ header h1 {
 }
 
 /* Dialog (Modal) */
+/* Hide modal divs in document flow before Syncfusion wraps them */
+body > #projectModal,
+body > #employeeModal,
+body > #settingsModal,
+body > #editModal,
+body > #blockModal,
+body > #addMacModal,
+body > #campaignModal {
+    visibility: hidden;
+    position: absolute;
+    top: -9999px;
+}
+
+/* Syncfusion moves them, so once they're in dialog container, make visible */
+.e-dialog-wrapper #projectModal,
+.e-dialog-wrapper #employeeModal,
+.e-dialog-wrapper #settingsModal,
+.e-dialog-wrapper #editModal,
+.e-dialog-wrapper #blockModal,
+.e-dialog-wrapper #addMacModal,
+.e-dialog-wrapper #campaignModal {
+    visibility: visible;
+    position: static;
+    top: auto;
+}
+
 .e-dialog {
     border-radius: 8px !important;
     box-shadow: 0 4px 20px rgba(0,0,0,0.2) !important;

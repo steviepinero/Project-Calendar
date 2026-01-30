@@ -3,7 +3,7 @@
  * Handles all project database operations
  */
 
-const pool = require('../db/connection');
+const pool = require('../connection');
 const { v4: uuidv4 } = require('uuid');
 
 class ProjectRepository {
@@ -158,5 +158,6 @@ class ProjectRepository {
 }
 
 module.exports = ProjectRepository;
+
 
 

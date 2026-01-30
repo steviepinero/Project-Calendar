@@ -10,107 +10,112 @@ const AI_CONFIG = {
 };
 
 // ===== SETTINGS MANAGEMENT =====
-const STORAGE_KEYS = {
-    openai: 'openai_api_key',
-    twilio_sid: 'twilio_account_sid',
-    twilio_token: 'twilio_auth_token',
-    twilio_phone: 'twilio_phone_number',
-    docusign_id: 'docusign_client_id',
-    docusign_secret: 'docusign_client_secret',
-    docusign_url: 'docusign_base_url',
-    sendgrid: 'sendgrid_api_key',
-    clearbit: 'clearbit_api_key'
-};
-
 function loadSettings() {
+    console.log('📥 Loading settings from localStorage...');
+    
     // Load OpenAI
-    const openaiKey = localStorage.getItem(STORAGE_KEYS.openai);
+    const openaiKey = localStorage.getItem('openai_api_key');
     if (openaiKey) {
         AI_CONFIG.apiKey = openaiKey;
         console.log('✅ OpenAI API Key loaded');
     }
 
     // Load Twilio
-    const twilioSid = localStorage.getItem(STORAGE_KEYS.twilio_sid);
-    const twilioToken = localStorage.getItem(STORAGE_KEYS.twilio_token);
-    const twilioPhone = localStorage.getItem(STORAGE_KEYS.twilio_phone);
+    const twilioSid = localStorage.getItem('twilio_account_sid');
+    const twilioToken = localStorage.getItem('twilio_auth_token');
+    const twilioPhone = localStorage.getItem('twilio_phone_number');
     if (twilioSid && twilioToken && window.VoIP) {
         window.VoIP.VOIP_CONFIG.apiKey = twilioSid;
         window.VoIP.VOIP_CONFIG.authToken = twilioToken;
         window.VoIP.VOIP_CONFIG.phoneNumber = twilioPhone;
         console.log('✅ Twilio credentials loaded');
     }
-
-    // Load and display all settings in settings modal
-    displaySettingsInModal();
+    
+    console.log('✅ Settings loaded');
 }
 
 function displaySettingsInModal() {
-    const openaiKey = localStorage.getItem(STORAGE_KEYS.openai) || '';
-    const twilioSid = localStorage.getItem(STORAGE_KEYS.twilio_sid) || '';
-    const twilioToken = localStorage.getItem(STORAGE_KEYS.twilio_token) || '';
-    const twilioPhone = localStorage.getItem(STORAGE_KEYS.twilio_phone) || '';
-    const docusignId = localStorage.getItem(STORAGE_KEYS.docusign_id) || '';
-    const docusignSecret = localStorage.getItem(STORAGE_KEYS.docusign_secret) || '';
-    const docusignUrl = localStorage.getItem(STORAGE_KEYS.docusign_url) || '';
-    const sendgridKey = localStorage.getItem(STORAGE_KEYS.sendgrid) || '';
-    const clearbitKey = localStorage.getItem(STORAGE_KEYS.clearbit) || '';
-
+    console.log('📋 Displaying settings in modal...');
+    
+    // Use localStorage directly (simple and reliable)
+    const settings = {
+        openai_api_key: localStorage.getItem('openai_api_key') || '',
+        twilio_account_sid: localStorage.getItem('twilio_account_sid') || '',
+        twilio_auth_token: localStorage.getItem('twilio_auth_token') || '',
+        twilio_phone_number: localStorage.getItem('twilio_phone_number') || '',
+        docusign_client_id: localStorage.getItem('docusign_client_id') || '',
+        docusign_client_secret: localStorage.getItem('docusign_client_secret') || '',
+        docusign_base_url: localStorage.getItem('docusign_base_url') || '',
+        sendgrid_api_key: localStorage.getItem('sendgrid_api_key') || '',
+        clearbit_api_key: localStorage.getItem('clearbit_api_key') || ''
+    };
+    
     // Mask sensitive keys for display
-    const maskKey = (key) => key ? `${key.substring(0, 8)}${'*'.repeat(Math.max(0, key.length - 8))}` : '';
-
+    const maskKey = (key) => {
+        if (!key || key.length <= 8) return key;
+        return key.substring(0, 8) + '*'.repeat(Math.max(0, key.length - 8));
+    };
+    
+    // Display settings in form fields
     if (document.getElementById('openaiApiKey')) {
-        document.getElementById('openaiApiKey').value = maskKey(openaiKey);
+        document.getElementById('openaiApiKey').value = maskKey(settings.openai_api_key);
     }
     if (document.getElementById('twilioAccountSid')) {
-        document.getElementById('twilioAccountSid').value = maskKey(twilioSid);
+        document.getElementById('twilioAccountSid').value = maskKey(settings.twilio_account_sid);
     }
     if (document.getElementById('twilioAuthToken')) {
-        document.getElementById('twilioAuthToken').value = maskKey(twilioToken);
+        document.getElementById('twilioAuthToken').value = maskKey(settings.twilio_auth_token);
     }
     if (document.getElementById('twilioPhoneNumber')) {
-        document.getElementById('twilioPhoneNumber').value = twilioPhone;
+        document.getElementById('twilioPhoneNumber').value = settings.twilio_phone_number;
     }
     if (document.getElementById('docusignClientId')) {
-        document.getElementById('docusignClientId').value = maskKey(docusignId);
+        document.getElementById('docusignClientId').value = maskKey(settings.docusign_client_id);
     }
     if (document.getElementById('docusignClientSecret')) {
-        document.getElementById('docusignClientSecret').value = maskKey(docusignSecret);
+        document.getElementById('docusignClientSecret').value = maskKey(settings.docusign_client_secret);
     }
     if (document.getElementById('docusignBaseUrl')) {
-        document.getElementById('docusignBaseUrl').value = docusignUrl;
+        document.getElementById('docusignBaseUrl').value = settings.docusign_base_url;
     }
     if (document.getElementById('sendgridApiKey')) {
-        document.getElementById('sendgridApiKey').value = maskKey(sendgridKey);
+        document.getElementById('sendgridApiKey').value = maskKey(settings.sendgrid_api_key);
     }
     if (document.getElementById('clearbitApiKey')) {
-        document.getElementById('clearbitApiKey').value = maskKey(clearbitKey);
+        document.getElementById('clearbitApiKey').value = maskKey(settings.clearbit_api_key);
     }
+    
+    console.log('✅ Settings displayed in modal');
 }
 
 function saveSettings() {
+    console.log('💾 Saving settings...');
+    
     const settings = {
-        openai: document.getElementById('openaiApiKey')?.value || '',
-        twilio_sid: document.getElementById('twilioAccountSid')?.value || '',
-        twilio_token: document.getElementById('twilioAuthToken')?.value || '',
-        twilio_phone: document.getElementById('twilioPhoneNumber')?.value || '',
-        docusign_id: document.getElementById('docusignClientId')?.value || '',
-        docusign_secret: document.getElementById('docusignClientSecret')?.value || '',
-        docusign_url: document.getElementById('docusignBaseUrl')?.value || '',
-        sendgrid: document.getElementById('sendgridApiKey')?.value || '',
-        clearbit: document.getElementById('clearbitApiKey')?.value || ''
+        openai_api_key: document.getElementById('openaiApiKey')?.value || '',
+        twilio_account_sid: document.getElementById('twilioAccountSid')?.value || '',
+        twilio_auth_token: document.getElementById('twilioAuthToken')?.value || '',
+        twilio_phone_number: document.getElementById('twilioPhoneNumber')?.value || '',
+        docusign_client_id: document.getElementById('docusignClientId')?.value || '',
+        docusign_client_secret: document.getElementById('docusignClientSecret')?.value || '',
+        docusign_base_url: document.getElementById('docusignBaseUrl')?.value || '',
+        sendgrid_api_key: document.getElementById('sendgridApiKey')?.value || '',
+        clearbit_api_key: document.getElementById('clearbitApiKey')?.value || ''
     };
 
-    // Save to localStorage
+    // Save to localStorage (skip masked values)
     Object.keys(settings).forEach(key => {
         if (settings[key] && !settings[key].includes('*')) {
-            localStorage.setItem(STORAGE_KEYS[key], settings[key]);
+            localStorage.setItem(key, settings[key]);
+            console.log(`✅ Saved ${key}`);
         }
     });
-
+    
     alert('✅ Settings saved successfully!');
+    
+    // Close the dialog
     if (typeof window.hideDialog === 'function') {
-        window.hideDialog('settings');  // Use 'settings' not 'settingsModal'
+        window.hideDialog('settings');
     } else {
         document.getElementById('settingsModal').style.display = 'none';
     }
@@ -121,10 +126,18 @@ function saveSettings() {
 
 function openSettingsModal() {
     console.log('⚙️ Opening settings modal...');
-    displaySettingsInModal();
+    
+    // Load the settings first
+    try {
+        displaySettingsInModal();
+    } catch (error) {
+        console.error('❌ Error loading settings:', error);
+    }
+    
+    // Then show the dialog
     if (typeof window.showDialog === 'function') {
         console.log('📊 Using Syncfusion dialog for settings');
-        window.showDialog('settings');  // Use 'settings' not 'settingsModal'
+        window.showDialog('settings');
     } else {
         console.log('📊 Using direct style for settings modal');
         const modal = document.getElementById('settingsModal');

@@ -268,7 +268,7 @@ function initializeLeadDetailTabs() {
             },
             {
                 header: { text: 'Site Overview' },
-                content: '<div class="tab-content-section"><h3>Site Overview</h3><p>Website and online presence details will be displayed here.</p></div>'
+                content: '<div class="tab-content-section" id="siteOverviewTabContent" style="padding: 0;"></div>'
             },
             {
                 header: { text: 'Proposals' },
@@ -287,6 +287,10 @@ function initializeLeadDetailTabs() {
                 // When Touch's tab is selected, initialize the grid
                 if (args.selectedIndex === 1) {
                     initializeTouchesGrid();
+                }
+                // When Site Overview tab is selected, initialize the site survey
+                if (args.selectedIndex === 2) {
+                    initializeSiteOverviewTab();
                 }
                 // When Proposals tab is selected, initialize the proposals interface
                 if (args.selectedIndex === 3) {
@@ -557,6 +561,267 @@ function setupProfileSubtabs() {
 }
 
 /**
+ * Initialize the Site Overview Tab with Site Survey, Layout, and Devices
+ */
+function initializeSiteOverviewTab() {
+    const siteOverviewContainer = document.getElementById('siteOverviewTabContent');
+    if (!siteOverviewContainer) {
+        console.warn('⚠️ siteOverviewTabContent container not found');
+        return;
+    }
+    
+    const currentCompany = leadsData[currentLeadIndex];
+    if (!currentCompany) {
+        console.warn('⚠️ No company data available');
+        return;
+    }
+    
+    // Generate sample device data
+    const devices = generateDeviceList(currentCompany);
+    
+    // Build comprehensive site overview HTML
+    const siteOverviewHTML = `
+        <div style="padding: 20px;">
+            <h2 style="color: #2c3e50; margin-bottom: 20px;">🏢 ${currentCompany.Company} - Site Survey</h2>
+            
+            <!-- Site Information Cards -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-bottom: 30px;">
+                <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-left: 4px solid #3498db;">
+                    <div style="color: #999; font-size: 13px; margin-bottom: 5px;">Total Devices</div>
+                    <div style="font-size: 28px; font-weight: 700; color: #2c3e50;">${devices.length}</div>
+                </div>
+                <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-left: 4px solid #27ae60;">
+                    <div style="color: #999; font-size: 13px; margin-bottom: 5px;">Network Type</div>
+                    <div style="font-size: 18px; font-weight: 700; color: #2c3e50;">Hybrid (Wired/WiFi)</div>
+                </div>
+                <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-left: 4px solid #f39c12;">
+                    <div style="color: #999; font-size: 13px; margin-bottom: 5px;">Internet Provider</div>
+                    <div style="font-size: 18px; font-weight: 700; color: #2c3e50;">Comcast Business</div>
+                </div>
+                <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-left: 4px solid #9b59b6;">
+                    <div style="color: #999; font-size: 13px; margin-bottom: 5px;">Bandwidth</div>
+                    <div style="font-size: 18px; font-weight: 700; color: #2c3e50;">500 Mbps</div>
+                </div>
+            </div>
+
+            <!-- Network Layout Diagram -->
+            <div style="background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 30px;">
+                <h3 style="margin: 0 0 20px 0; color: #2c3e50; display: flex; align-items: center; gap: 8px;">
+                    🌐 Network Layout
+                </h3>
+                <div style="background: #f8f9fa; padding: 30px; border-radius: 8px; border: 2px solid #e0e0e0;">
+                    <div style="display: flex; flex-direction: column; align-items: center; gap: 20px;">
+                        <!-- Internet -->
+                        <div style="background: #3498db; color: white; padding: 15px 30px; border-radius: 8px; font-weight: 600; box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);">
+                            ☁️ Internet
+                        </div>
+                        
+                        <div style="width: 2px; height: 30px; background: #95a5a6;"></div>
+                        
+                        <!-- Firewall -->
+                        <div style="background: #e74c3c; color: white; padding: 15px 30px; border-radius: 8px; font-weight: 600; box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3);">
+                            🛡️ Firewall (WatchGuard)
+                        </div>
+                        
+                        <div style="width: 2px; height: 30px; background: #95a5a6;"></div>
+                        
+                        <!-- Core Switch -->
+                        <div style="background: #27ae60; color: white; padding: 15px 30px; border-radius: 8px; font-weight: 600; box-shadow: 0 4px 8px rgba(39, 174, 96, 0.3);">
+                            🔌 Core Switch (48-port)
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; margin-top: 20px;">
+                            <!-- Left Branch -->
+                            <div style="display: flex; flex-direction: column; align-items: center; gap: 15px;">
+                                <div style="width: 2px; height: 30px; background: #95a5a6;"></div>
+                                <div style="background: #f39c12; color: white; padding: 12px 20px; border-radius: 6px; font-weight: 600; text-align: center; box-shadow: 0 3px 6px rgba(243, 156, 18, 0.3);">
+                                    📡 WiFi AP<br><span style="font-size: 11px; font-weight: 400;">2.4/5 GHz</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Middle Branch -->
+                            <div style="display: flex; flex-direction: column; align-items: center; gap: 15px;">
+                                <div style="width: 2px; height: 30px; background: #95a5a6;"></div>
+                                <div style="background: #9b59b6; color: white; padding: 12px 20px; border-radius: 6px; font-weight: 600; text-align: center; box-shadow: 0 3px 6px rgba(155, 89, 182, 0.3);">
+                                    🖥️ Server<br><span style="font-size: 11px; font-weight: 400;">Windows Server</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Right Branch -->
+                            <div style="display: flex; flex-direction: column; align-items: center; gap: 15px;">
+                                <div style="width: 2px; height: 30px; background: #95a5a6;"></div>
+                                <div style="background: #16a085; color: white; padding: 12px 20px; border-radius: 6px; font-weight: 600; text-align: center; box-shadow: 0 3px 6px rgba(22, 160, 133, 0.3);">
+                                    💻 Workstations<br><span style="font-size: 11px; font-weight: 400;">${devices.filter(d => d.Type === 'Workstation').length} devices</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Network Details -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
+                    <div style="padding: 15px; background: #e8f4f8; border-radius: 6px; border-left: 4px solid #3498db;">
+                        <strong style="color: #2980b9; display: block; margin-bottom: 8px;">📍 Primary Location</strong>
+                        <p style="margin: 0; color: #555; font-size: 13px;">
+                            ${currentCompany.City}, FL<br>
+                            Single-site deployment<br>
+                            Office: 5,000 sq ft
+                        </p>
+                    </div>
+                    <div style="padding: 15px; background: #e8f8e8; border-radius: 6px; border-left: 4px solid #27ae60;">
+                        <strong style="color: #27ae60; display: block; margin-bottom: 8px;">🔒 Security Features</strong>
+                        <p style="margin: 0; color: #555; font-size: 13px;">
+                            • Unified Threat Management<br>
+                            • Content Filtering<br>
+                            • VPN Access (SSL/IPSec)
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Device Inventory -->
+            <div style="background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 style="margin: 0; color: #2c3e50;">💻 Device Inventory</h3>
+                    <button class="e-btn e-outline e-small" onclick="alert('Export functionality coming soon!')">📥 Export List</button>
+                </div>
+                
+                <!-- Device Summary Cards -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                    <div style="background: #e3f2fd; padding: 15px; border-radius: 6px; text-align: center;">
+                        <div style="font-size: 24px; font-weight: 700; color: #1976d2;">${devices.filter(d => d.Type === 'Workstation').length}</div>
+                        <div style="font-size: 13px; color: #666; margin-top: 5px;">Workstations</div>
+                    </div>
+                    <div style="background: #f3e5f5; padding: 15px; border-radius: 6px; text-align: center;">
+                        <div style="font-size: 24px; font-weight: 700; color: #7b1fa2;">${devices.filter(d => d.Type === 'Laptop').length}</div>
+                        <div style="font-size: 13px; color: #666; margin-top: 5px;">Laptops</div>
+                    </div>
+                    <div style="background: #fff3e0; padding: 15px; border-radius: 6px; text-align: center;">
+                        <div style="font-size: 24px; font-weight: 700; color: #f57c00;">${devices.filter(d => d.Type === 'Server').length}</div>
+                        <div style="font-size: 13px; color: #666; margin-top: 5px;">Servers</div>
+                    </div>
+                    <div style="background: #e8f5e9; padding: 15px; border-radius: 6px; text-align: center;">
+                        <div style="font-size: 24px; font-weight: 700; color: #388e3c;">${devices.filter(d => d.Type === 'Network').length}</div>
+                        <div style="font-size: 13px; color: #666; margin-top: 5px;">Network Devices</div>
+                    </div>
+                </div>
+                
+                <!-- Device List Table -->
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background: #34495e; color: white;">
+                                <th style="padding: 12px; text-align: left; font-size: 13px; font-weight: 600;">Device Name</th>
+                                <th style="padding: 12px; text-align: left; font-size: 13px; font-weight: 600;">Type</th>
+                                <th style="padding: 12px; text-align: left; font-size: 13px; font-weight: 600;">Model</th>
+                                <th style="padding: 12px; text-align: left; font-size: 13px; font-weight: 600;">OS/Version</th>
+                                <th style="padding: 12px; text-align: left; font-size: 13px; font-weight: 600;">Location</th>
+                                <th style="padding: 12px; text-align: center; font-size: 13px; font-weight: 600;">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${devices.map((device, index) => `
+                                <tr style="border-bottom: 1px solid #ecf0f1; ${index % 2 === 0 ? 'background: #f8f9fa;' : ''}">
+                                    <td style="padding: 12px; font-size: 14px; color: #2c3e50; font-weight: 600;">${device.Name}</td>
+                                    <td style="padding: 12px; font-size: 14px; color: #2c3e50;">${device.Type}</td>
+                                    <td style="padding: 12px; font-size: 14px; color: #555;">${device.Model}</td>
+                                    <td style="padding: 12px; font-size: 14px; color: #555;">${device.OS}</td>
+                                    <td style="padding: 12px; font-size: 14px; color: #555;">${device.Location}</td>
+                                    <td style="padding: 12px; text-align: center;">
+                                        <span style="background: ${device.Status === 'Active' ? '#27ae60' : device.Status === 'Aging' ? '#f39c12' : '#95a5a6'}; color: white; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600;">
+                                            ${device.Status}
+                                        </span>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Notes Section -->
+                <div style="margin-top: 20px; padding: 15px; background: #fff8e1; border-radius: 6px; border-left: 4px solid #ffc107;">
+                    <strong style="color: #f57c00; display: block; margin-bottom: 8px;">📝 Survey Notes</strong>
+                    <p style="margin: 0; color: #555; font-size: 13px; line-height: 1.6;">
+                        Network assessment conducted on initial site visit. Current infrastructure is adequate for basic operations. 
+                        Recommendations: Consider firewall upgrade for enhanced security, implement backup solution, 
+                        replace aging workstations (3+ units over 4 years old).
+                    </p>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    siteOverviewContainer.innerHTML = siteOverviewHTML;
+    
+    console.log('✅ Site Overview tab initialized for:', currentCompany.Company);
+}
+
+/**
+ * Generate sample device list for a company
+ */
+function generateDeviceList(company) {
+    const deviceTypes = ['Workstation', 'Laptop', 'Server', 'Network'];
+    const models = {
+        'Workstation': ['Dell OptiPlex 7090', 'HP EliteDesk 800', 'Lenovo ThinkCentre M920'],
+        'Laptop': ['Dell Latitude 5420', 'HP EliteBook 840', 'Lenovo ThinkPad X1'],
+        'Server': ['Dell PowerEdge R740', 'HP ProLiant DL380', 'Dell PowerEdge T440'],
+        'Network': ['Cisco Catalyst 2960', 'UniFi Dream Machine', 'WatchGuard Firebox']
+    };
+    const os = {
+        'Workstation': ['Windows 11 Pro', 'Windows 10 Pro'],
+        'Laptop': ['Windows 11 Pro', 'Windows 10 Pro'],
+        'Server': ['Windows Server 2019', 'Windows Server 2022', 'Ubuntu 20.04'],
+        'Network': ['IOS 15.2', 'UniFi OS', 'Fireware OS 12.8']
+    };
+    const locations = ['Main Office', 'Conference Room', 'Server Room', 'Reception', 'Sales Floor'];
+    const statuses = ['Active', 'Active', 'Active', 'Aging', 'Active']; // Mostly active
+    
+    const devices = [];
+    const companyPrefix = company.Company.substring(0, 3).toUpperCase();
+    
+    // Generate 8-15 devices
+    const deviceCount = Math.floor(Math.random() * 8) + 8;
+    
+    for (let i = 0; i < deviceCount; i++) {
+        const type = deviceTypes[Math.floor(Math.random() * deviceTypes.length)];
+        const device = {
+            Name: `${companyPrefix}-${type.substring(0, 2).toUpperCase()}-${String(i + 1).padStart(3, '0')}`,
+            Type: type,
+            Model: models[type][Math.floor(Math.random() * models[type].length)],
+            OS: os[type][Math.floor(Math.random() * os[type].length)],
+            Location: locations[Math.floor(Math.random() * locations.length)],
+            Status: statuses[Math.floor(Math.random() * statuses.length)]
+        };
+        devices.push(device);
+    }
+    
+    // Ensure we have at least one server and one network device
+    if (!devices.find(d => d.Type === 'Server')) {
+        devices[0] = {
+            Name: `${companyPrefix}-SV-001`,
+            Type: 'Server',
+            Model: 'Dell PowerEdge R740',
+            OS: 'Windows Server 2019',
+            Location: 'Server Room',
+            Status: 'Active'
+        };
+    }
+    
+    if (!devices.find(d => d.Type === 'Network')) {
+        devices[1] = {
+            Name: `${companyPrefix}-NE-001`,
+            Type: 'Network',
+            Model: 'Cisco Catalyst 2960',
+            OS: 'IOS 15.2',
+            Location: 'Server Room',
+            Status: 'Active'
+        };
+    }
+    
+    return devices.sort((a, b) => a.Name.localeCompare(b.Name));
+}
+
+/**
  * Initialize the Touches Grid
  */
 function initializeTouchesGrid() {
@@ -802,11 +1067,13 @@ function refreshCurrentTabContent() {
     } else if (selectedIndex === 1) {
         // Touch's tab - reinitialize the grid with new company data
         initializeTouchesGrid();
+    } else if (selectedIndex === 2) {
+        // Site Overview tab - reinitialize with new company data
+        initializeSiteOverviewTab();
     } else if (selectedIndex === 3) {
         // Proposals tab - reinitialize the proposals with new company data
         initializeProposalsTab();
     }
-    // Site Overview tab is static, no need to refresh
 }
 
 /**

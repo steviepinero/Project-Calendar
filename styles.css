@@ -2565,10 +2565,45 @@ body > #campaignModal {
     .sidebar {
         width: 60px;
         position: fixed;
-        left: 0;
-        top: 0;
-        height: 100vh;
+        left: -250px;
+        top: 60px;
+        height: calc(100vh - 60px);
         z-index: 100;
+        transition: left 0.3s ease;
+    }
+    
+    .sidebar.mobile-open {
+        left: 0;
+        width: 250px;
+        box-shadow: 4px 0 12px rgba(0,0,0,0.3);
+    }
+    
+    .appbar-container {
+        padding: 10px 15px;
+    }
+    
+    .appbar-title {
+        font-size: 18px;
+    }
+    
+    .mobile-menu-btn {
+        display: block !important;
+    }
+    
+    .main-wrapper {
+        padding-left: 0 !important;
+    }
+    
+    /* Mobile overlay when menu is open */
+    .sidebar.mobile-open::before {
+        content: '';
+        position: fixed;
+        top: 60px;
+        left: 250px;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 99;
     }
     
     .layout-wrapper {
@@ -2958,6 +2993,310 @@ body > #campaignModal {
     color: #95a5a6;
     text-align: center;
     font-style: italic;
+}
+
+/* Responsive Leads Page Styles */
+/* ============================================ */
+
+/* Tablet (768px to 1024px) - Optimized layout */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .lead-detail-layout {
+        flex-direction: row;
+    }
+    
+    .lead-companies-sidebar {
+        width: 200px;
+        max-height: none;
+        border-right: 1px solid #ddd;
+        border-bottom: none;
+    }
+    
+    .companies-list {
+        grid-template-columns: 1fr;
+    }
+    
+    .company-list-item {
+        border-right: none;
+        padding: 12px 10px;
+        font-size: 13px;
+    }
+    
+    .lead-detail-content {
+        padding: 15px;
+    }
+    
+    #leadDetailTabs {
+        padding: 15px;
+    }
+    
+    /* Make profile subtabs fit on tablet */
+    .profile-subtab {
+        font-size: 13px !important;
+        padding: 10px 15px !important;
+    }
+    
+    /* Keep 2-column layout for profile stats on tablet */
+    #profileTabContent > div > div:first-child {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+    
+    /* Keep side-by-side layout for profile sections on tablet */
+    .profile-subtab-content > div > div:first-child {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 15px;
+    }
+}
+
+/* Tablet (768px to 1024px) - Keep all columns, just make scrollable */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .leads-list-view {
+        padding: 15px;
+    }
+    
+    .leads-header h2 {
+        font-size: 20px;
+    }
+    
+    .leads-filters {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    
+    /* Make leads grid scrollable but keep all columns */
+    #leadsGrid {
+        font-size: 13px;
+        overflow-x: auto;
+        width: 100%;
+    }
+    
+    #leadsGrid .e-grid {
+        min-width: 900px; /* Ensure grid has minimum width for all columns */
+    }
+    
+    #leadsGrid .e-grid .e-headercelldiv {
+        font-size: 12px !important;
+    }
+    
+    /* All columns remain visible on tablet */
+}
+
+/* Mobile (767px and below) */
+@media (max-width: 767px) {
+    .leads-list-view {
+        padding: 10px;
+    }
+    
+    .leads-header h2 {
+        font-size: 18px;
+    }
+    
+    .leads-filters {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    
+    .filter-label {
+        font-size: 11px;
+        padding: 4px 10px;
+    }
+    
+    /* Make leads grid responsive */
+    #leadsGrid {
+        font-size: 12px;
+        overflow-x: auto;
+    }
+    
+    #leadsGrid .e-grid {
+        min-width: 600px;
+    }
+    
+    #leadsGrid .e-grid .e-headercelldiv {
+        font-size: 11px !important;
+    }
+    
+    /* Hide less important columns on mobile */
+    #leadsGrid .e-grid .e-gridheader th:nth-child(n+6),
+    #leadsGrid .e-grid .e-gridcontent td:nth-child(n+6) {
+        display: none;
+    }
+    
+    /* Lead detail view adjustments for mobile only */
+    .lead-companies-sidebar {
+        max-height: 150px;
+    }
+    
+    .companies-list {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    }
+    
+    .company-list-item {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+    
+    .lead-detail-content {
+        padding: 10px;
+    }
+    
+    #leadDetailTabs {
+        padding: 10px;
+        min-height: 400px;
+    }
+    
+    .tab-content-section {
+        padding: 10px;
+    }
+    
+    /* Profile tab responsive styles */
+    #profileTabContent > div {
+        padding: 10px !important;
+    }
+    
+    /* Stack profile stats vertically on mobile */
+    #profileTabContent > div > div:first-child {
+        grid-template-columns: 1fr 1fr !important;
+    }
+    
+    /* Profile subtabs - make scrollable */
+    #profileTabContent .profile-subtab {
+        font-size: 12px !important;
+        padding: 8px 12px !important;
+        white-space: nowrap;
+    }
+    
+    /* Profile content grid - stack vertically */
+    .profile-subtab-content > div > div:first-child {
+        grid-template-columns: 1fr !important;
+    }
+    
+    /* Back button */
+    #backToLeadsBtn {
+        font-size: 13px;
+        padding: 8px 15px !important;
+    }
+    
+    /* Company name heading */
+    #leadCompanyName {
+        font-size: 18px !important;
+    }
+    
+    /* Syncfusion tabs - make mobile friendly */
+    .e-tab .e-tab-header {
+        overflow-x: auto !important;
+        flex-wrap: nowrap !important;
+    }
+    
+    .e-tab .e-tab-header .e-toolbar-items {
+        flex-wrap: nowrap !important;
+    }
+    
+    .e-tab .e-tab-header .e-toolbar-item {
+        flex-shrink: 0 !important;
+    }
+}
+
+/* Small Mobile (480px and below) */
+@media (max-width: 480px) {
+    .leads-header h2 {
+        font-size: 16px;
+    }
+    
+    .leads-filters {
+        display: none; /* Hide filters on very small screens */
+    }
+    
+    /* Stack profile stats in single column */
+    #profileTabContent > div > div:first-child {
+        grid-template-columns: 1fr !important;
+        gap: 10px !important;
+    }
+    
+    /* Profile cards - reduce padding */
+    #profileTabContent .profile-subtab-content > div > div {
+        padding: 15px !important;
+    }
+    
+    /* Hide less critical company list items on very small screens */
+    .companies-list {
+        grid-template-columns: 1fr 1fr;
+        max-height: 120px;
+    }
+    
+    .company-list-item {
+        font-size: 11px;
+        padding: 6px 8px;
+    }
+    
+    /* Adjust button sizes */
+    .e-btn {
+        font-size: 12px !important;
+        padding: 6px 12px !important;
+    }
+    
+    .e-btn.e-small {
+        font-size: 11px !important;
+        padding: 4px 8px !important;
+    }
+    
+    /* Make tabs stack or scroll better */
+    .profile-subtab {
+        font-size: 11px !important;
+        padding: 6px 10px !important;
+    }
+    
+    /* Reduce grid row height for mobile */
+    #leadsGrid .e-grid .e-row {
+        height: 35px !important;
+    }
+    
+    /* Hide even more columns on very small screens */
+    #leadsGrid .e-grid .e-gridheader th:nth-child(n+4),
+    #leadsGrid .e-grid .e-gridcontent td:nth-child(n+4) {
+        display: none;
+    }
+    
+    /* Show only Company, Industry, City on very small screens */
+    #leadsGrid .e-grid .e-gridheader th:nth-child(1),
+    #leadsGrid .e-grid .e-gridheader th:nth-child(2),
+    #leadsGrid .e-grid .e-gridheader th:nth-child(3),
+    #leadsGrid .e-grid .e-gridcontent td:nth-child(1),
+    #leadsGrid .e-grid .e-gridcontent td:nth-child(2),
+    #leadsGrid .e-grid .e-gridcontent td:nth-child(3) {
+        display: table-cell !important;
+    }
+}
+
+/* Landscape tablet adjustments - Keep optimized layout */
+@media (min-width: 769px) and (max-width: 1024px) and (orientation: landscape) {
+    /* Grid can show all columns comfortably in landscape */
+    #leadsGrid .e-grid {
+        min-width: 100%; /* Let it fill available space */
+    }
+}
+
+/* Touch device improvements */
+@media (hover: none) and (pointer: coarse) {
+    /* Increase touch target sizes */
+    .company-list-item {
+        padding: 15px !important;
+        min-height: 44px;
+    }
+    
+    .e-btn {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    .profile-subtab,
+    .client-tab {
+        min-height: 44px !important;
+    }
+    
+    /* Make clickable company names in grid easier to tap */
+    .company-name-cell {
+        padding: 10px 5px !important;
+        display: block !important;
+    }
 }
 
 /* ============================================

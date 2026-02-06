@@ -6,6 +6,7 @@
 # API Keys
 **/api-keys.js
 **/config/keys.js
+config.js
 
 # Syncfusion License (excluded from repo, but deploy to production)
 syncfusion-license.js

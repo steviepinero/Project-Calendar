@@ -159,6 +159,9 @@ function setupNavigation() {
         console.warn('⚠️ Sidebar not found for navigation setup');
         return;
     }
+    
+    // Setup mobile menu toggle
+    setupMobileMenu(sidebar);
 
     // Query for all navigation links, including those in collapsed accordion panels
     const navLinks = document.querySelectorAll('.nav-item[data-page], .sidebar-link[data-page]');
@@ -194,6 +197,42 @@ function setupNavigation() {
 
     window.navigationSetup = true;
     console.log('✅ Navigation setup complete - event delegation on sidebar for all', navLinks.length, 'links');
+}
+
+function setupMobileMenu(sidebar) {
+    const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+    if (!mobileMenuToggle) {
+        console.log('📱 Mobile menu toggle not found (not needed on desktop)');
+        return;
+    }
+    
+    // Toggle sidebar on mobile
+    mobileMenuToggle.addEventListener('click', function(e) {
+        e.stopPropagation();
+        sidebar.classList.toggle('mobile-open');
+        console.log('📱 Mobile menu toggled');
+    });
+    
+    // Close sidebar when clicking outside on mobile
+    document.addEventListener('click', function(e) {
+        if (window.innerWidth <= 480) {
+            if (!sidebar.contains(e.target) && !mobileMenuToggle.contains(e.target)) {
+                sidebar.classList.remove('mobile-open');
+            }
+        }
+    });
+    
+    // Close sidebar when clicking a navigation link on mobile
+    sidebar.addEventListener('click', function(e) {
+        const link = e.target.closest('.nav-item[data-page], .sidebar-link[data-page]');
+        if (link && window.innerWidth <= 480) {
+            setTimeout(() => {
+                sidebar.classList.remove('mobile-open');
+            }, 100);
+        }
+    });
+    
+    console.log('✅ Mobile menu setup complete');
 }
 
 function switchPage(pageName) {
@@ -242,6 +281,11 @@ function switchPage(pageName) {
             window.Endpoint.initializeHardwarePage();
             window.Endpoint.initializeHardwareChart();
             window.Endpoint.initializeHardwareGrid();
+        }
+        
+        if (pageName === 'client-profile' && window.initClientProfilePage) {
+            console.log('👤 Initializing client profile page');
+            window.initClientProfilePage();
         }
         
         if (pageName === 'lifecycle' && window.Lifecycle) {
@@ -391,6 +435,24 @@ function setupEventListeners() {
         });
     } else {
         console.warn('⚠️ Delete project button not found');
+    }
+    
+    // AI Summarize Notes button
+    const summarizeNotesBtn = document.getElementById('summarizeNotesBtn');
+    if (summarizeNotesBtn) {
+        console.log('✅ Found AI summarize notes button');
+        summarizeNotesBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('✨ AI Summarize button clicked');
+            if (window.AISummarizer && typeof window.AISummarizer.summarizeNotesFromModal === 'function') {
+                window.AISummarizer.summarizeNotesFromModal();
+            } else {
+                console.error('❌ AI Summarizer module not loaded');
+                alert('❌ AI Summarizer module not loaded. Please refresh the page.');
+            }
+        });
+    } else {
+        console.warn('⚠️ AI Summarize notes button not found');
     }
     
     console.log('✅ Event listeners setup complete');

@@ -145,3 +145,5 @@ Once the server is running and the database is set up, you're ready to go!
 
 **Open http://localhost:8000 and explore the new features!** 🎉
 
+
+

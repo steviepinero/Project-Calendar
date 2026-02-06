@@ -9,13 +9,16 @@
     <link rel="stylesheet" href="https://cdn.syncfusion.com/ej2/24.2.9/material.css">
     <link rel="stylesheet" href="https://cdn.syncfusion.com/ej2/24.2.9/material.css" id="theme">
     
-    <link rel="stylesheet" href="styles.css?v=20260130-0700">
+    <link rel="stylesheet" href="styles.css?v=20260206-0600">
 </head>
 <body>
     <div class="ej2-container">
         <!-- Header -->
         <header class="appbar-container">
             <div class="appbar-content">
+                <button id="mobileMenuToggle" class="mobile-menu-btn" style="display: none; background: none; border: none; color: white; font-size: 24px; cursor: pointer; padding: 5px 10px; margin-right: 10px;">
+                    ☰
+                </button>
                 <div class="appbar-left">
                     <h1 class="appbar-title">MSP Project Calendar</h1>
                 </div>
@@ -49,7 +52,6 @@
                                         <li><a href="#" class="sidebar-link" data-page="email-campaigns">Email Campaigns</a></li>
                                         <li><a href="#" class="sidebar-link" data-page="e-signature">E-Signature</a></li>
                                         <li><a href="#" class="sidebar-link" data-page="voip-calling">VoIP Calling</a></li>
-                                        <li><a href="#" class="sidebar-link">Client Profile</a></li>
                                         <li><a href="#" class="sidebar-link">Network Analysis</a></li>
                                         <li><a href="#" class="sidebar-link">Proposal Generator</a></li>
                                     </ul>
@@ -675,6 +677,584 @@
                     }
                 </style>
 
+                <!-- Page: Client Profile -->
+                <div id="page-client-profile" class="page-content">
+                    <div style="padding: 20px; max-width: 1400px; margin: 0 auto;">
+                        <!-- Header with Client Selector -->
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                            <div style="display: flex; align-items: center; gap: 15px;">
+                                <h2 style="color: #2c3e50; margin: 0;">👤 Client Profile</h2>
+                                <select id="clientSelector" class="e-field" style="padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; min-width: 250px;">
+                                    <option value="">Select a client...</option>
+                                    <!-- Options will be populated dynamically from leads data -->
+                                </select>
+                            </div>
+                            <div style="display: flex; gap: 10px;">
+                                <button id="editClientBtn" class="e-btn e-outline" style="padding: 10px 16px; font-weight: 600;">
+                                    ✏️ Edit Client
+                                </button>
+                                <button id="addClientBtn" class="e-btn e-primary" style="padding: 10px 16px; font-weight: 600;">
+                                    + Add Client
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Main Content - Only show when client is selected -->
+                        <div id="clientProfileContent" style="display: none;">
+                            <!-- Client Overview Stats -->
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px;">
+                                <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-left: 4px solid #3498db;">
+                                    <div style="color: #999; font-size: 13px; margin-bottom: 5px;">Account Status</div>
+                                    <div style="font-size: 18px; font-weight: 700; color: #27ae60;">Active</div>
+                                </div>
+                                <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-left: 4px solid #27ae60;">
+                                    <div style="color: #999; font-size: 13px; margin-bottom: 5px;">Monthly Billing</div>
+                                    <div style="font-size: 18px; font-weight: 700; color: #2c3e50;">$3,500</div>
+                                </div>
+                                <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-left: 4px solid #f39c12;">
+                                    <div style="color: #999; font-size: 13px; margin-bottom: 5px;">Active Projects</div>
+                                    <div style="font-size: 18px; font-weight: 700; color: #2c3e50;">4</div>
+                                </div>
+                                <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-left: 4px solid #9b59b6;">
+                                    <div style="color: #999; font-size: 13px; margin-bottom: 5px;">Total Devices</div>
+                                    <div style="font-size: 18px; font-weight: 700; color: #2c3e50;">24</div>
+                                </div>
+                            </div>
+
+                            <!-- Tabs for Different Sections -->
+                            <div style="margin-bottom: 20px;">
+                                <div style="display: flex; gap: 10px; border-bottom: 2px solid #ecf0f1;">
+                                    <button class="client-tab active" data-tab="overview" style="padding: 12px 20px; background: none; border: none; color: #2c3e50; font-weight: 600; cursor: pointer; border-bottom: 3px solid #3498db; margin-bottom: -2px;">
+                                        Overview
+                                    </button>
+                                    <button class="client-tab" data-tab="contacts" style="padding: 12px 20px; background: none; border: none; color: #555; font-weight: 600; cursor: pointer;">
+                                        Contacts
+                                    </button>
+                                    <button class="client-tab" data-tab="services" style="padding: 12px 20px; background: none; border: none; color: #555; font-weight: 600; cursor: pointer;">
+                                        Services
+                                    </button>
+                                    <button class="client-tab" data-tab="billing" style="padding: 12px 20px; background: none; border: none; color: #555; font-weight: 600; cursor: pointer;">
+                                        Billing
+                                    </button>
+                                    <button class="client-tab" data-tab="assets" style="padding: 12px 20px; background: none; border: none; color: #555; font-weight: 600; cursor: pointer;">
+                                        Assets
+                                    </button>
+                                    <button class="client-tab" data-tab="documents" style="padding: 12px 20px; background: none; border: none; color: #555; font-weight: 600; cursor: pointer;">
+                                        Documents
+                                    </button>
+                                    <button class="client-tab" data-tab="notes" style="padding: 12px 20px; background: none; border: none; color: #555; font-weight: 600; cursor: pointer;">
+                                        Notes
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Tab Content: Overview -->
+                            <div id="client-tab-overview" class="client-tab-content">
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                                    <!-- Company Information -->
+                                    <div style="background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                                        <h3 style="margin: 0 0 20px 0; color: #2c3e50; display: flex; align-items: center; gap: 8px;">
+                                            🏢 Company Information
+                                        </h3>
+                                        <div style="display: grid; gap: 12px;">
+                                            <div>
+                                                <label style="font-size: 12px; color: #999; display: block; margin-bottom: 3px;">Company Name</label>
+                                                <div style="font-size: 14px; color: #2c3e50; font-weight: 600;">Acme Corporation</div>
+                                            </div>
+                                            <div>
+                                                <label style="font-size: 12px; color: #999; display: block; margin-bottom: 3px;">Industry</label>
+                                                <div style="font-size: 14px; color: #2c3e50;">Technology Services</div>
+                                            </div>
+                                            <div>
+                                                <label style="font-size: 12px; color: #999; display: block; margin-bottom: 3px;">Company Size</label>
+                                                <div style="font-size: 14px; color: #2c3e50;">25-50 employees</div>
+                                            </div>
+                                            <div>
+                                                <label style="font-size: 12px; color: #999; display: block; margin-bottom: 3px;">Website</label>
+                                                <div style="font-size: 14px; color: #3498db;"><a href="#" style="text-decoration: none; color: #3498db;">www.acmecorp.com</a></div>
+                                            </div>
+                                            <div>
+                                                <label style="font-size: 12px; color: #999; display: block; margin-bottom: 3px;">Address</label>
+                                                <div style="font-size: 14px; color: #2c3e50; line-height: 1.5;">
+                                                    123 Business Park Drive<br>
+                                                    Suite 200<br>
+                                                    San Francisco, CA 94107
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <label style="font-size: 12px; color: #999; display: block; margin-bottom: 3px;">Phone</label>
+                                                <div style="font-size: 14px; color: #2c3e50;">(415) 555-0123</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Account Details -->
+                                    <div style="background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                                        <h3 style="margin: 0 0 20px 0; color: #2c3e50; display: flex; align-items: center; gap: 8px;">
+                                            📋 Account Details
+                                        </h3>
+                                        <div style="display: grid; gap: 12px;">
+                                            <div>
+                                                <label style="font-size: 12px; color: #999; display: block; margin-bottom: 3px;">Client Since</label>
+                                                <div style="font-size: 14px; color: #2c3e50; font-weight: 600;">January 15, 2023</div>
+                                            </div>
+                                            <div>
+                                                <label style="font-size: 12px; color: #999; display: block; margin-bottom: 3px;">Account Manager</label>
+                                                <div style="font-size: 14px; color: #2c3e50;">John Smith</div>
+                                            </div>
+                                            <div>
+                                                <label style="font-size: 12px; color: #999; display: block; margin-bottom: 3px;">Service Level Agreement</label>
+                                                <div style="font-size: 14px; color: #2c3e50;">Premium (24/7 Support)</div>
+                                            </div>
+                                            <div>
+                                                <label style="font-size: 12px; color: #999; display: block; margin-bottom: 3px;">Contract End Date</label>
+                                                <div style="font-size: 14px; color: #2c3e50;">December 31, 2026</div>
+                                            </div>
+                                            <div>
+                                                <label style="font-size: 12px; color: #999; display: block; margin-bottom: 3px;">Billing Frequency</label>
+                                                <div style="font-size: 14px; color: #2c3e50;">Monthly</div>
+                                            </div>
+                                            <div>
+                                                <label style="font-size: 12px; color: #999; display: block; margin-bottom: 3px;">Payment Method</label>
+                                                <div style="font-size: 14px; color: #2c3e50;">ACH - Auto-pay (15th of month)</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Recent Activity -->
+                                <div style="background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-top: 20px;">
+                                    <h3 style="margin: 0 0 20px 0; color: #2c3e50;">📅 Recent Activity</h3>
+                                    <div style="display: grid; gap: 10px;">
+                                        <div style="padding: 12px; background-color: #f8f9fa; border-radius: 4px; border-left: 3px solid #3498db; display: flex; justify-content: space-between;">
+                                            <span style="font-size: 14px; color: #2c3e50;">Completed network security assessment</span>
+                                            <span style="font-size: 13px; color: #999;">2 days ago</span>
+                                        </div>
+                                        <div style="padding: 12px; background-color: #f8f9fa; border-radius: 4px; border-left: 3px solid #27ae60; display: flex; justify-content: space-between;">
+                                            <span style="font-size: 14px; color: #2c3e50;">Deployed Windows updates to 24 devices</span>
+                                            <span style="font-size: 13px; color: #999;">5 days ago</span>
+                                        </div>
+                                        <div style="padding: 12px; background-color: #f8f9fa; border-radius: 4px; border-left: 3px solid #f39c12; display: flex; justify-content: space-between;">
+                                            <span style="font-size: 14px; color: #2c3e50;">Resolved ticket #4521 - Email issues</span>
+                                            <span style="font-size: 13px; color: #999;">1 week ago</span>
+                                        </div>
+                                        <div style="padding: 12px; background-color: #f8f9fa; border-radius: 4px; border-left: 3px solid #9b59b6; display: flex; justify-content: space-between;">
+                                            <span style="font-size: 14px; color: #2c3e50;">Quarterly business review meeting</span>
+                                            <span style="font-size: 13px; color: #999;">2 weeks ago</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tab Content: Contacts -->
+                            <div id="client-tab-contacts" class="client-tab-content" style="display: none;">
+                                <div style="background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                                        <h3 style="margin: 0; color: #2c3e50;">Contact List</h3>
+                                        <button id="addContactBtn" class="e-btn e-primary" style="padding: 10px 16px;">+ Add Contact</button>
+                                    </div>
+                                    <div id="contactsGrid" style="display: grid; gap: 15px;">
+                                        <!-- Contact Card 1 -->
+                                        <div style="padding: 15px; border: 1px solid #eee; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
+                                            <div style="display: flex; gap: 15px; align-items: center;">
+                                                <div style="width: 50px; height: 50px; border-radius: 50%; background: #3498db; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 18px;">JD</div>
+                                                <div>
+                                                    <div style="font-weight: 600; color: #2c3e50; margin-bottom: 3px;">Jane Doe</div>
+                                                    <div style="font-size: 13px; color: #666; margin-bottom: 2px;">Chief Technology Officer</div>
+                                                    <div style="font-size: 13px; color: #999;">
+                                                        📧 jane.doe@acmecorp.com | ☎️ (415) 555-0124
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div style="display: flex; gap: 8px;">
+                                                <button class="e-btn e-outline e-small">✉️ Email</button>
+                                                <button class="e-btn e-outline e-small">☎️ Call</button>
+                                                <button class="e-btn e-outline e-small">✏️ Edit</button>
+                                            </div>
+                                        </div>
+
+                                        <!-- Contact Card 2 -->
+                                        <div style="padding: 15px; border: 1px solid #eee; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
+                                            <div style="display: flex; gap: 15px; align-items: center;">
+                                                <div style="width: 50px; height: 50px; border-radius: 50%; background: #27ae60; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 18px;">MS</div>
+                                                <div>
+                                                    <div style="font-weight: 600; color: #2c3e50; margin-bottom: 3px;">Mike Smith</div>
+                                                    <div style="font-size: 13px; color: #666; margin-bottom: 2px;">IT Manager</div>
+                                                    <div style="font-size: 13px; color: #999;">
+                                                        📧 mike.smith@acmecorp.com | ☎️ (415) 555-0125
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div style="display: flex; gap: 8px;">
+                                                <button class="e-btn e-outline e-small">✉️ Email</button>
+                                                <button class="e-btn e-outline e-small">☎️ Call</button>
+                                                <button class="e-btn e-outline e-small">✏️ Edit</button>
+                                            </div>
+                                        </div>
+
+                                        <!-- Contact Card 3 -->
+                                        <div style="padding: 15px; border: 1px solid #eee; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
+                                            <div style="display: flex; gap: 15px; align-items: center;">
+                                                <div style="width: 50px; height: 50px; border-radius: 50%; background: #e74c3c; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 18px;">SJ</div>
+                                                <div>
+                                                    <div style="font-weight: 600; color: #2c3e50; margin-bottom: 3px;">Sarah Johnson</div>
+                                                    <div style="font-size: 13px; color: #666; margin-bottom: 2px;">Operations Manager</div>
+                                                    <div style="font-size: 13px; color: #999;">
+                                                        📧 sarah.j@acmecorp.com | ☎️ (415) 555-0126
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div style="display: flex; gap: 8px;">
+                                                <button class="e-btn e-outline e-small">✉️ Email</button>
+                                                <button class="e-btn e-outline e-small">☎️ Call</button>
+                                                <button class="e-btn e-outline e-small">✏️ Edit</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tab Content: Services -->
+                            <div id="client-tab-services" class="client-tab-content" style="display: none;">
+                                <div style="background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                                        <h3 style="margin: 0; color: #2c3e50;">Active Services</h3>
+                                        <button id="addServiceBtn" class="e-btn e-primary" style="padding: 10px 16px;">+ Add Service</button>
+                                    </div>
+                                    <div style="display: grid; gap: 15px;">
+                                        <!-- Service Item -->
+                                        <div style="padding: 15px; border: 1px solid #eee; border-radius: 6px;">
+                                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                                                <div>
+                                                    <div style="font-weight: 600; color: #2c3e50; font-size: 16px; margin-bottom: 5px;">🖥️ Managed IT Services</div>
+                                                    <div style="font-size: 13px; color: #666; line-height: 1.6;">
+                                                        24/7 monitoring, helpdesk support, patch management, and proactive maintenance for all endpoints and infrastructure.
+                                                    </div>
+                                                </div>
+                                                <span style="background: #27ae60; color: white; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600; white-space: nowrap; margin-left: 15px;">Active</span>
+                                            </div>
+                                            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding-top: 10px; border-top: 1px solid #eee;">
+                                                <div>
+                                                    <span style="font-size: 12px; color: #999;">Monthly Cost:</span>
+                                                    <div style="font-weight: 600; color: #2c3e50;">$2,500</div>
+                                                </div>
+                                                <div>
+                                                    <span style="font-size: 12px; color: #999;">Start Date:</span>
+                                                    <div style="font-weight: 600; color: #2c3e50;">Jan 15, 2023</div>
+                                                </div>
+                                                <div>
+                                                    <span style="font-size: 12px; color: #999;">Renewal:</span>
+                                                    <div style="font-weight: 600; color: #2c3e50;">Annual</div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Service Item 2 -->
+                                        <div style="padding: 15px; border: 1px solid #eee; border-radius: 6px;">
+                                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                                                <div>
+                                                    <div style="font-weight: 600; color: #2c3e50; font-size: 16px; margin-bottom: 5px;">☁️ Cloud Backup & DR</div>
+                                                    <div style="font-size: 13px; color: #666; line-height: 1.6;">
+                                                        Automated cloud backup solution with disaster recovery capabilities. 500GB storage included.
+                                                    </div>
+                                                </div>
+                                                <span style="background: #27ae60; color: white; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600; white-space: nowrap; margin-left: 15px;">Active</span>
+                                            </div>
+                                            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding-top: 10px; border-top: 1px solid #eee;">
+                                                <div>
+                                                    <span style="font-size: 12px; color: #999;">Monthly Cost:</span>
+                                                    <div style="font-weight: 600; color: #2c3e50;">$750</div>
+                                                </div>
+                                                <div>
+                                                    <span style="font-size: 12px; color: #999;">Start Date:</span>
+                                                    <div style="font-weight: 600; color: #2c3e50;">Jan 15, 2023</div>
+                                                </div>
+                                                <div>
+                                                    <span style="font-size: 12px; color: #999;">Renewal:</span>
+                                                    <div style="font-weight: 600; color: #2c3e50;">Monthly</div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Service Item 3 -->
+                                        <div style="padding: 15px; border: 1px solid #eee; border-radius: 6px;">
+                                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                                                <div>
+                                                    <div style="font-weight: 600; color: #2c3e50; font-size: 16px; margin-bottom: 5px;">🔒 Cybersecurity Suite</div>
+                                                    <div style="font-size: 13px; color: #666; line-height: 1.6;">
+                                                        Advanced threat protection, EDR, email security, and security awareness training.
+                                                    </div>
+                                                </div>
+                                                <span style="background: #27ae60; color: white; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600; white-space: nowrap; margin-left: 15px;">Active</span>
+                                            </div>
+                                            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding-top: 10px; border-top: 1px solid #eee;">
+                                                <div>
+                                                    <span style="font-size: 12px; color: #999;">Monthly Cost:</span>
+                                                    <div style="font-weight: 600; color: #2c3e50;">$250</div>
+                                                </div>
+                                                <div>
+                                                    <span style="font-size: 12px; color: #999;">Start Date:</span>
+                                                    <div style="font-weight: 600; color: #2c3e50;">Mar 1, 2023</div>
+                                                </div>
+                                                <div>
+                                                    <span style="font-size: 12px; color: #999;">Renewal:</span>
+                                                    <div style="font-weight: 600; color: #2c3e50;">Annual</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tab Content: Billing -->
+                            <div id="client-tab-billing" class="client-tab-content" style="display: none;">
+                                <div style="display: grid; gap: 20px;">
+                                    <!-- Billing Summary -->
+                                    <div style="background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                                        <h3 style="margin: 0 0 20px 0; color: #2c3e50;">💳 Billing Summary</h3>
+                                        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px;">
+                                            <div style="padding: 15px; background: #e8f4f8; border-radius: 6px;">
+                                                <div style="font-size: 12px; color: #666; margin-bottom: 5px;">Current Balance</div>
+                                                <div style="font-size: 24px; font-weight: 700; color: #27ae60;">$0.00</div>
+                                            </div>
+                                            <div style="padding: 15px; background: #f0f0f0; border-radius: 6px;">
+                                                <div style="font-size: 12px; color: #666; margin-bottom: 5px;">Last Payment</div>
+                                                <div style="font-size: 24px; font-weight: 700; color: #2c3e50;">$3,500</div>
+                                            </div>
+                                            <div style="padding: 15px; background: #fff3e0; border-radius: 6px;">
+                                                <div style="font-size: 12px; color: #666; margin-bottom: 5px;">Next Invoice</div>
+                                                <div style="font-size: 24px; font-weight: 700; color: #f39c12;">Feb 15</div>
+                                            </div>
+                                            <div style="padding: 15px; background: #f3e5f5; border-radius: 6px;">
+                                                <div style="font-size: 12px; color: #666; margin-bottom: 5px;">YTD Total</div>
+                                                <div style="font-size: 24px; font-weight: 700; color: #9b59b6;">$7,000</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Recent Invoices -->
+                                    <div style="background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                                        <h3 style="margin: 0 0 20px 0; color: #2c3e50;">📄 Recent Invoices</h3>
+                                        <div style="overflow-x: auto;">
+                                            <table style="width: 100%; border-collapse: collapse;">
+                                                <thead>
+                                                    <tr style="border-bottom: 2px solid #eee;">
+                                                        <th style="padding: 12px; text-align: left; font-size: 13px; color: #666;">Invoice #</th>
+                                                        <th style="padding: 12px; text-align: left; font-size: 13px; color: #666;">Date</th>
+                                                        <th style="padding: 12px; text-align: left; font-size: 13px; color: #666;">Description</th>
+                                                        <th style="padding: 12px; text-align: right; font-size: 13px; color: #666;">Amount</th>
+                                                        <th style="padding: 12px; text-align: center; font-size: 13px; color: #666;">Status</th>
+                                                        <th style="padding: 12px; text-align: center; font-size: 13px; color: #666;">Actions</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr style="border-bottom: 1px solid #f0f0f0;">
+                                                        <td style="padding: 12px; font-size: 14px; color: #2c3e50;">INV-2026-001</td>
+                                                        <td style="padding: 12px; font-size: 14px; color: #2c3e50;">Jan 15, 2026</td>
+                                                        <td style="padding: 12px; font-size: 14px; color: #2c3e50;">Monthly Services - January</td>
+                                                        <td style="padding: 12px; font-size: 14px; color: #2c3e50; text-align: right; font-weight: 600;">$3,500</td>
+                                                        <td style="padding: 12px; text-align: center;"><span style="background: #27ae60; color: white; padding: 4px 10px; border-radius: 12px; font-size: 12px;">Paid</span></td>
+                                                        <td style="padding: 12px; text-align: center;"><button class="e-btn e-outline e-small">View</button></td>
+                                                    </tr>
+                                                    <tr style="border-bottom: 1px solid #f0f0f0;">
+                                                        <td style="padding: 12px; font-size: 14px; color: #2c3e50;">INV-2025-012</td>
+                                                        <td style="padding: 12px; font-size: 14px; color: #2c3e50;">Dec 15, 2025</td>
+                                                        <td style="padding: 12px; font-size: 14px; color: #2c3e50;">Monthly Services - December</td>
+                                                        <td style="padding: 12px; font-size: 14px; color: #2c3e50; text-align: right; font-weight: 600;">$3,500</td>
+                                                        <td style="padding: 12px; text-align: center;"><span style="background: #27ae60; color: white; padding: 4px 10px; border-radius: 12px; font-size: 12px;">Paid</span></td>
+                                                        <td style="padding: 12px; text-align: center;"><button class="e-btn e-outline e-small">View</button></td>
+                                                    </tr>
+                                                    <tr style="border-bottom: 1px solid #f0f0f0;">
+                                                        <td style="padding: 12px; font-size: 14px; color: #2c3e50;">INV-2025-011</td>
+                                                        <td style="padding: 12px; font-size: 14px; color: #2c3e50;">Nov 15, 2025</td>
+                                                        <td style="padding: 12px; font-size: 14px; color: #2c3e50;">Monthly Services - November</td>
+                                                        <td style="padding: 12px; font-size: 14px; color: #2c3e50; text-align: right; font-weight: 600;">$3,500</td>
+                                                        <td style="padding: 12px; text-align: center;"><span style="background: #27ae60; color: white; padding: 4px 10px; border-radius: 12px; font-size: 12px;">Paid</span></td>
+                                                        <td style="padding: 12px; text-align: center;"><button class="e-btn e-outline e-small">View</button></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tab Content: Assets -->
+                            <div id="client-tab-assets" class="client-tab-content" style="display: none;">
+                                <div style="background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                                    <h3 style="margin: 0 0 20px 0; color: #2c3e50;">💻 Hardware & Software Assets</h3>
+                                    
+                                    <!-- Asset Summary -->
+                                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 25px;">
+                                        <div style="padding: 15px; background: #e3f2fd; border-radius: 6px; text-align: center;">
+                                            <div style="font-size: 32px; font-weight: 700; color: #1976d2;">12</div>
+                                            <div style="font-size: 13px; color: #666; margin-top: 5px;">Workstations</div>
+                                        </div>
+                                        <div style="padding: 15px; background: #f3e5f5; border-radius: 6px; text-align: center;">
+                                            <div style="font-size: 32px; font-weight: 700; color: #7b1fa2;">8</div>
+                                            <div style="font-size: 13px; color: #666; margin-top: 5px;">Laptops</div>
+                                        </div>
+                                        <div style="padding: 15px; background: #fff3e0; border-radius: 6px; text-align: center;">
+                                            <div style="font-size: 32px; font-weight: 700; color: #f57c00;">4</div>
+                                            <div style="font-size: 13px; color: #666; margin-top: 5px;">Servers</div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Assets List -->
+                                    <div style="overflow-x: auto;">
+                                        <table style="width: 100%; border-collapse: collapse;">
+                                            <thead>
+                                                <tr style="border-bottom: 2px solid #eee;">
+                                                    <th style="padding: 12px; text-align: left; font-size: 13px; color: #666;">Device Name</th>
+                                                    <th style="padding: 12px; text-align: left; font-size: 13px; color: #666;">Type</th>
+                                                    <th style="padding: 12px; text-align: left; font-size: 13px; color: #666;">User</th>
+                                                    <th style="padding: 12px; text-align: left; font-size: 13px; color: #666;">Serial #</th>
+                                                    <th style="padding: 12px; text-align: left; font-size: 13px; color: #666;">Purchase Date</th>
+                                                    <th style="padding: 12px; text-align: center; font-size: 13px; color: #666;">Status</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr style="border-bottom: 1px solid #f0f0f0;">
+                                                    <td style="padding: 12px; font-size: 14px; color: #2c3e50; font-weight: 600;">ACME-WS-001</td>
+                                                    <td style="padding: 12px; font-size: 14px; color: #2c3e50;">Dell OptiPlex 7090</td>
+                                                    <td style="padding: 12px; font-size: 14px; color: #2c3e50;">Jane Doe</td>
+                                                    <td style="padding: 12px; font-size: 14px; color: #666;">JD234567</td>
+                                                    <td style="padding: 12px; font-size: 14px; color: #2c3e50;">Jan 2023</td>
+                                                    <td style="padding: 12px; text-align: center;"><span style="background: #27ae60; color: white; padding: 4px 10px; border-radius: 12px; font-size: 12px;">Active</span></td>
+                                                </tr>
+                                                <tr style="border-bottom: 1px solid #f0f0f0;">
+                                                    <td style="padding: 12px; font-size: 14px; color: #2c3e50; font-weight: 600;">ACME-LT-001</td>
+                                                    <td style="padding: 12px; font-size: 14px; color: #2c3e50;">Lenovo ThinkPad X1</td>
+                                                    <td style="padding: 12px; font-size: 14px; color: #2c3e50;">Mike Smith</td>
+                                                    <td style="padding: 12px; font-size: 14px; color: #666;">MS987654</td>
+                                                    <td style="padding: 12px; font-size: 14px; color: #2c3e50;">Mar 2023</td>
+                                                    <td style="padding: 12px; text-align: center;"><span style="background: #27ae60; color: white; padding: 4px 10px; border-radius: 12px; font-size: 12px;">Active</span></td>
+                                                </tr>
+                                                <tr style="border-bottom: 1px solid #f0f0f0;">
+                                                    <td style="padding: 12px; font-size: 14px; color: #2c3e50; font-weight: 600;">ACME-SRV-001</td>
+                                                    <td style="padding: 12px; font-size: 14px; color: #2c3e50;">Dell PowerEdge R740</td>
+                                                    <td style="padding: 12px; font-size: 14px; color: #2c3e50;">-</td>
+                                                    <td style="padding: 12px; font-size: 14px; color: #666;">SRV112233</td>
+                                                    <td style="padding: 12px; font-size: 14px; color: #2c3e50;">Feb 2022</td>
+                                                    <td style="padding: 12px; text-align: center;"><span style="background: #f39c12; color: white; padding: 4px 10px; border-radius: 12px; font-size: 12px;">Aging</span></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tab Content: Documents -->
+                            <div id="client-tab-documents" class="client-tab-content" style="display: none;">
+                                <div style="background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                                        <h3 style="margin: 0; color: #2c3e50;">📎 Documents & Contracts</h3>
+                                        <button id="uploadDocBtn" class="e-btn e-primary" style="padding: 10px 16px;">📤 Upload Document</button>
+                                    </div>
+                                    <div style="display: grid; gap: 12px;">
+                                        <!-- Document Item -->
+                                        <div style="padding: 15px; border: 1px solid #eee; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
+                                            <div style="display: flex; gap: 15px; align-items: center;">
+                                                <div style="width: 40px; height: 40px; background: #e74c3c; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px;">📄</div>
+                                                <div>
+                                                    <div style="font-weight: 600; color: #2c3e50; margin-bottom: 3px;">Master Service Agreement.pdf</div>
+                                                    <div style="font-size: 13px; color: #999;">Uploaded: Jan 15, 2023 • Size: 1.2 MB</div>
+                                                </div>
+                                            </div>
+                                            <div style="display: flex; gap: 8px;">
+                                                <button class="e-btn e-outline e-small">👁️ View</button>
+                                                <button class="e-btn e-outline e-small">⬇️ Download</button>
+                                            </div>
+                                        </div>
+
+                                        <!-- Document Item 2 -->
+                                        <div style="padding: 15px; border: 1px solid #eee; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
+                                            <div style="display: flex; gap: 15px; align-items: center;">
+                                                <div style="width: 40px; height: 40px; background: #27ae60; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px;">📑</div>
+                                                <div>
+                                                    <div style="font-weight: 600; color: #2c3e50; margin-bottom: 3px;">SLA Agreement - 2026.pdf</div>
+                                                    <div style="font-size: 13px; color: #999;">Uploaded: Jan 1, 2026 • Size: 850 KB</div>
+                                                </div>
+                                            </div>
+                                            <div style="display: flex; gap: 8px;">
+                                                <button class="e-btn e-outline e-small">👁️ View</button>
+                                                <button class="e-btn e-outline e-small">⬇️ Download</button>
+                                            </div>
+                                        </div>
+
+                                        <!-- Document Item 3 -->
+                                        <div style="padding: 15px; border: 1px solid #eee; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
+                                            <div style="display: flex; gap: 15px; align-items: center;">
+                                                <div style="width: 40px; height: 40px; background: #3498db; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px;">📊</div>
+                                                <div>
+                                                    <div style="font-weight: 600; color: #2c3e50; margin-bottom: 3px;">Network Assessment - Q4 2025.pdf</div>
+                                                    <div style="font-size: 13px; color: #999;">Uploaded: Dec 20, 2025 • Size: 2.4 MB</div>
+                                                </div>
+                                            </div>
+                                            <div style="display: flex; gap: 8px;">
+                                                <button class="e-btn e-outline e-small">👁️ View</button>
+                                                <button class="e-btn e-outline e-small">⬇️ Download</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tab Content: Notes -->
+                            <div id="client-tab-notes" class="client-tab-content" style="display: none;">
+                                <div style="background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                                        <h3 style="margin: 0; color: #2c3e50;">📝 Client Notes</h3>
+                                        <button id="addNoteBtn" class="e-btn e-primary" style="padding: 10px 16px;">+ Add Note</button>
+                                    </div>
+                                    <div style="display: grid; gap: 15px;">
+                                        <!-- Note Item -->
+                                        <div style="padding: 15px; border-left: 4px solid #3498db; background: #f8f9fa; border-radius: 4px;">
+                                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                                                <div style="font-weight: 600; color: #2c3e50;">Meeting with CTO - Infrastructure Planning</div>
+                                                <span style="font-size: 12px; color: #999; white-space: nowrap; margin-left: 15px;">Feb 1, 2026 - John Smith</span>
+                                            </div>
+                                            <p style="margin: 0; color: #666; font-size: 14px; line-height: 1.6;">
+                                                Discussed upcoming cloud migration project. Client interested in moving email and file servers to Azure. Need to prepare proposal for 100-user migration including Exchange Online and SharePoint. Timeline: Q2 2026. Budget approved up to $50K.
+                                            </p>
+                                        </div>
+
+                                        <!-- Note Item 2 -->
+                                        <div style="padding: 15px; border-left: 4px solid #27ae60; background: #f8f9fa; border-radius: 4px;">
+                                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                                                <div style="font-weight: 600; color: #2c3e50;">Security Audit Completed</div>
+                                                <span style="font-size: 12px; color: #999; white-space: nowrap; margin-left: 15px;">Jan 28, 2026 - Sarah Lee</span>
+                                            </div>
+                                            <p style="margin: 0; color: #666; font-size: 14px; line-height: 1.6;">
+                                                Completed quarterly security audit. Found 3 workstations with outdated antivirus definitions - remediated immediately. Recommended implementing MFA for all cloud services. Client agreed to proceed with implementation next month.
+                                            </p>
+                                        </div>
+
+                                        <!-- Note Item 3 -->
+                                        <div style="padding: 15px; border-left: 4px solid #f39c12; background: #f8f9fa; border-radius: 4px;">
+                                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                                                <div style="font-weight: 600; color: #2c3e50;">Hardware Refresh Discussion</div>
+                                                <span style="font-size: 12px; color: #999; white-space: nowrap; margin-left: 15px;">Jan 15, 2026 - Mike Johnson</span>
+                                            </div>
+                                            <p style="margin: 0; color: #666; font-size: 14px; line-height: 1.6;">
+                                                Client has 8 workstations reaching 4-year mark. Preparing lifecycle replacement proposal. Prefer Dell OptiPlex series. Looking at staged replacement over 2 months to minimize disruption.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Empty State - Show when no client selected -->
+                        <div id="clientEmptyState" style="background: white; padding: 60px 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); text-align: center;">
+                            <div style="font-size: 72px; margin-bottom: 20px;">👤</div>
+                            <h3 style="color: #2c3e50; margin: 0 0 10px 0;">No Client Selected</h3>
+                            <p style="color: #999; margin: 0 0 20px 0;">Select a client from the dropdown above or add a new client to get started.</p>
+                            <button id="addClientEmptyBtn" class="e-btn e-primary" style="padding: 12px 24px; font-weight: 600;">+ Add New Client</button>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Page: VoIP Calling -->
                 <div id="page-lifecycle" class="page-content">
                     <div class="lifecycle-page">
@@ -1099,6 +1679,9 @@
     <!-- Syncfusion License Key (gitignored, manually deploy to production) -->
     <script src="syncfusion-license.js"></script>
     
+    <!-- API Configuration (gitignored for security) -->
+    <script src="config.js"></script>
+    
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     
@@ -1108,6 +1691,7 @@
     <!-- Application Modules -->
     <script src="js/utils.js?v=20260123-1500"></script>
     <script src="js/api-settings.js?v=20260129-0100"></script>
+    <script src="js/ai-summarizer.js?v=20260205-0100"></script>
     <script src="js/scheduling.js?v=20260123-1500"></script>
     <script src="js/network-access.js?v=20260123-1500"></script>
     <script src="js/endpoint.js?v=20260123-1500"></script>
@@ -1116,10 +1700,11 @@
     <script src="js/email-campaigns.js?v=20260123-1500"></script>
     <script src="js/e-signature.js?v=20260123-1500"></script>
     <script src="js/voip.js?v=20260123-1500"></script>
-    <script src="js/leads.js?v=20260123-1900"></script>
+    <script src="js/leads.js?v=20260206-0400"></script>
     <script src="js/billing.js?v=20260125-0200"></script>
+    <script src="js/client-profile.js?v=20260206-0300"></script>
     
     <!-- Main Application Coordinator -->
-    <script src="js/app-main.js?v=20260130-0200"></script>
+    <script src="js/app-main.js?v=20260206-0500"></script>
 </body>
 </html>

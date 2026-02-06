@@ -206,6 +206,11 @@ function showLeadDetail(companyName, leadIndex) {
     
     // Initialize tabs for detail view
     initializeLeadDetailTabs();
+    
+    // Initialize the Profile tab by default (after a small delay to ensure tabs are ready)
+    setTimeout(() => {
+        initializeProfileTab();
+    }, 100);
 }
 
 /**
@@ -255,7 +260,7 @@ function initializeLeadDetailTabs() {
         const tabItems = [
             {
                 header: { text: 'Profile' },
-                content: '<div class="tab-content-section"><h3>Company Profile</h3><p>Profile information will be displayed here.</p></div>'
+                content: '<div class="tab-content-section" id="profileTabContent" style="padding: 0;"></div>'
             },
             {
                 header: { text: "Touch's" },
@@ -275,6 +280,10 @@ function initializeLeadDetailTabs() {
             items: tabItems,
             heightAdjustMode: 'Auto',
             selected: function(args) {
+                // When Profile tab is selected, initialize the profile
+                if (args.selectedIndex === 0) {
+                    initializeProfileTab();
+                }
                 // When Touch's tab is selected, initialize the grid
                 if (args.selectedIndex === 1) {
                     initializeTouchesGrid();
@@ -295,6 +304,256 @@ function initializeLeadDetailTabs() {
     } catch (error) {
         console.error('❌ Error initializing tabs:', error);
     }
+}
+
+/**
+ * Initialize the Profile Tab
+ */
+function initializeProfileTab() {
+    const profileContainer = document.getElementById('profileTabContent');
+    if (!profileContainer) {
+        console.warn('⚠️ profileTabContent container not found');
+        return;
+    }
+    
+    const currentCompany = leadsData[currentLeadIndex];
+    if (!currentCompany) {
+        console.warn('⚠️ No company data available');
+        return;
+    }
+    
+    // Build comprehensive profile HTML
+    const profileHTML = `
+        <div style="padding: 20px;">
+            <!-- Company Overview Stats -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px;">
+                <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-left: 4px solid #3498db;">
+                    <div style="color: #999; font-size: 13px; margin-bottom: 5px;">Account Status</div>
+                    <div style="font-size: 18px; font-weight: 700; color: #27ae60;">${currentCompany.Status || 'Active'}</div>
+                </div>
+                <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-left: 4px solid #27ae60;">
+                    <div style="color: #999; font-size: 13px; margin-bottom: 5px;">Estimated Value</div>
+                    <div style="font-size: 18px; font-weight: 700; color: #2c3e50;">${currentCompany.Amount || 'N/A'}</div>
+                </div>
+                <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-left: 4px solid #f39c12;">
+                    <div style="color: #999; font-size: 13px; margin-bottom: 5px;">Total Touches</div>
+                    <div style="font-size: 18px; font-weight: 700; color: #2c3e50;">${currentCompany.Touches || 0}</div>
+                </div>
+                <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-left: 4px solid #9b59b6;">
+                    <div style="color: #999; font-size: 13px; margin-bottom: 5px;">Next Follow-up</div>
+                    <div style="font-size: 18px; font-weight: 700; color: #2c3e50;">${currentCompany.FollowUp || 'TBD'}</div>
+                </div>
+            </div>
+
+            <!-- Tabs for Different Sections -->
+            <div style="margin-bottom: 20px;">
+                <div style="display: flex; gap: 10px; border-bottom: 2px solid #ecf0f1;">
+                    <button class="profile-subtab active" data-tab="overview" style="padding: 12px 20px; background: none; border: none; color: #2c3e50; font-weight: 600; cursor: pointer; border-bottom: 3px solid #3498db; margin-bottom: -2px;">
+                        Overview
+                    </button>
+                    <button class="profile-subtab" data-tab="contacts" style="padding: 12px 20px; background: none; border: none; color: #555; font-weight: 600; cursor: pointer;">
+                        Contacts
+                    </button>
+                    <button class="profile-subtab" data-tab="services" style="padding: 12px 20px; background: none; border: none; color: #555; font-weight: 600; cursor: pointer;">
+                        Services
+                    </button>
+                    <button class="profile-subtab" data-tab="notes" style="padding: 12px 20px; background: none; border: none; color: #555; font-weight: 600; cursor: pointer;">
+                        Notes
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tab Content: Overview -->
+            <div id="profile-subtab-overview" class="profile-subtab-content">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <!-- Company Information -->
+                    <div style="background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                        <h3 style="margin: 0 0 20px 0; color: #2c3e50; display: flex; align-items: center; gap: 8px;">
+                            🏢 Company Information
+                        </h3>
+                        <div style="display: grid; gap: 12px;">
+                            <div>
+                                <label style="font-size: 12px; color: #999; display: block; margin-bottom: 3px;">Company Name</label>
+                                <div style="font-size: 14px; color: #2c3e50; font-weight: 600;">${currentCompany.Company}</div>
+                            </div>
+                            <div>
+                                <label style="font-size: 12px; color: #999; display: block; margin-bottom: 3px;">Industry</label>
+                                <div style="font-size: 14px; color: #2c3e50;">${currentCompany.Industry || 'N/A'}</div>
+                            </div>
+                            <div>
+                                <label style="font-size: 12px; color: #999; display: block; margin-bottom: 3px;">Location</label>
+                                <div style="font-size: 14px; color: #2c3e50;">${currentCompany.City || 'N/A'}, FL</div>
+                            </div>
+                            <div>
+                                <label style="font-size: 12px; color: #999; display: block; margin-bottom: 3px;">Website</label>
+                                <div style="font-size: 14px; color: #3498db;"><a href="#" style="text-decoration: none; color: #3498db;">www.${currentCompany.Company.toLowerCase().replace(/\s+/g, '')}.com</a></div>
+                            </div>
+                            <div>
+                                <label style="font-size: 12px; color: #999; display: block; margin-bottom: 3px;">Lead Source</label>
+                                <div style="font-size: 14px; color: #2c3e50;">${currentCompany.Source || 'N/A'}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Account Details -->
+                    <div style="background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                        <h3 style="margin: 0 0 20px 0; color: #2c3e50; display: flex; align-items: center; gap: 8px;">
+                            📋 Sales Information
+                        </h3>
+                        <div style="display: grid; gap: 12px;">
+                            <div>
+                                <label style="font-size: 12px; color: #999; display: block; margin-bottom: 3px;">Account Representative</label>
+                                <div style="font-size: 14px; color: #2c3e50; font-weight: 600;">${currentCompany.Rep || 'Unassigned'}</div>
+                            </div>
+                            <div>
+                                <label style="font-size: 12px; color: #999; display: block; margin-bottom: 3px;">Lead Status</label>
+                                <div style="font-size: 14px; color: #2c3e50;">${currentCompany.Status || 'Active'}</div>
+                            </div>
+                            <div>
+                                <label style="font-size: 12px; color: #999; display: block; margin-bottom: 3px;">Solutions Interest</label>
+                                <div style="font-size: 14px; color: #2c3e50;">${currentCompany.Solutions || 'N/A'}</div>
+                            </div>
+                            <div>
+                                <label style="font-size: 12px; color: #999; display: block; margin-bottom: 3px;">Estimated Value</label>
+                                <div style="font-size: 14px; color: #2c3e50;">${currentCompany.Amount || 'N/A'}</div>
+                            </div>
+                            <div>
+                                <label style="font-size: 12px; color: #999; display: block; margin-bottom: 3px;">Next Step</label>
+                                <div style="font-size: 14px; color: #2c3e50;">${currentCompany.NextStep || 'TBD'}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Content: Contacts -->
+            <div id="profile-subtab-contacts" class="profile-subtab-content" style="display: none;">
+                <div style="background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h3 style="margin: 0; color: #2c3e50;">Contact List</h3>
+                        <button class="e-btn e-primary" style="padding: 10px 16px;">+ Add Contact</button>
+                    </div>
+                    <div style="display: grid; gap: 15px;">
+                        <div style="padding: 15px; border: 1px solid #eee; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
+                            <div style="display: flex; gap: 15px; align-items: center;">
+                                <div style="width: 50px; height: 50px; border-radius: 50%; background: #3498db; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 18px;">${currentCompany.Company.substring(0, 2).toUpperCase()}</div>
+                                <div>
+                                    <div style="font-weight: 600; color: #2c3e50; margin-bottom: 3px;">Primary Contact</div>
+                                    <div style="font-size: 13px; color: #666; margin-bottom: 2px;">Decision Maker</div>
+                                    <div style="font-size: 13px; color: #999;">
+                                        📧 contact@${currentCompany.Company.toLowerCase().replace(/\s+/g, '')}.com | ☎️ (555) 123-4567
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 8px;">
+                                <button class="e-btn e-outline e-small">✉️ Email</button>
+                                <button class="e-btn e-outline e-small">☎️ Call</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Content: Services -->
+            <div id="profile-subtab-services" class="profile-subtab-content" style="display: none;">
+                <div style="background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h3 style="margin: 0; color: #2c3e50;">Proposed Services</h3>
+                        <button class="e-btn e-primary" style="padding: 10px 16px;">+ Add Service</button>
+                    </div>
+                    <div style="display: grid; gap: 15px;">
+                        <div style="padding: 15px; border: 1px solid #eee; border-radius: 6px;">
+                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                                <div>
+                                    <div style="font-weight: 600; color: #2c3e50; font-size: 16px; margin-bottom: 5px;">🖥️ Managed IT Services</div>
+                                    <div style="font-size: 13px; color: #666; line-height: 1.6;">
+                                        24/7 monitoring, helpdesk support, patch management, and proactive maintenance.
+                                    </div>
+                                </div>
+                                <span style="background: #f39c12; color: white; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600; white-space: nowrap; margin-left: 15px;">Proposed</span>
+                            </div>
+                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; padding-top: 10px; border-top: 1px solid #eee;">
+                                <div>
+                                    <span style="font-size: 12px; color: #999;">Estimated Monthly:</span>
+                                    <div style="font-weight: 600; color: #2c3e50;">${currentCompany.Amount || 'TBD'}</div>
+                                </div>
+                                <div>
+                                    <span style="font-size: 12px; color: #999;">Solutions:</span>
+                                    <div style="font-weight: 600; color: #2c3e50;">${currentCompany.Solutions || 'ALL'}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Content: Notes -->
+            <div id="profile-subtab-notes" class="profile-subtab-content" style="display: none;">
+                <div style="background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h3 style="margin: 0; color: #2c3e50;">Lead Notes</h3>
+                        <button class="e-btn e-primary" style="padding: 10px 16px;">+ Add Note</button>
+                    </div>
+                    <div style="display: grid; gap: 15px;">
+                        <div style="padding: 15px; border-left: 4px solid #3498db; background: #f8f9fa; border-radius: 4px;">
+                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                                <div style="font-weight: 600; color: #2c3e50;">Initial Contact - ${currentCompany.Source}</div>
+                                <span style="font-size: 12px; color: #999; white-space: nowrap; margin-left: 15px;">Follow-up: ${currentCompany.FollowUp}</span>
+                            </div>
+                            <p style="margin: 0; color: #666; font-size: 14px; line-height: 1.6;">
+                                Lead source: ${currentCompany.Source}. Interested in ${currentCompany.Solutions || 'multiple solutions'}. 
+                                Estimated value: ${currentCompany.Amount}. Total touches: ${currentCompany.Touches}.
+                                ${currentCompany.NextStep ? 'Next step: ' + currentCompany.NextStep : 'Planning next engagement.'}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    profileContainer.innerHTML = profileHTML;
+    
+    // Set up subtab navigation
+    setupProfileSubtabs();
+    
+    console.log('✅ Profile tab initialized for:', currentCompany.Company);
+}
+
+/**
+ * Setup profile subtab navigation
+ */
+function setupProfileSubtabs() {
+    const subtabs = document.querySelectorAll('.profile-subtab');
+    subtabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            const targetTab = this.getAttribute('data-tab');
+            
+            // Update tab buttons
+            subtabs.forEach(t => {
+                const isActive = t.getAttribute('data-tab') === targetTab;
+                if (isActive) {
+                    t.style.color = '#2c3e50';
+                    t.style.borderBottom = '3px solid #3498db';
+                    t.classList.add('active');
+                } else {
+                    t.style.color = '#555';
+                    t.style.borderBottom = 'none';
+                    t.classList.remove('active');
+                }
+            });
+            
+            // Update tab content
+            const tabContents = document.querySelectorAll('.profile-subtab-content');
+            tabContents.forEach(content => {
+                if (content.id === `profile-subtab-${targetTab}`) {
+                    content.style.display = 'block';
+                } else {
+                    content.style.display = 'none';
+                }
+            });
+        });
+    });
 }
 
 /**
@@ -537,14 +796,17 @@ function refreshCurrentTabContent() {
     console.log('🔄 Refreshing tab content for tab index:', selectedIndex);
     
     // Refresh based on which tab is currently active
-    if (selectedIndex === 1) {
+    if (selectedIndex === 0) {
+        // Profile tab - reinitialize with new company data
+        initializeProfileTab();
+    } else if (selectedIndex === 1) {
         // Touch's tab - reinitialize the grid with new company data
         initializeTouchesGrid();
     } else if (selectedIndex === 3) {
         // Proposals tab - reinitialize the proposals with new company data
         initializeProposalsTab();
     }
-    // Profile and Site Overview tabs are static, no need to refresh
+    // Site Overview tab is static, no need to refresh
 }
 
 /**
@@ -567,8 +829,10 @@ function setupProposalEventListeners() {
     }
 }
 
-// Export functions
+// Export functions and data
 if (typeof window !== 'undefined') {
     window.initializeLeadsPage = initializeLeadsPage;
+    window.leadsData = leadsData; // Export leadsData for use by other modules
+    console.log('✅ Leads data exported to window:', leadsData.length, 'companies');
 }
 

@@ -2780,12 +2780,6 @@ body > #campaignModal {
     font-size: 13px !important;
 }
 
-.e-grid .e-headercelldiv {
-    font-weight: 600 !important;
-    font-size: 13px !important;
-    color: #2c3e50 !important;
-}
-
 .company-name-cell {
     color: #3498db;
     cursor: pointer;

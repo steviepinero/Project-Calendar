@@ -128,6 +128,89 @@ function initializeLeadsPage() {
 }
 
 /**
+ * Get responsive column widths based on screen size
+ */
+function getResponsiveColumns() {
+    const screenWidth = window.innerWidth;
+    
+    // Phone: < 768px - Show minimal columns
+    if (screenWidth < 768) {
+        return [
+            { 
+                field: 'Company', 
+                headerText: 'Company', 
+                width: 150,
+                template: '<span class="company-name-cell">${Company}</span>'
+            },
+            { field: 'Status', headerText: 'Status', width: 70 },
+            { field: 'Amount', headerText: 'Amount', width: 90, textAlign: 'Right' },
+            { field: 'FollowUp', headerText: 'Follow Up', width: 100 }
+        ];
+    }
+    
+    // Tablet: 768px - 1024px - Show important columns
+    if (screenWidth < 1024) {
+        return [
+            { 
+                field: 'Company', 
+                headerText: 'Company', 
+                width: 140,
+                template: '<span class="company-name-cell">${Company}</span>'
+            },
+            { field: 'Industry', headerText: 'Industry', width: 100 },
+            { field: 'City', headerText: 'City', width: 90 },
+            { field: 'Amount', headerText: 'Amount', width: 85, textAlign: 'Right' },
+            { field: 'Rep', headerText: 'Rep', width: 110 },
+            { field: 'Status', headerText: 'Status', width: 70 },
+            { field: 'Touches', headerText: "# Touch's", width: 70, textAlign: 'Right' },
+            { field: 'FollowUp', headerText: 'Follow Up', width: 100 }
+        ];
+    }
+    
+    // Small desktop: 1024px - 1366px
+    if (screenWidth < 1366) {
+        return [
+            { 
+                field: 'Company', 
+                headerText: 'Company', 
+                width: 150,
+                template: '<span class="company-name-cell">${Company}</span>'
+            },
+            { field: 'Industry', headerText: 'Industry', width: 100 },
+            { field: 'City', headerText: 'City', width: 100 },
+            { field: 'Source', headerText: 'Source', width: 100 },
+            { field: 'Solutions', headerText: 'Solutions', width: 90 },
+            { field: 'Amount', headerText: 'Amount', width: 90, textAlign: 'Right' },
+            { field: 'Rep', headerText: 'Rep', width: 120 },
+            { field: 'Status', headerText: 'Status', width: 70 },
+            { field: 'Touches', headerText: "# Touch's", width: 80, textAlign: 'Right' },
+            { field: 'FollowUp', headerText: 'Follow Up', width: 100 }
+        ];
+    }
+    
+    // Full desktop: >= 1366px - Show all columns
+    return [
+        { 
+            field: 'Company', 
+            headerText: 'Company', 
+            width: 180,
+            template: '<span class="company-name-cell">${Company}</span>'
+        },
+        { field: 'Industry', headerText: 'Industry', width: 120 },
+        { field: 'City', headerText: 'City', width: 120 },
+        { field: 'Source', headerText: 'Source', width: 130 },
+        { field: 'Solutions', headerText: 'Solutions', width: 100 },
+        { field: 'Amount', headerText: 'Amount', width: 100, textAlign: 'Right' },
+        { field: 'Rep', headerText: 'Rep', width: 150 },
+        { field: 'Status', headerText: 'Status', width: 80 },
+        { field: 'LastTouch', headerText: 'Last Touch', width: 120 },
+        { field: 'Touches', headerText: "# Touch's", width: 90, textAlign: 'Right' },
+        { field: 'FollowUp', headerText: 'Follow Up', width: 120 },
+        { field: 'NextStep', headerText: 'Next Step', width: 100 }
+    ];
+}
+
+/**
  * Initialize Syncfusion Grid for leads
  */
 function initializeLeadsGrid() {
@@ -148,27 +231,10 @@ function initializeLeadsGrid() {
             allowSorting: true,
             allowFiltering: true,
             allowPaging: true,
+            allowResizing: true,
             pageSettings: { pageSize: 25 },
             filterSettings: { type: 'Excel' },
-            columns: [
-                { 
-                    field: 'Company', 
-                    headerText: 'Company', 
-                    width: 180,
-                    template: '<span class="company-name-cell">${Company}</span>'
-                },
-                { field: 'Industry', headerText: 'Industry', width: 120 },
-                { field: 'City', headerText: 'City', width: 120 },
-                { field: 'Source', headerText: 'Source', width: 130 },
-                { field: 'Solutions', headerText: 'Solutions', width: 100 },
-                { field: 'Amount', headerText: 'Amount', width: 100, textAlign: 'Right' },
-                { field: 'Rep', headerText: 'Rep', width: 150 },
-                { field: 'Status', headerText: 'Status', width: 80 },
-                { field: 'LastTouch', headerText: 'Last Touch', width: 120 },
-                { field: 'Touches', headerText: "# Touch's", width: 90, textAlign: 'Right' },
-                { field: 'FollowUp', headerText: 'Follow Up', width: 120 },
-                { field: 'NextStep', headerText: 'Next Step', width: 100 }
-            ],
+            columns: getResponsiveColumns(),
             height: '100%',
             rowHeight: 40
         });
@@ -914,6 +980,20 @@ function setupLeadsEventListeners() {
             currentLeadIndex = null;
         });
     }
+    
+    // Window resize handler for responsive grid
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+            // Only re-initialize if on leads page and grid exists
+            const leadsPage = document.getElementById('page-leads');
+            if (leadsPage && leadsPage.classList.contains('active') && leadsGridInstance) {
+                console.log('📐 Window resized, updating grid columns');
+                initializeLeadsGrid();
+            }
+        }, 300); // Debounce resize events
+    });
 }
 
 /**

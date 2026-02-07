@@ -940,8 +940,8 @@ function initializeProposalsTab() {
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
                 <h2 style="color: #2c3e50; margin: 0;">📄 Business Proposal Generator</h2>
                 <div style="display: flex; gap: 10px;">
-                    <button id="saveProposalBtn" class="e-btn e-outline">💾 Save Draft</button>
-                    <button id="generateProposalBtn" class="e-btn e-primary">📥 Generate PDF</button>
+                    <button id="saveProposalBtn" class="e-btn e-outline" onclick="window.saveProposalDraft()">💾 Save Draft</button>
+                    <button id="generateProposalBtn" class="e-btn e-primary" onclick="window.generateCurrentProposalPDF()">📥 Generate PDF</button>
                 </div>
             </div>
 
@@ -1195,6 +1195,271 @@ Phase 3 (Week 5-6): Go-Live & Training
 }
 
 /**
+ * Generate PDF from proposal content
+ */
+function generateProposalPDF(company) {
+    console.log('🔄 Starting PDF generation for:', company.Company);
+    
+    // Check if jsPDF is loaded
+    if (!window.jspdf || !window.jspdf.jsPDF) {
+        console.error('❌ jsPDF library not loaded');
+        alert('⚠️ PDF library not loaded. Please refresh the page and try again.');
+        return;
+    }
+    
+    try {
+        // Access jsPDF from the global scope
+        const { jsPDF } = window.jspdf;
+        console.log('✅ jsPDF loaded successfully');
+        const doc = new jsPDF();
+        
+        // Get current date for the proposal
+        const currentDate = new Date().toLocaleDateString('en-US', { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+        });
+        
+        let yPos = 20;
+        const pageWidth = doc.internal.pageSize.width;
+        const pageHeight = doc.internal.pageSize.height;
+        const margin = 20;
+        const maxWidth = pageWidth - (margin * 2);
+        
+        // Helper function to add new page if needed
+        const checkPageBreak = (requiredSpace = 10) => {
+            if (yPos + requiredSpace > pageHeight - 20) {
+                doc.addPage();
+                yPos = 20;
+                return true;
+            }
+            return false;
+        };
+        
+        // Header
+        doc.setFillColor(52, 152, 219);
+        doc.rect(0, 0, pageWidth, 40, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(24);
+        doc.setFont(undefined, 'bold');
+        doc.text('BUSINESS PROPOSAL', pageWidth / 2, 25, { align: 'center' });
+        
+        yPos = 50;
+        doc.setTextColor(0, 0, 0);
+        
+        // Company Name
+        doc.setFontSize(20);
+        doc.setFont(undefined, 'bold');
+        doc.text(company.Company, margin, yPos);
+        yPos += 10;
+        
+        // Date
+        doc.setFontSize(10);
+        doc.setFont(undefined, 'normal');
+        doc.setTextColor(100, 100, 100);
+        doc.text(`Proposal Date: ${currentDate}`, margin, yPos);
+        yPos += 15;
+        
+        // Divider line
+        doc.setDrawColor(200, 200, 200);
+        doc.line(margin, yPos, pageWidth - margin, yPos);
+        yPos += 15;
+        
+        doc.setTextColor(0, 0, 0);
+        
+        // Executive Summary Section
+        if (document.getElementById('section-executive')?.checked !== false) {
+            checkPageBreak(30);
+            doc.setFontSize(16);
+            doc.setFont(undefined, 'bold');
+            doc.setTextColor(52, 152, 219);
+            doc.text('Executive Summary', margin, yPos);
+            yPos += 8;
+            
+            doc.setFontSize(10);
+            doc.setFont(undefined, 'normal');
+            doc.setTextColor(0, 0, 0);
+            const execText = document.getElementById('execSummaryText')?.value || 
+                `We are pleased to present this comprehensive proposal for ${company.Company}. Our managed IT services are designed to enhance your business operations, improve security, and provide reliable technical support for your organization.`;
+            const execLines = doc.splitTextToSize(execText, maxWidth);
+            doc.text(execLines, margin, yPos);
+            yPos += (execLines.length * 5) + 10;
+        }
+        
+        // Company Overview Section
+        if (document.getElementById('section-company')?.checked !== false) {
+            checkPageBreak(30);
+            doc.setFontSize(16);
+            doc.setFont(undefined, 'bold');
+            doc.setTextColor(52, 152, 219);
+            doc.text('Company Overview', margin, yPos);
+            yPos += 8;
+            
+            doc.setFontSize(10);
+            doc.setFont(undefined, 'normal');
+            doc.setTextColor(0, 0, 0);
+            const companyText = document.getElementById('companyOverviewText')?.value || 
+                `Our MSP has been serving businesses in the ${company.City} area for over 15 years. We specialize in providing comprehensive IT solutions tailored to organizations in the ${company.Industry} industry.`;
+            const companyLines = doc.splitTextToSize(companyText, maxWidth);
+            doc.text(companyLines, margin, yPos);
+            yPos += (companyLines.length * 5) + 10;
+        }
+        
+        // Services & Pricing Section
+        if (document.getElementById('section-services')?.checked !== false) {
+            checkPageBreak(30);
+            doc.setFontSize(16);
+            doc.setFont(undefined, 'bold');
+            doc.setTextColor(52, 152, 219);
+            doc.text('Proposed Services & Pricing', margin, yPos);
+            yPos += 10;
+            
+            // Get services from the table
+            const servicesTable = document.getElementById('servicesTable');
+            if (servicesTable) {
+                const rows = servicesTable.querySelectorAll('tr');
+                let totalCost = 0;
+                
+                doc.setFontSize(10);
+                doc.setFont(undefined, 'bold');
+                doc.setTextColor(100, 100, 100);
+                
+                // Table header
+                checkPageBreak(15);
+                doc.text('Service', margin, yPos);
+                doc.text('Description', margin + 60, yPos);
+                doc.text('Monthly Cost', pageWidth - margin - 30, yPos, { align: 'right' });
+                yPos += 5;
+                doc.setDrawColor(200, 200, 200);
+                doc.line(margin, yPos, pageWidth - margin, yPos);
+                yPos += 8;
+                
+                doc.setFont(undefined, 'normal');
+                doc.setTextColor(0, 0, 0);
+                
+                // Table rows
+                rows.forEach((row, index) => {
+                    checkPageBreak(20);
+                    
+                    const cells = row.querySelectorAll('td');
+                    if (cells.length >= 3) {
+                        const service = cells[0].querySelector('input')?.value || cells[0].textContent.trim();
+                        const description = cells[1].querySelector('input')?.value || cells[1].textContent.trim();
+                        const cost = parseFloat(cells[2].querySelector('input')?.value || cells[2].textContent.replace(/[$,]/g, '')) || 0;
+                        totalCost += cost;
+                        
+                        // Service name (bold)
+                        doc.setFont(undefined, 'bold');
+                        doc.text(service.substring(0, 25), margin, yPos);
+                        
+                        // Description
+                        doc.setFont(undefined, 'normal');
+                        const descLines = doc.splitTextToSize(description, 60);
+                        doc.text(descLines[0].substring(0, 35), margin + 60, yPos);
+                        
+                        // Cost
+                        doc.text('$' + cost.toLocaleString(), pageWidth - margin - 5, yPos, { align: 'right' });
+                        
+                        yPos += 8;
+                    }
+                });
+                
+                // Total
+                yPos += 5;
+                doc.setDrawColor(200, 200, 200);
+                doc.line(margin, yPos, pageWidth - margin, yPos);
+                yPos += 8;
+                
+                doc.setFont(undefined, 'bold');
+                doc.setFontSize(12);
+                doc.text('Total Monthly Investment:', margin, yPos);
+                doc.setTextColor(52, 152, 219);
+                doc.text('$' + totalCost.toLocaleString(), pageWidth - margin - 5, yPos, { align: 'right' });
+                doc.setTextColor(0, 0, 0);
+                yPos += 15;
+            }
+        }
+        
+        // Implementation Timeline Section
+        if (document.getElementById('section-timeline')?.checked !== false) {
+            checkPageBreak(30);
+            doc.setFontSize(16);
+            doc.setFont(undefined, 'bold');
+            doc.setTextColor(52, 152, 219);
+            doc.text('Implementation Timeline', margin, yPos);
+            yPos += 8;
+            
+            doc.setFontSize(10);
+            doc.setFont(undefined, 'normal');
+            doc.setTextColor(0, 0, 0);
+            const timelineText = document.getElementById('timelineText')?.value || 
+                `Phase 1 (Week 1-2): Discovery & Planning\nPhase 2 (Week 3-4): Infrastructure Setup\nPhase 3 (Week 5-6): Migration & Testing\nPhase 4 (Week 7-8): Training & Go-Live`;
+            const timelineLines = doc.splitTextToSize(timelineText, maxWidth);
+            doc.text(timelineLines, margin, yPos);
+            yPos += (timelineLines.length * 5) + 10;
+        }
+        
+        // Terms & Conditions Section
+        if (document.getElementById('section-terms')?.checked !== false) {
+            checkPageBreak(30);
+            doc.setFontSize(16);
+            doc.setFont(undefined, 'bold');
+            doc.setTextColor(52, 152, 219);
+            doc.text('Terms & Conditions', margin, yPos);
+            yPos += 8;
+            
+            doc.setFontSize(10);
+            doc.setFont(undefined, 'normal');
+            doc.setTextColor(0, 0, 0);
+            const termsText = document.getElementById('termsText')?.value || 
+                `• Contract term: 12 months with automatic renewal\n• Payment terms: Net 30 days\n• Services provided during business hours (8 AM - 6 PM EST)\n• 24/7 emergency support available\n• 30-day notice required for service changes`;
+            const termsLines = doc.splitTextToSize(termsText, maxWidth);
+            doc.text(termsLines, margin, yPos);
+            yPos += (termsLines.length * 5) + 10;
+        }
+        
+        // Footer on last page
+        checkPageBreak(40);
+        yPos = pageHeight - 40;
+        doc.setDrawColor(52, 152, 219);
+        doc.setLineWidth(0.5);
+        doc.line(margin, yPos, pageWidth - margin, yPos);
+        yPos += 8;
+        
+        doc.setFontSize(10);
+        doc.setFont(undefined, 'bold');
+        doc.text('Thank you for considering our proposal!', margin, yPos);
+        yPos += 6;
+        doc.setFont(undefined, 'normal');
+        doc.setFontSize(9);
+        doc.setTextColor(100, 100, 100);
+        doc.text('For questions or to accept this proposal, please contact your account representative.', margin, yPos);
+        
+        // Page numbers
+        const pageCount = doc.internal.getNumberOfPages();
+        for (let i = 1; i <= pageCount; i++) {
+            doc.setPage(i);
+            doc.setFontSize(8);
+            doc.setTextColor(150, 150, 150);
+            doc.text(`Page ${i} of ${pageCount}`, pageWidth - margin, pageHeight - 10, { align: 'right' });
+        }
+        
+        // Save the PDF
+        const filename = `Proposal_${company.Company.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`;
+        doc.save(filename);
+        
+        console.log('✅ PDF generated successfully:', filename);
+        
+        // Show success message
+        alert(`📄 PDF Generated Successfully!\n\nFile: ${filename}\n\nThe proposal has been downloaded to your device.`);
+        
+    } catch (error) {
+        console.error('❌ Error generating PDF:', error);
+        alert('⚠️ Error generating PDF. Please check the console for details.');
+    }
+}
+
+/**
  * Calculate total cost from service items
  */
 function calculateTotalCost() {
@@ -1213,20 +1478,37 @@ function calculateTotalCost() {
  * Set up event listeners for proposal buttons and features
  */
 function setupProposalEventListeners(company) {
+    console.log('🔧 Setting up proposal event listeners for:', company.Company);
+    
     // Generate PDF button
     const generateBtn = document.getElementById('generateProposalBtn');
     if (generateBtn) {
-        generateBtn.addEventListener('click', () => {
-            alert('📥 PDF Generation\n\nIn production, this would:\n• Compile all selected sections\n• Apply the chosen template style\n• Generate a professional PDF\n• Allow download or email to client\n\nIntegration options: jsPDF, PDFKit, or DocuSign API');
+        console.log('✅ Found generateProposalBtn');
+        // Remove any existing listeners by cloning the button
+        const newGenerateBtn = generateBtn.cloneNode(true);
+        generateBtn.parentNode.replaceChild(newGenerateBtn, generateBtn);
+        
+        newGenerateBtn.addEventListener('click', () => {
+            console.log('📄 Generate PDF button clicked for:', company.Company);
+            generateProposalPDF(company);
         });
+    } else {
+        console.error('❌ generateProposalBtn not found');
     }
     
     // Save draft button
     const saveBtn = document.getElementById('saveProposalBtn');
     if (saveBtn) {
-        saveBtn.addEventListener('click', () => {
+        console.log('✅ Found saveProposalBtn');
+        // Remove any existing listeners by cloning the button
+        const newSaveBtn = saveBtn.cloneNode(true);
+        saveBtn.parentNode.replaceChild(newSaveBtn, saveBtn);
+        
+        newSaveBtn.addEventListener('click', () => {
             alert('💾 Proposal saved as draft!\n\nIn production, this would save to database for later editing.');
         });
+    } else {
+        console.error('❌ saveProposalBtn not found');
     }
     
     // Add service row button
@@ -1312,13 +1594,6 @@ function refreshCurrentTabContent() {
 }
 
 /**
- * Set up event listeners for proposal buttons
- */
-function setupProposalEventListeners() {
-    // This is the old version - will be overridden by the new one above
-}
-
-/**
  * Open a specific lead with a specific tab (for deep linking)
  */
 function openLeadWithTab(companyName, leadIndex, tabIndex) {
@@ -1368,6 +1643,23 @@ if (typeof window !== 'undefined') {
     window.showLeadDetail = showLeadDetail; // Export for deep linking to proposals
     window.openLeadWithTab = openLeadWithTab; // Export for deep linking with specific tab
     window.leadDetailTabsInstance = null; // Will be set when tabs are initialized
+    
+    // Global wrapper functions for proposal actions
+    window.generateCurrentProposalPDF = function() {
+        console.log('🌍 Global generateCurrentProposalPDF called');
+        if (currentLeadIndex !== null && leadsData[currentLeadIndex]) {
+            generateProposalPDF(leadsData[currentLeadIndex]);
+        } else {
+            console.error('❌ No current lead selected');
+            alert('Please select a company first');
+        }
+    };
+    
+    window.saveProposalDraft = function() {
+        console.log('💾 Save proposal draft clicked');
+        alert('💾 Proposal saved as draft!\n\nIn production, this would save to database for later editing.');
+    };
+    
     console.log('✅ Leads data exported to window:', leadsData.length, 'companies');
 }
 

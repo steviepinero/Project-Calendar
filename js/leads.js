@@ -39,6 +39,7 @@ let leadsGridInstance = null;
 let currentLeadIndex = null;
 let touchesGridInstance = null;
 let leadDetailTabsInstance = null; // Store the tabs instance
+let isDeepLinking = false; // Flag to prevent double initialization during deep linking
 
 // Sample touch history data for each company
 const touchHistoryData = {
@@ -106,6 +107,12 @@ function initializeLeadsPage() {
     // Check if we're on the leads page
     const leadsPage = document.getElementById('page-leads');
     if (!leadsPage || !leadsPage.classList.contains('active')) {
+        return;
+    }
+    
+    // Check if already initialized - if tabs exist, don't re-initialize
+    if (leadDetailTabsInstance !== null) {
+        console.log('⚠️ Leads page already initialized, skipping re-initialization');
         return;
     }
     
@@ -206,11 +213,6 @@ function showLeadDetail(companyName, leadIndex) {
     
     // Initialize tabs for detail view
     initializeLeadDetailTabs();
-    
-    // Initialize the Profile tab by default (after a small delay to ensure tabs are ready)
-    setTimeout(() => {
-        initializeProfileTab();
-    }, 100);
 }
 
 /**
@@ -279,7 +281,27 @@ function initializeLeadDetailTabs() {
         const tabObj = new ej.navigations.Tab({
             items: tabItems,
             heightAdjustMode: 'Auto',
+            created: function() {
+                // Initialize the first tab (Profile) when tabs are created
+                // But only if we're not deep linking (which will handle initialization itself)
+                if (!isDeepLinking) {
+                    console.log('🎨 Tabs created, initializing Profile tab');
+                    setTimeout(() => {
+                        initializeProfileTab();
+                    }, 100);
+                } else {
+                    console.log('🎨 Tabs created during deep linking, skipping auto-init');
+                }
+            },
             selected: function(args) {
+                console.log('📑 Tab selected:', args.selectedIndex, 'isDeepLinking:', isDeepLinking);
+                
+                // Skip initialization during deep linking - openLeadWithTab will handle it
+                if (isDeepLinking) {
+                    console.log('⏭️ Skipping tab init during deep linking');
+                    return;
+                }
+                
                 // When Profile tab is selected, initialize the profile
                 if (args.selectedIndex === 0) {
                     initializeProfileTab();
@@ -303,6 +325,7 @@ function initializeLeadDetailTabs() {
         
         // Store the tab instance globally for later access
         leadDetailTabsInstance = tabObj;
+        window.leadDetailTabsInstance = tabObj; // Also expose globally for deep linking
         
         console.log('✅ Lead Detail Tabs initialized');
     } catch (error) {
@@ -896,6 +919,9 @@ function setupLeadsEventListeners() {
 /**
  * Initialize the Proposals Tab
  */
+/**
+ * Initialize the Proposals Tab - Business Proposal Generator
+ */
 function initializeProposalsTab() {
     const proposalsContainer = document.getElementById('proposalsTabContent');
     if (!proposalsContainer) {
@@ -908,93 +934,248 @@ function initializeProposalsTab() {
     
     const currentCompany = leadsData[currentLeadIndex];
     
-    // Build the proposals interface HTML
+    // Build the comprehensive proposal generator HTML
     const proposalsHTML = `
-        <div class="proposals-layout">
-            <div class="proposals-left">
-                <!-- Documents To Include Section -->
-                <div class="proposals-section">
-                    <h3>Documents To Include</h3>
-                    <div class="document-checklist">
-                        <label class="document-item">
-                            <input type="checkbox" class="e-checkbox" id="doc-cover" checked>
-                            <span>Cover Letter</span>
-                        </label>
-                        <label class="document-item">
-                            <input type="checkbox" class="e-checkbox" id="doc-executive">
-                            <span>#VALUE! Executive Summary</span>
-                        </label>
-                        <label class="document-item">
-                            <input type="checkbox" class="e-checkbox" id="doc-problem">
-                            <span>Problem Statement</span>
-                        </label>
-                        <label class="document-item">
-                            <input type="checkbox" class="e-checkbox" id="doc-solution">
-                            <span>#VALUE! Proposed Solution</span>
-                        </label>
-                        <label class="document-item">
-                            <input type="checkbox" class="e-checkbox" id="doc-deliverables">
-                            <span>Deliverables</span>
-                        </label>
-                        <label class="document-item">
-                            <input type="checkbox" class="e-checkbox" id="doc-timeline">
-                            <span>#VALUE! Timeline</span>
-                        </label>
-                        <label class="document-item">
-                            <input type="checkbox" class="e-checkbox" id="doc-budget">
-                            <span>#VALUE! Budget</span>
-                        </label>
-                        <label class="document-item">
-                            <input type="checkbox" class="e-checkbox" id="doc-team">
-                            <span>About The Team</span>
-                        </label>
-                        <label class="document-item">
-                            <input type="checkbox" class="e-checkbox" id="doc-press">
-                            <span>Press Releases</span>
-                        </label>
-                    </div>
-                </div>
-                
-                <!-- Variables Section -->
-                <div class="proposals-section">
-                    <h3>Variables</h3>
-                    <div id="proposalVariablesGrid"></div>
-                </div>
-                
-                <div class="proposals-actions">
-                    <button id="generateProposalBtn" class="e-btn e-primary">Generate Proposal</button>
-                    <button id="previewProposalBtn" class="e-btn e-outline">Preview</button>
+        <div style="padding: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                <h2 style="color: #2c3e50; margin: 0;">📄 Business Proposal Generator</h2>
+                <div style="display: flex; gap: 10px;">
+                    <button id="saveProposalBtn" class="e-btn e-outline">💾 Save Draft</button>
+                    <button id="generateProposalBtn" class="e-btn e-primary">📥 Generate PDF</button>
                 </div>
             </div>
-            
-            <div class="proposals-right">
-                <div class="proposal-preview" id="proposalPreview">
-                    <div class="proposal-document">
-                        <div class="proposal-header">
-                            <div class="proposal-logo">
-                                <div class="handshake-icon">🤝</div>
+
+            <!-- Proposal Configuration -->
+            <div style="display: grid; grid-template-columns: 350px 1fr; gap: 20px;">
+                <!-- Left Panel: Configuration -->
+                <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                    <h3 style="margin: 0 0 20px 0; color: #2c3e50;">⚙️ Configuration</h3>
+                    
+                    <!-- Client Information -->
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; font-size: 12px; color: #666; margin-bottom: 5px; font-weight: 600;">Client Name</label>
+                        <input type="text" id="proposalClientName" value="${currentCompany.Company}" class="e-field" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px;">
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; font-size: 12px; color: #666; margin-bottom: 5px; font-weight: 600;">Contact Person</label>
+                        <input type="text" id="proposalContactPerson" value="Primary Contact" class="e-field" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px;">
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; font-size: 12px; color: #666; margin-bottom: 5px; font-weight: 600;">Proposal Date</label>
+                        <input type="date" id="proposalDate" value="${new Date().toISOString().split('T')[0]}" class="e-field" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px;">
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; font-size: 12px; color: #666; margin-bottom: 5px; font-weight: 600;">Valid Until</label>
+                        <input type="date" id="proposalValidUntil" value="${new Date(Date.now() + 30*24*60*60*1000).toISOString().split('T')[0]}" class="e-field" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px;">
+                    </div>
+                    
+                    <!-- Sections to Include -->
+                    <h4 style="margin: 20px 0 10px 0; color: #2c3e50; font-size: 14px;">Sections to Include</h4>
+                    <div style="display: grid; gap: 8px;">
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                            <input type="checkbox" checked id="section-cover" style="cursor: pointer;">
+                            <span style="font-size: 13px;">Cover Letter</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                            <input type="checkbox" checked id="section-executive" style="cursor: pointer;">
+                            <span style="font-size: 13px;">Executive Summary</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                            <input type="checkbox" checked id="section-problem" style="cursor: pointer;">
+                            <span style="font-size: 13px;">Problem Statement</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                            <input type="checkbox" checked id="section-solution" style="cursor: pointer;">
+                            <span style="font-size: 13px;">Proposed Solution</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                            <input type="checkbox" checked id="section-services" style="cursor: pointer;">
+                            <span style="font-size: 13px;">Services & Pricing</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                            <input type="checkbox" checked id="section-timeline" style="cursor: pointer;">
+                            <span style="font-size: 13px;">Implementation Timeline</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                            <input type="checkbox" id="section-team" style="cursor: pointer;">
+                            <span style="font-size: 13px;">About Our Team</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                            <input type="checkbox" id="section-terms" style="cursor: pointer;">
+                            <span style="font-size: 13px;">Terms & Conditions</span>
+                        </label>
+                    </div>
+                    
+                    <!-- Template Selection -->
+                    <h4 style="margin: 20px 0 10px 0; color: #2c3e50; font-size: 14px;">Template Style</h4>
+                    <select id="proposalTemplate" class="e-field" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px;">
+                        <option value="professional">Professional</option>
+                        <option value="modern">Modern</option>
+                        <option value="minimal">Minimal</option>
+                        <option value="classic">Classic</option>
+                    </select>
+                </div>
+                
+                <!-- Right Panel: Proposal Editor -->
+                <div style="background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); max-height: 800px; overflow-y: auto;">
+                    <div style="max-width: 800px;">
+                        <!-- Cover Section -->
+                        <div class="proposal-section" id="cover-section">
+                            <div style="text-align: center; padding: 40px 20px; border-bottom: 3px solid #3498db;">
+                                <div style="font-size: 48px; margin-bottom: 20px;">📋</div>
+                                <h1 style="color: #2c3e50; margin: 0 0 10px 0; font-size: 32px;">Business Proposal</h1>
+                                <h2 style="color: #7f8c8d; margin: 0 0 30px 0; font-weight: 400; font-size: 20px;">Managed IT Services</h2>
+                                <div style="border-top: 2px solid #ecf0f1; padding-top: 30px; margin-top: 30px;">
+                                    <p style="font-size: 24px; font-weight: 600; color: #34495e; margin: 0 0 10px 0;">${currentCompany.Company}</p>
+                                    <p style="font-size: 16px; color: #95a5a6; margin: 0;">${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                                </div>
                             </div>
-                            <h1>Cover Letter</h1>
-                            <h2>of Business Proposal</h2>
                         </div>
-                        
-                        <div class="proposal-body">
-                            <p class="proposal-greeting">Dear <span class="variable">XYZ</span>,</p>
+
+                        <!-- Executive Summary -->
+                        <div class="proposal-section" id="executive-section" style="margin-top: 30px;">
+                            <h3 style="color: #2c3e50; border-left: 4px solid #3498db; padding-left: 15px; margin: 0 0 20px 0;">Executive Summary</h3>
+                            <textarea id="executiveSummary" rows="6" class="e-field" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; line-height: 1.6; font-family: inherit;" placeholder="Enter executive summary...">${currentCompany.Company} is seeking a comprehensive managed IT services solution to enhance operational efficiency, improve security posture, and reduce technology-related downtime. Our proposal outlines a complete IT infrastructure management approach tailored to your business needs, including 24/7 monitoring, proactive maintenance, and strategic technology guidance.</textarea>
+                        </div>
+
+                        <!-- Problem Statement -->
+                        <div class="proposal-section" id="problem-section" style="margin-top: 30px;">
+                            <h3 style="color: #2c3e50; border-left: 4px solid #e74c3c; padding-left: 15px; margin: 0 0 20px 0;">Problem Statement</h3>
+                            <textarea id="problemStatement" rows="6" class="e-field" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; line-height: 1.6; font-family: inherit;" placeholder="Enter problem statement...">Many organizations in the ${currentCompany.Industry || 'business'} industry face challenges with:
+• Managing complex IT infrastructure without dedicated internal resources
+• Maintaining security compliance and protecting against cyber threats
+• Minimizing downtime and ensuring business continuity
+• Scaling technology to support business growth
+• Controlling IT costs while maintaining service quality</textarea>
+                        </div>
+
+                        <!-- Proposed Solution -->
+                        <div class="proposal-section" id="solution-section" style="margin-top: 30px;">
+                            <h3 style="color: #2c3e50; border-left: 4px solid #27ae60; padding-left: 15px; margin: 0 0 20px 0;">Proposed Solution</h3>
+                            <textarea id="proposedSolution" rows="8" class="e-field" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; line-height: 1.6; font-family: inherit;" placeholder="Enter proposed solution...">We propose a comprehensive Managed IT Services package that includes:
+
+1. 24/7 Network Monitoring & Management
+   - Proactive monitoring of all systems and devices
+   - Immediate incident response and resolution
+   - Performance optimization and capacity planning
+
+2. Security & Compliance
+   - Advanced threat protection and firewall management
+   - Regular security audits and vulnerability assessments
+   - Compliance reporting and documentation
+
+3. Help Desk Support
+   - Unlimited support tickets
+   - Remote and on-site assistance
+   - Average response time: 15 minutes
+
+4. Strategic IT Consulting
+   - Technology roadmap planning
+   - Vendor management
+   - Budget optimization</textarea>
+                        </div>
+
+                        <!-- Services & Pricing -->
+                        <div class="proposal-section" id="services-section" style="margin-top: 30px;">
+                            <h3 style="color: #2c3e50; border-left: 4px solid #f39c12; padding-left: 15px; margin: 0 0 20px 0;">Services & Pricing</h3>
                             
-                            <p class="proposal-intro">
-                                Here you will give a one-liner about your company, brief background information about how your company came to be, and a short overview of what makes your company better than the rest. Make it friendly and encourage your reader to reach out with any questions.
-                            </p>
-                            
-                            <div class="proposal-signature">
-                                <p><strong>Regards,</strong></p>
-                                <p class="signature-name">User Name</p>
-                                <p class="signature-title">Designation</p>
-                                <p class="signature-company">Company Name</p>
+                            <div style="border: 1px solid #ddd; border-radius: 6px; overflow: hidden; margin-bottom: 20px;">
+                                <table style="width: 100%; border-collapse: collapse;">
+                                    <thead style="background: #34495e; color: white;">
+                                        <tr>
+                                            <th style="padding: 12px; text-align: left; font-size: 14px; font-weight: 600;">Service</th>
+                                            <th style="padding: 12px; text-align: left; font-size: 14px; font-weight: 600;">Description</th>
+                                            <th style="padding: 12px; text-align: right; font-size: 14px; font-weight: 600;">Monthly Cost</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="servicesTable">
+                                        <tr style="border-bottom: 1px solid #ecf0f1;">
+                                            <td style="padding: 12px; font-size: 14px;"><input type="text" value="Managed IT Services" class="e-field" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 3px; font-size: 13px;"></td>
+                                            <td style="padding: 12px; font-size: 14px;"><input type="text" value="Complete infrastructure management" class="e-field" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 3px; font-size: 13px;"></td>
+                                            <td style="padding: 12px; text-align: right; font-size: 14px;"><input type="number" value="2500" class="e-field service-cost" style="width: 120px; padding: 6px; border: 1px solid #ddd; border-radius: 3px; font-size: 13px;"></td>
+                                        </tr>
+                                        <tr style="border-bottom: 1px solid #ecf0f1; background: #f8f9fa;">
+                                            <td style="padding: 12px; font-size: 14px;"><input type="text" value="Cloud Backup & DR" class="e-field" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 3px; font-size: 13px;"></td>
+                                            <td style="padding: 12px; font-size: 14px;"><input type="text" value="Automated cloud backup (500GB)" class="e-field" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 3px; font-size: 13px;"></td>
+                                            <td style="padding: 12px; text-align: right; font-size: 14px;"><input type="number" value="750" class="e-field service-cost" style="width: 120px; padding: 6px; border: 1px solid #ddd; border-radius: 3px; font-size: 13px;"></td>
+                                        </tr>
+                                        <tr style="border-bottom: 1px solid #ecf0f1;">
+                                            <td style="padding: 12px; font-size: 14px;"><input type="text" value="Cybersecurity Suite" class="e-field" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 3px; font-size: 13px;"></td>
+                                            <td style="padding: 12px; font-size: 14px;"><input type="text" value="Advanced threat protection" class="e-field" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 3px; font-size: 13px;"></td>
+                                            <td style="padding: 12px; text-align: right; font-size: 14px;"><input type="number" value="250" class="e-field service-cost" style="width: 120px; padding: 6px; border: 1px solid #ddd; border-radius: 3px; font-size: 13px;"></td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot style="background: #ecf0f1; font-weight: 600;">
+                                        <tr>
+                                            <td colspan="2" style="padding: 15px; text-align: right; font-size: 16px;">Total Monthly Investment:</td>
+                                            <td style="padding: 15px; text-align: right; font-size: 18px; color: #27ae60;" id="totalCost">$3,500</td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
                             </div>
+                            
+                            <button id="addServiceRow" class="e-btn e-outline e-small">+ Add Service</button>
                         </div>
-                        
-                        <div class="proposal-footer">
-                            <p class="proposal-note">This slide is 100% editable. Adapt it to your needs and capture your audience's attention.</p>
+
+                        <!-- Implementation Timeline -->
+                        <div class="proposal-section" id="timeline-section" style="margin-top: 30px;">
+                            <h3 style="color: #2c3e50; border-left: 4px solid #9b59b6; padding-left: 15px; margin: 0 0 20px 0;">Implementation Timeline</h3>
+                            <textarea id="implementationTimeline" rows="6" class="e-field" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; line-height: 1.6; font-family: inherit;" placeholder="Enter implementation timeline...">Phase 1 (Week 1-2): Initial Assessment & Planning
+• Complete network assessment
+• Document current infrastructure
+• Define migration strategy
+
+Phase 2 (Week 3-4): Infrastructure Setup
+• Deploy monitoring agents
+• Configure backup solutions
+• Implement security measures
+
+Phase 3 (Week 5-6): Go-Live & Training
+• Cutover to managed services
+• Staff training sessions
+• 24/7 support activation</textarea>
+                        </div>
+
+                        <!-- About Our Team -->
+                        <div class="proposal-section" id="team-section" style="margin-top: 30px;">
+                            <h3 style="color: #2c3e50; border-left: 4px solid #16a085; padding-left: 15px; margin: 0 0 20px 0;">About Our Team</h3>
+                            <textarea id="aboutTeam" rows="5" class="e-field" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; line-height: 1.6; font-family: inherit;" placeholder="Enter team information...">Our team of certified IT professionals brings over 20 years of combined experience in managing enterprise-level IT infrastructure. We hold industry certifications including Microsoft Certified Professional, Cisco CCNA, CompTIA Security+, and ITIL Foundation. Our local presence ensures rapid on-site response when needed, while our 24/7 Network Operations Center provides round-the-clock monitoring and support.</textarea>
+                        </div>
+
+                        <!-- Terms & Conditions -->
+                        <div class="proposal-section" id="terms-section" style="margin-top: 30px;">
+                            <h3 style="color: #2c3e50; border-left: 4px solid #7f8c8d; padding-left: 15px; margin: 0 0 20px 0;">Terms & Conditions</h3>
+                            <textarea id="termsConditions" rows="5" class="e-field" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; line-height: 1.6; font-family: inherit;" placeholder="Enter terms and conditions...">• This proposal is valid for 30 days from the date above
+• Services are provided on a month-to-month basis with 30-day termination notice
+• Setup fees: One-time $500 implementation fee
+• Payment terms: Net 15 days from invoice date
+• Service Level Agreement (SLA) guarantees 99.9% uptime
+• All prices are in USD and subject to applicable taxes</textarea>
+                        </div>
+
+                        <!-- Call to Action -->
+                        <div style="margin-top: 40px; padding: 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px; text-align: center; color: white;">
+                            <h3 style="margin: 0 0 15px 0; font-size: 24px;">Ready to Get Started?</h3>
+                            <p style="margin: 0 0 20px 0; font-size: 16px; opacity: 0.9;">Let's discuss how we can help transform your IT infrastructure.</p>
+                            <div style="display: flex; justify-content: center; gap: 15px;">
+                                <div style="text-align: center;">
+                                    <div style="font-size: 12px; opacity: 0.8;">Contact</div>
+                                    <div style="font-size: 16px; font-weight: 600;">${currentCompany.Rep || 'Sales Representative'}</div>
+                                </div>
+                                <div style="border-left: 1px solid rgba(255,255,255,0.3); margin: 0 10px;"></div>
+                                <div style="text-align: center;">
+                                    <div style="font-size: 12px; opacity: 0.8;">Email</div>
+                                    <div style="font-size: 16px; font-weight: 600;">sales@yourcompany.com</div>
+                                </div>
+                                <div style="border-left: 1px solid rgba(255,255,255,0.3); margin: 0 10px;"></div>
+                                <div style="text-align: center;">
+                                    <div style="font-size: 12px; opacity: 0.8;">Phone</div>
+                                    <div style="font-size: 16px; font-weight: 600;">(555) 123-4567</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1004,48 +1185,102 @@ function initializeProposalsTab() {
     
     proposalsContainer.innerHTML = proposalsHTML;
     
-    // Initialize the variables grid
-    initializeProposalVariablesGrid(currentCompany);
-    
     // Set up event listeners
-    setupProposalEventListeners();
+    setupProposalEventListeners(currentCompany);
     
-    console.log('✅ Proposals tab initialized');
+    // Calculate initial total
+    calculateTotalCost();
+    
+    console.log('✅ Proposals tab initialized with business proposal generator');
 }
 
 /**
- * Initialize Variables Grid
+ * Calculate total cost from service items
+ */
+function calculateTotalCost() {
+    const costInputs = document.querySelectorAll('.service-cost');
+    let total = 0;
+    costInputs.forEach(input => {
+        total += parseFloat(input.value) || 0;
+    });
+    const totalElement = document.getElementById('totalCost');
+    if (totalElement) {
+        totalElement.textContent = '$' + total.toLocaleString();
+    }
+}
+
+/**
+ * Set up event listeners for proposal buttons and features
+ */
+function setupProposalEventListeners(company) {
+    // Generate PDF button
+    const generateBtn = document.getElementById('generateProposalBtn');
+    if (generateBtn) {
+        generateBtn.addEventListener('click', () => {
+            alert('📥 PDF Generation\n\nIn production, this would:\n• Compile all selected sections\n• Apply the chosen template style\n• Generate a professional PDF\n• Allow download or email to client\n\nIntegration options: jsPDF, PDFKit, or DocuSign API');
+        });
+    }
+    
+    // Save draft button
+    const saveBtn = document.getElementById('saveProposalBtn');
+    if (saveBtn) {
+        saveBtn.addEventListener('click', () => {
+            alert('💾 Proposal saved as draft!\n\nIn production, this would save to database for later editing.');
+        });
+    }
+    
+    // Add service row button
+    const addServiceBtn = document.getElementById('addServiceRow');
+    if (addServiceBtn) {
+        addServiceBtn.addEventListener('click', () => {
+            const tbody = document.getElementById('servicesTable');
+            const rowCount = tbody.children.length;
+            const newRow = document.createElement('tr');
+            newRow.style.borderBottom = '1px solid #ecf0f1';
+            if (rowCount % 2 === 0) {
+                newRow.style.background = '#f8f9fa';
+            }
+            newRow.innerHTML = `
+                <td style="padding: 12px; font-size: 14px;"><input type="text" value="New Service" class="e-field" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 3px; font-size: 13px;"></td>
+                <td style="padding: 12px; font-size: 14px;"><input type="text" value="Service description" class="e-field" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 3px; font-size: 13px;"></td>
+                <td style="padding: 12px; text-align: right; font-size: 14px;"><input type="number" value="0" class="e-field service-cost" style="width: 120px; padding: 6px; border: 1px solid #ddd; border-radius: 3px; font-size: 13px;"></td>
+            `;
+            tbody.appendChild(newRow);
+            
+            // Add event listener to new cost input
+            const newCostInput = newRow.querySelector('.service-cost');
+            newCostInput.addEventListener('input', calculateTotalCost);
+            
+            calculateTotalCost();
+        });
+    }
+    
+    // Cost calculation on input change
+    const costInputs = document.querySelectorAll('.service-cost');
+    costInputs.forEach(input => {
+        input.addEventListener('input', calculateTotalCost);
+    });
+    
+    // Section checkbox toggles
+    const sectionCheckboxes = document.querySelectorAll('[id^="section-"]');
+    sectionCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const sectionId = this.id.replace('section-', '') + '-section';
+            const section = document.getElementById(sectionId);
+            if (section) {
+                section.style.display = this.checked ? 'block' : 'none';
+            }
+        });
+    });
+}
+
+/**
+ * Initialize Variables Grid (deprecated - kept for compatibility)
  */
 function initializeProposalVariablesGrid(company) {
-    const gridContainer = document.getElementById('proposalVariablesGrid');
-    if (!gridContainer) return;
-    
-    const variablesData = [
-        { Field: 'Client Name', Value: company.Company },
-        { Field: 'Address', Value: company.City },
-        { Field: 'Date Of Next Meeting', Value: company.FollowUp }
-    ];
-    
-    if (typeof window.ej !== 'undefined' && typeof window.ej.grids !== 'undefined') {
-        try {
-            const grid = new ej.grids.Grid({
-                dataSource: variablesData,
-                allowSorting: false,
-                allowPaging: false,
-                editSettings: { allowEditing: true, allowAdding: true, allowDeleting: true, mode: 'Normal' },
-                columns: [
-                    { field: 'Field', headerText: 'Field', width: 150, textAlign: 'Left' },
-                    { field: 'Value', headerText: 'Value', width: 250, textAlign: 'Left' }
-                ],
-                height: 200
-            });
-            
-            grid.appendTo('#proposalVariablesGrid');
-            console.log('✅ Proposal Variables Grid initialized');
-        } catch (error) {
-            console.error('❌ Error initializing Variables Grid:', error);
-        }
-    }
+    // This function is deprecated but kept for backwards compatibility
+    // New proposal generator doesn't use this grid anymore
+    console.log('📝 Proposal variables initialized for:', company.Company);
 }
 
 /**
@@ -1080,26 +1315,59 @@ function refreshCurrentTabContent() {
  * Set up event listeners for proposal buttons
  */
 function setupProposalEventListeners() {
-    const generateBtn = document.getElementById('generateProposalBtn');
-    const previewBtn = document.getElementById('previewProposalBtn');
+    // This is the old version - will be overridden by the new one above
+}
+
+/**
+ * Open a specific lead with a specific tab (for deep linking)
+ */
+function openLeadWithTab(companyName, leadIndex, tabIndex) {
+    console.log('🔗 Deep linking to:', companyName, 'tab:', tabIndex);
+    isDeepLinking = true;
     
-    if (generateBtn) {
-        generateBtn.addEventListener('click', () => {
-            alert('Proposal generation coming soon! This will create a PDF document with all selected sections.');
-        });
-    }
+    // Open the lead detail
+    showLeadDetail(companyName, leadIndex);
     
-    if (previewBtn) {
-        previewBtn.addEventListener('click', () => {
-            alert('Preview functionality coming soon! This will show a full preview of the proposal document.');
-        });
-    }
+    // Wait for tabs to be ready, then select the specified tab
+    setTimeout(() => {
+        if (window.leadDetailTabsInstance) {
+            // Select the tab
+            window.leadDetailTabsInstance.select(tabIndex);
+            console.log('✅ Deep link tab selected:', tabIndex);
+            
+            // Now manually initialize the selected tab since we skipped it in the selected event
+            setTimeout(() => {
+                console.log('🎯 Manually initializing tab:', tabIndex);
+                if (tabIndex === 0) {
+                    initializeProfileTab();
+                } else if (tabIndex === 1) {
+                    initializeTouchesGrid();
+                } else if (tabIndex === 2) {
+                    initializeSiteOverviewTab();
+                } else if (tabIndex === 3) {
+                    initializeProposalsTab();
+                }
+                
+                // Reset the flag after initialization
+                setTimeout(() => {
+                    isDeepLinking = false;
+                    console.log('🏁 Deep linking complete');
+                }, 100);
+            }, 100);
+        } else {
+            console.error('❌ Tab instance not available for deep linking');
+            isDeepLinking = false;
+        }
+    }, 400);
 }
 
 // Export functions and data
 if (typeof window !== 'undefined') {
     window.initializeLeadsPage = initializeLeadsPage;
     window.leadsData = leadsData; // Export leadsData for use by other modules
+    window.showLeadDetail = showLeadDetail; // Export for deep linking to proposals
+    window.openLeadWithTab = openLeadWithTab; // Export for deep linking with specific tab
+    window.leadDetailTabsInstance = null; // Will be set when tabs are initialized
     console.log('✅ Leads data exported to window:', leadsData.length, 'companies');
 }
 

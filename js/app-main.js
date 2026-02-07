@@ -183,9 +183,10 @@ function setupNavigation() {
             e.stopPropagation();
             
             const pageName = link.getAttribute('data-page');
-            console.log('🔗 Link clicked:', link.textContent.trim(), '→', pageName);
+            const targetTab = link.getAttribute('data-tab'); // Optional tab to open
+            console.log('🔗 Link clicked:', link.textContent.trim(), '→', pageName, targetTab ? `(Tab: ${targetTab})` : '');
             
-            switchPage(pageName);
+            switchPage(pageName, targetTab);
             
             // Update active state
             document.querySelectorAll('.nav-item, .sidebar-link').forEach(function(nav) {
@@ -235,13 +236,13 @@ function setupMobileMenu(sidebar) {
     console.log('✅ Mobile menu setup complete');
 }
 
-function switchPage(pageName) {
+function switchPage(pageName, targetTab) {
     if (!pageName) {
         console.error('❌ switchPage called with no pageName');
         return;
     }
     
-    console.log('📄 Switching to page:', pageName);
+    console.log('📄 Switching to page:', pageName, targetTab ? `with tab: ${targetTab}` : '');
     
     // Hide all pages
     const pages = document.querySelectorAll('.page-content');
@@ -260,9 +261,51 @@ function switchPage(pageName) {
     
     // Initialize page-specific content based on page name
     setTimeout(() => {
-        if (pageName === 'leads' && window.initializeLeadsPage) {
-            console.log('🎯 Initializing leads page');
-            window.initializeLeadsPage();
+        if (pageName === 'leads') {
+            // Check if leads page is already initialized
+            const isLeadsInitialized = window.leadDetailTabsInstance !== null && window.leadDetailTabsInstance !== undefined;
+            
+            if (!isLeadsInitialized && window.initializeLeadsPage) {
+                console.log('🎯 Initializing leads page (first time)');
+                window.initializeLeadsPage();
+            } else {
+                console.log('🎯 Leads page already initialized');
+            }
+            
+            // If targetTab is specified, handle tab switching
+            if (targetTab === 'proposals') {
+                console.log('📄 Switching to Proposals tab');
+                setTimeout(() => {
+                    if (window.leadsData && window.leadsData.length > 0) {
+                        if (isLeadsInitialized && window.leadDetailTabsInstance) {
+                            // Leads already open, just switch tabs
+                            console.log('↔️ Leads already open, switching to tab 3');
+                            window.leadDetailTabsInstance.select(3);
+                        } else if (window.openLeadWithTab) {
+                            // Leads not open yet, use deep linking
+                            console.log('🔗 Opening leads with Proposals tab');
+                            const firstCompany = window.leadsData[0].Company;
+                            window.openLeadWithTab(firstCompany, 0, 3); // Proposals is tab index 3
+                        }
+                    }
+                }, isLeadsInitialized ? 100 : 500);
+            } else if (targetTab === 'profile') {
+                console.log('👤 Switching to Profile tab');
+                setTimeout(() => {
+                    if (window.leadsData && window.leadsData.length > 0) {
+                        if (isLeadsInitialized && window.leadDetailTabsInstance) {
+                            // Leads already open, just switch tabs
+                            console.log('↔️ Leads already open, switching to tab 0');
+                            window.leadDetailTabsInstance.select(0);
+                        } else if (window.openLeadWithTab) {
+                            // Leads not open yet, use deep linking
+                            console.log('🔗 Opening leads with Profile tab');
+                            const firstCompany = window.leadsData[0].Company;
+                            window.openLeadWithTab(firstCompany, 0, 0); // Profile is tab index 0
+                        }
+                    }
+                }, isLeadsInitialized ? 100 : 500);
+            }
         }
         
         if (pageName === 'scheduling' && window.Scheduling) {

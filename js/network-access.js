@@ -166,11 +166,133 @@ function addNewMacAddress() {
     }
 }
 
+// ===== TAB-SPECIFIC FUNCTIONS =====
+function renderAllowListTab() {
+    const allowListBox = document.getElementById('allowListBoxTab');
+    if (!allowListBox) {
+        console.error('allowListBoxTab element not found');
+        return;
+    }
+    
+    allowListBox.innerHTML = '';
+    
+    allowList.forEach((item, index) => {
+        const listItem = document.createElement('div');
+        listItem.className = 'list-item';
+        if (selectedMacAddress === item.mac) {
+            listItem.classList.add('selected');
+        }
+        
+        const textDiv = document.createElement('div');
+        textDiv.className = 'list-item-text';
+        textDiv.textContent = item.mac + (item.description ? ` - ${item.description}` : '');
+        
+        const actionsDiv = document.createElement('div');
+        actionsDiv.className = 'list-item-actions';
+        
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'list-item-btn list-item-remove';
+        removeBtn.textContent = '✕';
+        removeBtn.title = 'Remove this MAC address';
+        removeBtn.onclick = (e) => {
+            e.stopPropagation();
+            removeMacAddress(index);
+            // Re-render both lists
+            renderAllowList();
+            renderAllowListTab();
+        };
+        
+        actionsDiv.appendChild(removeBtn);
+        
+        listItem.appendChild(textDiv);
+        listItem.appendChild(actionsDiv);
+        
+        // Click to select
+        listItem.onclick = () => {
+            selectedMacAddress = selectedMacAddress === item.mac ? null : item.mac;
+            renderAllowList();
+            renderAllowListTab();
+        };
+        
+        allowListBox.appendChild(listItem);
+    });
+    
+    // Set up event listeners for tab-specific buttons
+    setupTabEventListeners();
+}
+
+function setupTabEventListeners() {
+    const removeBtn = document.getElementById('removeSelectedBtnTab');
+    const blockBtn = document.getElementById('blockSelectedBtnTab');
+    const addBtn = document.getElementById('addManuallyBtnTab');
+    const macInput = document.getElementById('macInputTab');
+    
+    if (removeBtn) {
+        removeBtn.onclick = () => {
+            removeSelectedMacAddress();
+            renderAllowList();
+            renderAllowListTab();
+        };
+    }
+    
+    if (blockBtn) {
+        blockBtn.onclick = () => {
+            if (!selectedMacAddress) {
+                alert('Please select a MAC address to block');
+                return;
+            }
+            openBlockModal();
+        };
+    }
+    
+    if (addBtn && macInput) {
+        addBtn.onclick = () => {
+            const macAddress = macInput.value.trim();
+            if (!macAddress) {
+                alert('Please enter a MAC address');
+                return;
+            }
+            
+            // Validate MAC address format
+            const macRegex = /^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/;
+            if (!macRegex.test(macAddress)) {
+                alert('Invalid MAC address format. Please use XX:XX:XX:XX:XX:XX');
+                return;
+            }
+            
+            // Normalize to uppercase with colons
+            const normalizedMac = macAddress.toUpperCase().replace(/-/g, ':');
+            
+            // Check if already exists
+            if (allowList.some(item => item.mac === normalizedMac)) {
+                alert('This MAC address is already in the allow list');
+                return;
+            }
+            
+            // Add to list
+            allowList.push({
+                mac: normalizedMac,
+                description: 'Manually added device'
+            });
+            
+            // Clear input
+            macInput.value = '';
+            
+            // Re-render both lists
+            renderAllowList();
+            renderAllowListTab();
+            
+            alert(`✓ MAC address ${normalizedMac} has been added to the allow list`);
+        };
+    }
+}
+
 // ===== EXPORTS =====
 if (typeof window !== 'undefined') {
     window.NetworkAccess = {
         initializeNetworkAccessPage,
         renderAllowList,
+        renderAllowListTab,
         removeMacAddress,
         removeSelectedMacAddress,
         openBlockModal,

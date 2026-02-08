@@ -337,6 +337,22 @@ function switchPage(pageName, targetTab) {
                         }
                     }
                 }, isLeadsInitialized ? 100 : 500);
+            } else if (targetTab === 'access') {
+                console.log('🔒 Switching to Network Access tab');
+                setTimeout(() => {
+                    if (window.leadsData && window.leadsData.length > 0) {
+                        if (isLeadsInitialized && window.leadDetailTabsInstance) {
+                            // Leads already open, just switch tabs
+                            console.log('↔️ Leads already open, switching to tab 6');
+                            window.leadDetailTabsInstance.select(6);
+                        } else if (window.openLeadWithTab) {
+                            // Leads not open yet, use deep linking
+                            console.log('🔗 Opening leads with Network Access tab');
+                            const firstCompany = window.leadsData[0].Company;
+                            window.openLeadWithTab(firstCompany, 0, 6); // Network Access is tab index 6
+                        }
+                    }
+                }, isLeadsInitialized ? 100 : 500);
             }
         }
         

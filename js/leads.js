@@ -349,6 +349,10 @@ function initializeLeadDetailTabs() {
             {
                 header: { text: 'Device Analysis' },
                 content: '<div class="tab-content-section" id="deviceAnalysisTabContent" style="padding: 0;"></div>'
+            },
+            {
+                header: { text: 'Network Access' },
+                content: '<div class="tab-content-section" id="networkAccessTabContent" style="padding: 0;"></div>'
             }
         ];
         
@@ -399,6 +403,10 @@ function initializeLeadDetailTabs() {
                 // When Device Analysis tab is selected, initialize the device analysis
                 if (args.selectedIndex === 5) {
                     initializeDeviceAnalysisTab();
+                }
+                // When Network Access tab is selected, initialize the network access
+                if (args.selectedIndex === 6) {
+                    initializeNetworkAccessTab();
                 }
             }
         });
@@ -1392,6 +1400,81 @@ function initializeDeviceAnalysisTab() {
 }
 
 /**
+ * Initialize the Network Access Tab
+ */
+function initializeNetworkAccessTab() {
+    console.log('🔒 Initializing Network Access tab...');
+    
+    if (currentLeadIndex === null) {
+        console.error('No company selected');
+        return;
+    }
+    
+    const currentCompany = leadsData[currentLeadIndex];
+    const accessContainer = document.getElementById('networkAccessTabContent');
+    
+    if (!accessContainer) {
+        console.error('Network Access tab content container not found');
+        return;
+    }
+    
+    // Build the HTML for network access with better layout
+    const accessHTML = `
+        <div class="network-content" style="padding: 20px;">
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px; align-items: start;">
+                <div class="allow-list-section e-card">
+                    <div class="e-card-header">
+                        <div class="e-card-header-title">Allow List</div>
+                    </div>
+                    <div class="e-card-content">
+                        <div class="list-box e-listview" id="allowListBoxTab">
+                            <!-- MAC addresses will be dynamically added here -->
+                        </div>
+                        <div class="list-actions">
+                            <button class="e-btn e-small e-danger" id="removeSelectedBtnTab">Remove</button>
+                            <button class="e-btn e-small e-danger" id="blockSelectedBtnTab">Block</button>
+                            <button class="e-btn e-small e-primary" id="addManuallyBtnTab">+ Add Manually</button>
+                            <input type="text" placeholder="XX:XX:XX:XX:XX:XX" class="e-field mac-input" id="macInputTab">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="configuration-section e-card">
+                    <div class="e-card-header">
+                        <div class="e-card-header-title">Configuration</div>
+                    </div>
+                    <div class="e-card-content">
+                        <div class="config-group">
+                            <label>RMM</label>
+                            <input type="text" placeholder="RMM connection string..." class="e-field" id="rmmConfigTab">
+                        </div>
+                        <div class="config-group">
+                            <label>Watchguard</label>
+                            <input type="text" placeholder="Watchguard connection string..." class="e-field" id="watchguardConfigTab">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    accessContainer.innerHTML = accessHTML;
+    
+    // Initialize the network access list for this tab
+    setTimeout(() => {
+        if (window.NetworkAccess) {
+            if (window.NetworkAccess.renderAllowListTab) {
+                window.NetworkAccess.renderAllowListTab();
+            }
+        } else {
+            console.error('NetworkAccess module not loaded');
+        }
+    }, 100);
+    
+    console.log('✅ Network Access tab initialized');
+}
+
+/**
  * Generate PDF from proposal content
  */
 function generateProposalPDF(company) {
@@ -1765,6 +1848,9 @@ function refreshCurrentTabContent() {
     } else if (selectedIndex === 5) {
         // Device Analysis tab - reinitialize with new company data
         initializeDeviceAnalysisTab();
+    } else if (selectedIndex === 6) {
+        // Network Access tab - reinitialize with new company data
+        initializeNetworkAccessTab();
     }
 }
 
@@ -1800,6 +1886,8 @@ function openLeadWithTab(companyName, leadIndex, tabIndex) {
                     initializeNetworkAnalysisTab();
                 } else if (tabIndex === 5) {
                     initializeDeviceAnalysisTab();
+                } else if (tabIndex === 6) {
+                    initializeNetworkAccessTab();
                 }
                 
                 // Reset the flag after initialization

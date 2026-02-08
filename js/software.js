@@ -79,6 +79,45 @@ let softwareData = [
         annualCost: 4500.00,
         status: 'Active',
         notes: 'Development team'
+    },
+    {
+        id: 7,
+        name: 'QuickBooks Enterprise',
+        company: 'Harbor Light Financial',
+        type: 'Business',
+        licenseKey: 'XXXXX-XXXXX-XXXXX-XXXXX',
+        licenseCount: 8,
+        purchaseDate: new Date('2024-01-01'),
+        expirationDate: new Date('2027-01-01'),
+        annualCost: 2400.00,
+        status: 'Active',
+        notes: 'Accounting software'
+    },
+    {
+        id: 8,
+        name: 'Kaspersky Endpoint Security',
+        company: 'Harbor Light Financial',
+        type: 'Security',
+        licenseKey: 'XXXXX-XXXXX-XXXXX-XXXXX',
+        licenseCount: 20,
+        purchaseDate: new Date('2023-08-01'),
+        expirationDate: new Date('2026-08-01'),
+        annualCost: 1800.00,
+        status: 'Active',
+        notes: 'All workstations'
+    },
+    {
+        id: 9,
+        name: 'Microsoft Office 365 Business',
+        company: 'Harbor Light Financial',
+        type: 'Office Suite',
+        licenseKey: 'XXXXX-XXXXX-XXXXX-XXXXX',
+        licenseCount: 18,
+        purchaseDate: new Date('2024-02-01'),
+        expirationDate: new Date('2027-02-01'),
+        annualCost: 3600.00,
+        status: 'Active',
+        notes: 'Standard business plan'
     }
 ];
 
@@ -404,10 +443,202 @@ Notes: ${software.notes || 'None'}
     alert(details);
 }
 
+// ===== TAB-SPECIFIC FUNCTIONS =====
+let softwareGridTabInstance = null;
+
+function initializeSoftwareTab(companyName) {
+    console.log('💿 Initializing Software tab for:', companyName);
+    
+    if (!companyName) {
+        console.error('❌ No company name provided to initializeSoftwareTab');
+        return;
+    }
+    
+    // Wait a bit to ensure DOM is ready
+    setTimeout(() => {
+        const gridContainer = document.getElementById('softwareGridTab');
+        if (!gridContainer) {
+            console.error('❌ softwareGridTab element not found - DOM may not be ready yet');
+            return;
+        }
+        
+        // Filter software data for this company
+        const companySoftware = softwareData.filter(s => s.company === companyName);
+        console.log(`📊 Found ${companySoftware.length} software licenses for ${companyName}`);
+        
+        // Update stats for this company
+        updateStatsTab(companySoftware);
+        
+        // Initialize grid for this company
+        initializeSoftwareGridTab(companySoftware);
+        
+        // Setup event listeners for tab
+        setupTabEventListeners(companyName);
+    }, 50);
+}
+
+function updateStatsTab(filteredData) {
+    const total = filteredData.length;
+    const active = filteredData.filter(s => s.status === 'Active').length;
+    const expiring = filteredData.filter(s => s.status === 'Expiring Soon').length;
+    const expired = filteredData.filter(s => s.status === 'Expired').length;
+    
+    const totalEl = document.getElementById('totalLicensesTab');
+    const activeEl = document.getElementById('activeLicensesTab');
+    const expiringEl = document.getElementById('expiringSoonTab');
+    const expiredEl = document.getElementById('expiredLicensesTab');
+    
+    if (totalEl) totalEl.textContent = total;
+    if (activeEl) activeEl.textContent = active;
+    if (expiringEl) expiringEl.textContent = expiring;
+    if (expiredEl) expiredEl.textContent = expired;
+}
+
+function initializeSoftwareGridTab(companySoftware) {
+    const gridContainer = document.getElementById('softwareGridTab');
+    if (!gridContainer) {
+        console.error('❌ softwareGridTab element not found');
+        return;
+    }
+    
+    // Clear any existing grid
+    gridContainer.innerHTML = '';
+    
+    // If no software, show message
+    if (!companySoftware || companySoftware.length === 0) {
+        gridContainer.innerHTML = '<div style="padding: 40px; text-align: center; color: #666;"><p style="font-size: 16px;">📦 No software licenses found for this company.</p><p style="font-size: 14px; margin-top: 10px;">Click "Add Software" to create a new license entry.</p></div>';
+        console.log('ℹ️ No software found for this company');
+        return;
+    }
+    
+    // Format data for grid
+    const gridData = companySoftware.map(software => ({
+        ...software,
+        purchaseDateFormatted: software.purchaseDate ? software.purchaseDate.toLocaleDateString() : 'N/A',
+        expirationDateFormatted: software.expirationDate ? software.expirationDate.toLocaleDateString() : 'Perpetual',
+        annualCostFormatted: `$${software.annualCost.toFixed(2)}`,
+        statusBadge: getStatusBadge(software.status)
+    }));
+    
+    console.log('📊 Creating grid with data:', gridData);
+    
+    softwareGridTabInstance = new ej.grids.Grid({
+        dataSource: gridData,
+        allowPaging: true,
+        allowSorting: true,
+        allowFiltering: true,
+        allowSelection: true,
+        pageSettings: { pageSize: 10, pageSizes: [10, 20, 50] },
+        filterSettings: { type: 'Excel' },
+        selectionSettings: { type: 'Single' },
+        columns: [
+            { field: 'name', headerText: 'Software Name', width: 180, textAlign: 'Left' },
+            { field: 'type', headerText: 'Type', width: 120, textAlign: 'Left' },
+            { field: 'licenseCount', headerText: 'Licenses', width: 80, textAlign: 'Center' },
+            { field: 'purchaseDateFormatted', headerText: 'Purchase Date', width: 110, textAlign: 'Center' },
+            { field: 'expirationDateFormatted', headerText: 'Expiration', width: 110, textAlign: 'Center' },
+            { field: 'annualCostFormatted', headerText: 'Annual Cost', width: 100, textAlign: 'Right' },
+            { 
+                field: 'statusBadge', 
+                headerText: 'Status', 
+                width: 100, 
+                textAlign: 'Center',
+                template: '<div class="${statusBadge}">${status}</div>'
+            },
+            { 
+                headerText: 'Actions', 
+                width: 100, 
+                textAlign: 'Center',
+                template: '<button class="e-btn e-small e-outline view-software-btn-tab" data-id="${id}">View</button>'
+            }
+        ],
+        created: function() {
+            console.log('✅ Software tab grid created successfully');
+            // Add event listener for view buttons
+            setTimeout(() => {
+                document.querySelectorAll('.view-software-btn-tab').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const softwareId = parseInt(this.getAttribute('data-id'));
+                        viewSoftwareDetails(softwareId);
+                    });
+                });
+            }, 100);
+        },
+        dataBound: function() {
+            console.log('✅ Software grid data bound');
+        }
+    });
+    
+    softwareGridTabInstance.appendTo(gridContainer);
+    console.log('✅ Grid appended to container');
+}
+
+function setupTabEventListeners(companyName) {
+    // Type filter
+    const typeFilter = document.getElementById('softwareTypeFilterTab');
+    if (typeFilter) {
+        typeFilter.addEventListener('change', () => applyTabFilters(companyName));
+    }
+    
+    // Status filter
+    const statusFilter = document.getElementById('softwareStatusFilterTab');
+    if (statusFilter) {
+        statusFilter.addEventListener('change', () => applyTabFilters(companyName));
+    }
+    
+    // Clear filters
+    const clearBtn = document.getElementById('clearFiltersTabBtn');
+    if (clearBtn) {
+        clearBtn.addEventListener('click', () => {
+            if (typeFilter) typeFilter.value = '';
+            if (statusFilter) statusFilter.value = '';
+            applyTabFilters(companyName);
+        });
+    }
+    
+    // Add software button
+    const addBtn = document.getElementById('addSoftwareBtnTab');
+    if (addBtn) {
+        addBtn.addEventListener('click', () => {
+            alert(`Add Software functionality for ${companyName} - Coming soon!`);
+        });
+    }
+}
+
+function applyTabFilters(companyName) {
+    const typeValue = document.getElementById('softwareTypeFilterTab').value;
+    const statusValue = document.getElementById('softwareStatusFilterTab').value;
+    
+    let filtered = softwareData.filter(s => s.company === companyName);
+    
+    if (typeValue) {
+        filtered = filtered.filter(s => s.type === typeValue);
+    }
+    if (statusValue) {
+        filtered = filtered.filter(s => s.status === statusValue);
+    }
+    
+    // Update stats
+    updateStatsTab(filtered);
+    
+    // Update grid
+    if (softwareGridTabInstance) {
+        const gridData = filtered.map(software => ({
+            ...software,
+            purchaseDateFormatted: software.purchaseDate ? software.purchaseDate.toLocaleDateString() : 'N/A',
+            expirationDateFormatted: software.expirationDate ? software.expirationDate.toLocaleDateString() : 'Perpetual',
+            annualCostFormatted: `$${software.annualCost.toFixed(2)}`,
+            statusBadge: getStatusBadge(software.status)
+        }));
+        softwareGridTabInstance.dataSource = gridData;
+    }
+}
+
 // ===== EXPORTS =====
 if (typeof window !== 'undefined') {
     window.Software = {
         initializeSoftwarePage,
+        initializeSoftwareTab,
         softwareData
     };
 }

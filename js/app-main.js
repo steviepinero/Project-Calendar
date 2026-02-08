@@ -353,6 +353,22 @@ function switchPage(pageName, targetTab) {
                         }
                     }
                 }, isLeadsInitialized ? 100 : 500);
+            } else if (targetTab === 'software') {
+                console.log('💿 Switching to Software tab');
+                setTimeout(() => {
+                    if (window.leadsData && window.leadsData.length > 0) {
+                        if (isLeadsInitialized && window.leadDetailTabsInstance) {
+                            // Leads already open, just switch tabs
+                            console.log('↔️ Leads already open, switching to tab 7');
+                            window.leadDetailTabsInstance.select(7);
+                        } else if (window.openLeadWithTab) {
+                            // Leads not open yet, use deep linking
+                            console.log('🔗 Opening leads with Software tab');
+                            const firstCompany = window.leadsData[0].Company;
+                            window.openLeadWithTab(firstCompany, 0, 7); // Software is tab index 7
+                        }
+                    }
+                }, isLeadsInitialized ? 100 : 500);
             }
         }
         

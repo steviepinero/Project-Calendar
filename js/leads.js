@@ -190,23 +190,23 @@ function getResponsiveColumns() {
     
     // Full desktop: >= 1366px - Show all columns
     return [
-        { 
-            field: 'Company', 
-            headerText: 'Company', 
-            width: 180,
-            template: '<span class="company-name-cell">${Company}</span>'
-        },
-        { field: 'Industry', headerText: 'Industry', width: 120 },
-        { field: 'City', headerText: 'City', width: 120 },
-        { field: 'Source', headerText: 'Source', width: 130 },
-        { field: 'Solutions', headerText: 'Solutions', width: 100 },
-        { field: 'Amount', headerText: 'Amount', width: 100, textAlign: 'Right' },
-        { field: 'Rep', headerText: 'Rep', width: 150 },
-        { field: 'Status', headerText: 'Status', width: 80 },
-        { field: 'LastTouch', headerText: 'Last Touch', width: 120 },
-        { field: 'Touches', headerText: "# Touch's", width: 90, textAlign: 'Right' },
-        { field: 'FollowUp', headerText: 'Follow Up', width: 120 },
-        { field: 'NextStep', headerText: 'Next Step', width: 100 }
+                { 
+                    field: 'Company', 
+                    headerText: 'Company', 
+                    width: 180,
+                    template: '<span class="company-name-cell">${Company}</span>'
+                },
+                { field: 'Industry', headerText: 'Industry', width: 120 },
+                { field: 'City', headerText: 'City', width: 120 },
+                { field: 'Source', headerText: 'Source', width: 130 },
+                { field: 'Solutions', headerText: 'Solutions', width: 100 },
+                { field: 'Amount', headerText: 'Amount', width: 100, textAlign: 'Right' },
+                { field: 'Rep', headerText: 'Rep', width: 150 },
+                { field: 'Status', headerText: 'Status', width: 80 },
+                { field: 'LastTouch', headerText: 'Last Touch', width: 120 },
+                { field: 'Touches', headerText: "# Touch's", width: 90, textAlign: 'Right' },
+                { field: 'FollowUp', headerText: 'Follow Up', width: 120 },
+                { field: 'NextStep', headerText: 'Next Step', width: 100 }
     ];
 }
 
@@ -353,6 +353,10 @@ function initializeLeadDetailTabs() {
             {
                 header: { text: 'Network Access' },
                 content: '<div class="tab-content-section" id="networkAccessTabContent" style="padding: 0;"></div>'
+            },
+            {
+                header: { text: 'Software' },
+                content: '<div class="tab-content-section" id="softwareTabContent" style="padding: 0;"></div>'
             }
         ];
         
@@ -407,6 +411,10 @@ function initializeLeadDetailTabs() {
                 // When Network Access tab is selected, initialize the network access
                 if (args.selectedIndex === 6) {
                     initializeNetworkAccessTab();
+                }
+                // When Software tab is selected, initialize the software
+                if (args.selectedIndex === 7) {
+                    initializeSoftwareTabWrapper();
                 }
             }
         });
@@ -1137,13 +1145,13 @@ function initializeProposalsTab() {
                                     <p style="font-size: 16px; color: #95a5a6; margin: 0;">${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
                                 </div>
                             </div>
-                        </div>
-
+                </div>
+                
                         <!-- Executive Summary -->
                         <div class="proposal-section" id="executive-section" style="margin-top: 30px;">
                             <h3 style="color: #2c3e50; border-left: 4px solid #3498db; padding-left: 15px; margin: 0 0 20px 0;">Executive Summary</h3>
                             <textarea id="executiveSummary" rows="6" class="e-field" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; line-height: 1.6; font-family: inherit;" placeholder="Enter executive summary...">${currentCompany.Company} is seeking a comprehensive managed IT services solution to enhance operational efficiency, improve security posture, and reduce technology-related downtime. Our proposal outlines a complete IT infrastructure management approach tailored to your business needs, including 24/7 monitoring, proactive maintenance, and strategic technology guidance.</textarea>
-                        </div>
+                </div>
 
                         <!-- Problem Statement -->
                         <div class="proposal-section" id="problem-section" style="margin-top: 30px;">
@@ -1154,8 +1162,8 @@ function initializeProposalsTab() {
 • Minimizing downtime and ensuring business continuity
 • Scaling technology to support business growth
 • Controlling IT costs while maintaining service quality</textarea>
-                        </div>
-
+            </div>
+            
                         <!-- Proposed Solution -->
                         <div class="proposal-section" id="solution-section" style="margin-top: 30px;">
                             <h3 style="color: #2c3e50; border-left: 4px solid #27ae60; padding-left: 15px; margin: 0 0 20px 0;">Proposed Solution</h3>
@@ -1180,7 +1188,7 @@ function initializeProposalsTab() {
    - Technology roadmap planning
    - Vendor management
    - Budget optimization</textarea>
-                        </div>
+                            </div>
 
                         <!-- Services & Pricing -->
                         <div class="proposal-section" id="services-section" style="margin-top: 30px;">
@@ -1219,8 +1227,8 @@ function initializeProposalsTab() {
                                         </tr>
                                     </tfoot>
                                 </table>
-                            </div>
-                            
+                        </div>
+                        
                             <button id="addServiceRow" class="e-btn e-outline e-small">+ Add Service</button>
                         </div>
 
@@ -1241,14 +1249,14 @@ Phase 3 (Week 5-6): Go-Live & Training
 • Cutover to managed services
 • Staff training sessions
 • 24/7 support activation</textarea>
-                        </div>
+                            </div>
 
                         <!-- About Our Team -->
                         <div class="proposal-section" id="team-section" style="margin-top: 30px;">
                             <h3 style="color: #2c3e50; border-left: 4px solid #16a085; padding-left: 15px; margin: 0 0 20px 0;">About Our Team</h3>
                             <textarea id="aboutTeam" rows="5" class="e-field" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; line-height: 1.6; font-family: inherit;" placeholder="Enter team information...">Our team of certified IT professionals brings over 20 years of combined experience in managing enterprise-level IT infrastructure. We hold industry certifications including Microsoft Certified Professional, Cisco CCNA, CompTIA Security+, and ITIL Foundation. Our local presence ensures rapid on-site response when needed, while our 24/7 Network Operations Center provides round-the-clock monitoring and support.</textarea>
                         </div>
-
+                        
                         <!-- Terms & Conditions -->
                         <div class="proposal-section" id="terms-section" style="margin-top: 30px;">
                             <h3 style="color: #2c3e50; border-left: 4px solid #7f8c8d; padding-left: 15px; margin: 0 0 20px 0;">Terms & Conditions</h3>
@@ -1268,7 +1276,7 @@ Phase 3 (Week 5-6): Go-Live & Training
                                 <div style="text-align: center;">
                                     <div style="font-size: 12px; opacity: 0.8;">Contact</div>
                                     <div style="font-size: 16px; font-weight: 600;">${currentCompany.Rep || 'Sales Representative'}</div>
-                                </div>
+                    </div>
                                 <div style="border-left: 1px solid rgba(255,255,255,0.3); margin: 0 10px;"></div>
                                 <div style="text-align: center;">
                                     <div style="font-size: 12px; opacity: 0.8;">Email</div>
@@ -1472,6 +1480,129 @@ function initializeNetworkAccessTab() {
     }, 100);
     
     console.log('✅ Network Access tab initialized');
+}
+
+/**
+ * Initialize the Software Tab (Leads Page Wrapper)
+ */
+function initializeSoftwareTabWrapper() {
+    console.log('🚀🚀🚀 SOFTWARE TAB WRAPPER FUNCTION CALLED 🚀🚀🚀');
+    console.log('💿 Initializing Software tab...');
+    console.log('📍 currentLeadIndex:', currentLeadIndex);
+    console.log('📍 leadsData:', leadsData);
+    console.log('📍 leadsData length:', leadsData ? leadsData.length : 'leadsData is null');
+    
+    if (currentLeadIndex === null || currentLeadIndex === undefined) {
+        console.error('❌ EARLY RETURN: No company selected - currentLeadIndex is:', currentLeadIndex);
+        return;
+    }
+    
+    if (!leadsData || !leadsData[currentLeadIndex]) {
+        console.error('❌ EARLY RETURN: No company data found at index:', currentLeadIndex);
+        console.error('❌ leadsData:', leadsData);
+        return;
+    }
+    
+    const currentCompany = leadsData[currentLeadIndex];
+    console.log('📍 Current Company object:', currentCompany);
+    
+    if (!currentCompany || !currentCompany.Company) {
+        console.error('❌ EARLY RETURN: Current company or company name is undefined');
+        console.error('❌ currentCompany:', currentCompany);
+        return;
+    }
+    
+    const companyName = currentCompany.Company;
+    console.log('📍 Company name extracted:', companyName);
+    console.log('📍 typeof companyName:', typeof companyName);
+    
+    const softwareContainer = document.getElementById('softwareTabContent');
+    
+    if (!softwareContainer) {
+        console.error('❌ EARLY RETURN: Software tab content container not found');
+        return;
+    }
+    
+    console.log('✅ All checks passed, building HTML...');
+    
+    // Build the HTML for software management
+    const softwareHTML = `
+        <div class="software-page" style="padding: 20px; height: 100%;">
+            <div class="software-header" style="margin-bottom: 20px;">
+                <h3 style="margin: 0; color: #2c3e50;">Software Licenses - ${companyName}</h3>
+                <button id="addSoftwareBtnTab" class="e-btn e-primary">+ Add Software</button>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="software-stats">
+                <div class="stat-card" style="border-left-color: #3498db;">
+                    <div class="stat-label">Total Licenses</div>
+                    <div class="stat-value" id="totalLicensesTab">0</div>
+                </div>
+                <div class="stat-card" style="border-left-color: #27ae60;">
+                    <div class="stat-label">Active</div>
+                    <div class="stat-value" id="activeLicensesTab">0</div>
+                </div>
+                <div class="stat-card" style="border-left-color: #f39c12;">
+                    <div class="stat-label">Expiring Soon</div>
+                    <div class="stat-value" id="expiringSoonTab">0</div>
+                </div>
+                <div class="stat-card" style="border-left-color: #e74c3c;">
+                    <div class="stat-label">Expired</div>
+                    <div class="stat-value" id="expiredLicensesTab">0</div>
+                </div>
+            </div>
+
+            <!-- Filter Section -->
+            <div class="software-filters e-card" style="margin-top: 20px;">
+                <div class="filter-group">
+                    <label>Software Type</label>
+                    <select id="softwareTypeFilterTab" class="e-field">
+                        <option value="">All Types</option>
+                        <option value="Operating System">Operating System</option>
+                        <option value="Office Suite">Office Suite</option>
+                        <option value="Security">Security</option>
+                        <option value="Business">Business</option>
+                        <option value="Development">Development</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Status</label>
+                    <select id="softwareStatusFilterTab" class="e-field">
+                        <option value="">All Status</option>
+                        <option value="Active">Active</option>
+                        <option value="Expiring Soon">Expiring Soon</option>
+                        <option value="Expired">Expired</option>
+                    </select>
+                </div>
+                <button id="clearFiltersTabBtn" class="e-btn e-small">Clear Filters</button>
+            </div>
+
+            <!-- Software Grid -->
+            <div class="software-grid-container" style="margin-top: 20px;">
+                <div id="softwareGridTab"></div>
+            </div>
+        </div>
+    `;
+    
+    softwareContainer.innerHTML = softwareHTML;
+    
+    // Initialize the software management for this tab
+    setTimeout(() => {
+        if (window.Software) {
+            if (window.Software.initializeSoftwareTab) {
+                console.log('🔄 Calling initializeSoftwareTab with company:', companyName);
+                window.Software.initializeSoftwareTab(companyName);
+            } else {
+                console.error('initializeSoftwareTab function not found');
+            }
+        } else {
+            console.error('Software module not loaded');
+        }
+    }, 200);
+    
+    console.log('✅ Software tab initialized');
 }
 
 /**
@@ -1733,7 +1864,7 @@ function generateProposalPDF(company) {
         // Show success message
         alert(`📄 PDF Generated Successfully!\n\nFile: ${filename}\n\nThe proposal has been downloaded to your device.`);
         
-    } catch (error) {
+        } catch (error) {
         console.error('❌ Error generating PDF:', error);
         alert('⚠️ Error generating PDF. Please check the console for details.');
     }
@@ -1851,6 +1982,9 @@ function refreshCurrentTabContent() {
     } else if (selectedIndex === 6) {
         // Network Access tab - reinitialize with new company data
         initializeNetworkAccessTab();
+    } else if (selectedIndex === 7) {
+        // Software tab - reinitialize with new company data
+        initializeSoftwareTabWrapper();
     }
 }
 
@@ -1888,6 +2022,8 @@ function openLeadWithTab(companyName, leadIndex, tabIndex) {
                     initializeDeviceAnalysisTab();
                 } else if (tabIndex === 6) {
                     initializeNetworkAccessTab();
+                } else if (tabIndex === 7) {
+                    initializeSoftwareTabWrapper();
                 }
                 
                 // Reset the flag after initialization

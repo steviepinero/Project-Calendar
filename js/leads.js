@@ -345,6 +345,10 @@ function initializeLeadDetailTabs() {
             {
                 header: { text: 'Network Analysis' },
                 content: '<div class="tab-content-section" id="networkAnalysisTabContent" style="padding: 0;"></div>'
+            },
+            {
+                header: { text: 'Device Analysis' },
+                content: '<div class="tab-content-section" id="deviceAnalysisTabContent" style="padding: 0;"></div>'
             }
         ];
         
@@ -391,6 +395,10 @@ function initializeLeadDetailTabs() {
                 // When Network Analysis tab is selected, initialize the network analysis
                 if (args.selectedIndex === 4) {
                     initializeNetworkAnalysisTab();
+                }
+                // When Device Analysis tab is selected, initialize the device analysis
+                if (args.selectedIndex === 5) {
+                    initializeDeviceAnalysisTab();
                 }
             }
         });
@@ -1312,6 +1320,78 @@ function initializeNetworkAnalysisTab() {
 }
 
 /**
+ * Initialize the Device Analysis Tab
+ */
+function initializeDeviceAnalysisTab() {
+    console.log('💻 Initializing Device Analysis tab...');
+    
+    if (currentLeadIndex === null) {
+        console.error('No company selected');
+        return;
+    }
+    
+    const currentCompany = leadsData[currentLeadIndex];
+    const deviceContainer = document.getElementById('deviceAnalysisTabContent');
+    
+    if (!deviceContainer) {
+        console.error('Device Analysis tab content container not found');
+        return;
+    }
+    
+    // Build the HTML for device analysis (identical to hardware page)
+    const deviceHTML = `
+        <div class="hardware-page" style="padding: 20px;">
+            <!-- Main Content Area -->
+            <div class="hardware-main-container">
+                <!-- Content Area -->
+                <div class="hardware-content">
+                    <!-- Chart Section -->
+                    <div class="hardware-chart-section e-card">
+                        <div class="e-card-header">
+                            <div class="e-card-header-title">Device Analysis - Lifecycle Replacement (4 year cycle)</div>
+                        </div>
+                        <div class="e-card-content">
+                            <canvas id="hardwareChartTab" class="hardware-chart-container" style="display: none;"></canvas>
+                            <div id="hardwareSfChartTab" class="hardware-chart-container"></div>
+                        </div>
+                    </div>
+
+                    <!-- Table Section -->
+                    <div class="hardware-table-section e-card">
+                        <div class="e-card-header">
+                            <div class="e-card-header-title">Device Inventory - ${currentCompany.Company}</div>
+                        </div>
+                        <div class="e-card-content">
+                            <div id="hardwareGridTab"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    deviceContainer.innerHTML = deviceHTML;
+    
+    // Initialize the hardware chart and grid for this tab
+    setTimeout(() => {
+        if (window.Endpoint) {
+            // Initialize chart
+            if (window.Endpoint.initializeHardwareChartTab) {
+                window.Endpoint.initializeHardwareChartTab();
+            }
+            // Initialize grid
+            if (window.Endpoint.initializeHardwareGridTab) {
+                window.Endpoint.initializeHardwareGridTab();
+            }
+        } else {
+            console.error('Endpoint module not loaded');
+        }
+    }, 100);
+    
+    console.log('✅ Device Analysis tab initialized');
+}
+
+/**
  * Generate PDF from proposal content
  */
 function generateProposalPDF(company) {
@@ -1679,6 +1759,12 @@ function refreshCurrentTabContent() {
     } else if (selectedIndex === 3) {
         // Proposals tab - reinitialize the proposals with new company data
         initializeProposalsTab();
+    } else if (selectedIndex === 4) {
+        // Network Analysis tab - reinitialize with new company data
+        initializeNetworkAnalysisTab();
+    } else if (selectedIndex === 5) {
+        // Device Analysis tab - reinitialize with new company data
+        initializeDeviceAnalysisTab();
     }
 }
 
@@ -1712,6 +1798,8 @@ function openLeadWithTab(companyName, leadIndex, tabIndex) {
                     initializeProposalsTab();
                 } else if (tabIndex === 4) {
                     initializeNetworkAnalysisTab();
+                } else if (tabIndex === 5) {
+                    initializeDeviceAnalysisTab();
                 }
                 
                 // Reset the flag after initialization

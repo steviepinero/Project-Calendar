@@ -262,6 +262,115 @@ function renderHardwareChart() {
     console.log('Chart.js rendered successfully');
 }
 
+// ===== TAB-SPECIFIC FUNCTIONS =====
+function initializeHardwareChartTab() {
+    console.log('🎨 Initializing hardware chart for tab...');
+    renderHardwareChartTab();
+}
+
+function initializeHardwareGridTab() {
+    console.log('📊 Initializing hardware grid for tab...');
+    renderHardwareTableTab();
+}
+
+function renderHardwareTableTab() {
+    console.log('Rendering hardware table for tab');
+    
+    // Try to use Syncfusion Grid if available
+    if (typeof window.ej !== 'undefined' && typeof window.ej.grids !== 'undefined') {
+        try {
+            const gridElement = document.getElementById('hardwareGridTab');
+            if (!gridElement) {
+                console.error('hardwareGridTab element not found');
+                return;
+            }
+            
+            const grid = new window.ej.grids.Grid({
+                dataSource: hardwareGridData,
+                allowPaging: true,
+                pageSettings: { pageSize: 10 },
+                allowSorting: true,
+                allowExcelExport: true,
+                columns: [
+                    { field: 'Type', headerText: 'Type', width: '100', textAlign: 'Left' },
+                    { field: 'DeviceName', headerText: 'Device Name', width: '120', textAlign: 'Left' },
+                    { field: 'User', headerText: 'User', width: '120', textAlign: 'Left' },
+                    { field: 'Purchased', headerText: 'Purchased', width: '120', textAlign: 'Left' },
+                    { field: 'Age', headerText: 'Age', width: '120', textAlign: 'Left' },
+                    { field: 'Value', headerText: 'Value', width: '100', textAlign: 'Right' },
+                    { field: 'Make', headerText: 'Make', width: '100', textAlign: 'Left' },
+                    { field: 'Model', headerText: 'Model', width: '120', textAlign: 'Left' },
+                    { field: 'CPU', headerText: 'CPU', width: '150', textAlign: 'Left' },
+                    { field: 'RAM', headerText: 'RAM', width: '80', textAlign: 'Left' }
+                ],
+                gridLines: 'Both',
+                rowHeight: 36,
+                headerTextAlign: 'Center'
+            });
+            grid.appendTo('#hardwareGridTab');
+            console.log('Syncfusion Grid rendered successfully in tab');
+        } catch (error) {
+            console.warn('Syncfusion Grid failed for tab:', error);
+        }
+    }
+}
+
+function renderHardwareChartTab() {
+    console.log('Rendering hardware chart for tab');
+    
+    // Try to use Syncfusion Chart if available
+    if (typeof window.ej !== 'undefined' && typeof window.ej.charts !== 'undefined') {
+        const chartDataSf = hardwareChartData.labels.map((label, index) => ({
+            x: label,
+            y: hardwareChartData.values[index]
+        }));
+        
+        const chartElement = document.getElementById('hardwareSfChartTab');
+        if (!chartElement) {
+            console.error('hardwareSfChartTab element not found');
+            return;
+        }
+        
+        const chart = new window.ej.charts.Chart({
+            primaryXAxis: {
+                valueType: 'Category',
+                title: 'Quarter',
+                majorGridLines: { width: 0 }
+            },
+            primaryYAxis: {
+                title: 'Estimated Replacement Cost',
+                labelFormat: '${value}',
+                majorGridLines: { width: 1 },
+                lineStyle: { width: 0 }
+            },
+            series: [{
+                dataSource: chartDataSf,
+                xName: 'x',
+                yName: 'y',
+                name: 'Hardware Cost',
+                type: 'Column',
+                marker: {
+                    dataLabel: {
+                        visible: true,
+                        position: 'Top',
+                        font: { fontWeight: '600', color: '#ffffff' },
+                        format: '${point.y}'
+                    }
+                }
+            }],
+            tooltip: {
+                enable: true,
+                format: '${point.x}: ${point.y}'
+            },
+            title: '',
+            width: '100%',
+            height: '400px'
+        });
+        chart.appendTo('#hardwareSfChartTab');
+        console.log('Syncfusion Chart rendered successfully in tab');
+    }
+}
+
 // ===== EXPORTS =====
 if (typeof window !== 'undefined') {
     window.Endpoint = {
@@ -269,7 +378,9 @@ if (typeof window !== 'undefined') {
         initializeHardwareChart,
         initializeHardwareGrid,
         renderHardwareTable,
-        renderHardwareChart
+        renderHardwareChart,
+        initializeHardwareChartTab,
+        initializeHardwareGridTab
     };
 }
 

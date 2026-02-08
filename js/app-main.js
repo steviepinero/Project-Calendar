@@ -321,6 +321,22 @@ function switchPage(pageName, targetTab) {
                         }
                     }
                 }, isLeadsInitialized ? 100 : 500);
+            } else if (targetTab === 'device') {
+                console.log('💻 Switching to Device Analysis tab');
+                setTimeout(() => {
+                    if (window.leadsData && window.leadsData.length > 0) {
+                        if (isLeadsInitialized && window.leadDetailTabsInstance) {
+                            // Leads already open, just switch tabs
+                            console.log('↔️ Leads already open, switching to tab 5');
+                            window.leadDetailTabsInstance.select(5);
+                        } else if (window.openLeadWithTab) {
+                            // Leads not open yet, use deep linking
+                            console.log('🔗 Opening leads with Device Analysis tab');
+                            const firstCompany = window.leadsData[0].Company;
+                            window.openLeadWithTab(firstCompany, 0, 5); // Device Analysis is tab index 5
+                        }
+                    }
+                }, isLeadsInitialized ? 100 : 500);
             }
         }
         

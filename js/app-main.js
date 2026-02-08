@@ -413,6 +413,11 @@ function switchPage(pageName, targetTab) {
             console.log('💰 Initializing billing page');
             window.Billing.initializeBillingPage();
         }
+        
+        if (pageName === 'software' && window.Software) {
+            console.log('💿 Initializing software page');
+            window.Software.initializeSoftwarePage();
+        }
     }, 100);
 }
 

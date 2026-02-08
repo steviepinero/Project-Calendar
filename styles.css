@@ -3358,3 +3358,141 @@ body > #campaignModal {
 /* ============================================
    END BILLING PAGE STYLES
    ============================================ */
+
+/* ============================================
+   SOFTWARE PAGE STYLES
+   ============================================ */
+
+.software-page {
+    padding: 20px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.software-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #3498db;
+}
+
+.software-header h2 {
+    font-size: 22px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0;
+}
+
+.software-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.stat-card {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    border-left: 4px solid #3498db;
+}
+
+.stat-label {
+    color: #999;
+    font-size: 13px;
+    margin-bottom: 5px;
+}
+
+.stat-value {
+    font-size: 32px;
+    font-weight: 700;
+    color: #2c3e50;
+}
+
+.software-filters {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: flex-end;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 200px;
+}
+
+.filter-group label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.software-grid-container {
+    flex: 1;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    padding: 20px;
+    overflow: auto;
+}
+
+/* Software Grid Customization */
+#softwareGrid .e-grid {
+    border: 1px solid #e0e0e0 !important;
+}
+
+#softwareGrid .e-gridheader {
+    background: #455a64 !important;
+}
+
+#softwareGrid .e-headercelldiv {
+    font-weight: 600 !important;
+    font-size: 13px !important;
+    color: white !important;
+}
+
+#softwareGrid .e-rowcell {
+    padding: 10px 12px !important;
+    font-size: 13px !important;
+    border-bottom: 1px solid #e0e0e0 !important;
+}
+
+/* Status badges in software grid */
+.status-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.status-active {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-expiring {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.status-expired {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+/* ============================================
+   END SOFTWARE PAGE STYLES
+   ============================================ */

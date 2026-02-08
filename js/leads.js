@@ -1265,7 +1265,7 @@ Phase 3 (Week 5-6): Go-Live & Training
     
     proposalsContainer.innerHTML = proposalsHTML;
     
-    // Set up event listeners
+    // Set up event listeners (PDF and Save buttons use onclick, so they're handled separately)
     setupProposalEventListeners(currentCompany);
     
     // Calculate initial total
@@ -1560,36 +1560,8 @@ function calculateTotalCost() {
 function setupProposalEventListeners(company) {
     console.log('🔧 Setting up proposal event listeners for:', company.Company);
     
-    // Generate PDF button
-    const generateBtn = document.getElementById('generateProposalBtn');
-    if (generateBtn) {
-        console.log('✅ Found generateProposalBtn');
-        // Remove any existing listeners by cloning the button
-        const newGenerateBtn = generateBtn.cloneNode(true);
-        generateBtn.parentNode.replaceChild(newGenerateBtn, generateBtn);
-        
-        newGenerateBtn.addEventListener('click', () => {
-            console.log('📄 Generate PDF button clicked for:', company.Company);
-            generateProposalPDF(company);
-        });
-    } else {
-        console.error('❌ generateProposalBtn not found');
-    }
-    
-    // Save draft button
-    const saveBtn = document.getElementById('saveProposalBtn');
-    if (saveBtn) {
-        console.log('✅ Found saveProposalBtn');
-        // Remove any existing listeners by cloning the button
-        const newSaveBtn = saveBtn.cloneNode(true);
-        saveBtn.parentNode.replaceChild(newSaveBtn, saveBtn);
-        
-        newSaveBtn.addEventListener('click', () => {
-            alert('💾 Proposal saved as draft!\n\nIn production, this would save to database for later editing.');
-        });
-    } else {
-        console.error('❌ saveProposalBtn not found');
-    }
+    // Note: Generate PDF and Save Draft buttons use onclick attributes
+    // and don't need event listeners here
     
     // Add service row button
     const addServiceBtn = document.getElementById('addServiceRow');

@@ -341,6 +341,10 @@ function initializeLeadDetailTabs() {
             {
                 header: { text: 'Proposals' },
                 content: '<div class="tab-content-section proposals-tab" id="proposalsTabContent"></div>'
+            },
+            {
+                header: { text: 'Network Analysis' },
+                content: '<div class="tab-content-section" id="networkAnalysisTabContent" style="padding: 0;"></div>'
             }
         ];
         
@@ -383,6 +387,10 @@ function initializeLeadDetailTabs() {
                 // When Proposals tab is selected, initialize the proposals interface
                 if (args.selectedIndex === 3) {
                     initializeProposalsTab();
+                }
+                // When Network Analysis tab is selected, initialize the network analysis
+                if (args.selectedIndex === 4) {
+                    initializeNetworkAnalysisTab();
                 }
             }
         });
@@ -1275,6 +1283,35 @@ Phase 3 (Week 5-6): Go-Live & Training
 }
 
 /**
+ * Initialize the Network Analysis Tab
+ */
+function initializeNetworkAnalysisTab() {
+    console.log('🌐 Initializing Network Analysis tab...');
+    
+    if (currentLeadIndex === null) {
+        console.error('No company selected');
+        return;
+    }
+    
+    const currentCompany = leadsData[currentLeadIndex];
+    const networkContainer = document.getElementById('networkAnalysisTabContent');
+    
+    if (!networkContainer) {
+        console.error('Network Analysis tab content container not found');
+        return;
+    }
+    
+    // Call the network analysis initialization from network-analysis.js
+    if (window.initializeNetworkAnalysisForCompany) {
+        window.initializeNetworkAnalysisForCompany(currentCompany, networkContainer);
+    } else {
+        console.error('Network analysis module not loaded');
+    }
+    
+    console.log('✅ Network Analysis tab initialized');
+}
+
+/**
  * Generate PDF from proposal content
  */
 function generateProposalPDF(company) {
@@ -1673,6 +1710,8 @@ function openLeadWithTab(companyName, leadIndex, tabIndex) {
                     initializeSiteOverviewTab();
                 } else if (tabIndex === 3) {
                     initializeProposalsTab();
+                } else if (tabIndex === 4) {
+                    initializeNetworkAnalysisTab();
                 }
                 
                 // Reset the flag after initialization

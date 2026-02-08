@@ -53,7 +53,7 @@
                                         <li><a href="#" class="sidebar-link" data-page="e-signature">E-Signature</a></li>
                                         <li><a href="#" class="sidebar-link" data-page="voip-calling">VoIP Calling</a></li>
                                         <li><a href="#" class="sidebar-link" data-page="leads" data-tab="profile">Client Profile</a></li>
-                                        <li><a href="#" class="sidebar-link">Network Analysis</a></li>
+                                        <li><a href="#" class="sidebar-link" data-page="leads" data-tab="network">Network Analysis</a></li>
                                         <li><a href="#" class="sidebar-link" data-page="leads" data-tab="proposals">Proposal Generator</a></li>
                                     </ul>
                                 </div>
@@ -387,18 +387,6 @@
                             </div>
                         </div>
 
-                        <!-- Integration Info -->
-                        <div style="background: #e8f4f8; padding: 20px; border-radius: 8px; border-left: 4px solid #3498db; margin-top: 30px;">
-                            <strong style="color: #2980b9; display: block; margin-bottom: 8px;">💡 E-Signature Feature</strong>
-                            <p style="margin: 0; color: #555; font-size: 13px; line-height: 1.6;">
-                                This e-signature manager allows you to create and send documents for signing.
-                                To enable actual signing, integrate with DocuSign, SignNow, or similar services by adding your API key in Settings.
-                                Features include document management, signer tracking, status updates, and audit trails.
-                            </p>
-                            <a href="#" style="color: #3498db; text-decoration: none; font-size: 13px; margin-top: 10px; display: inline-block;">
-                                📖 Learn how to integrate →
-                            </a>
-                        </div>
                     </div>
                 </div>
 
@@ -677,6 +665,124 @@
                         box-shadow: 0 4px 12px rgba(0,0,0,0.1);
                     }
                 </style>
+
+                <!-- Page: Network Analysis -->
+                <div id="page-network-analysis" class="page-content">
+                    <div style="padding: 20px; max-width: 1600px; margin: 0 auto;">
+                        <!-- Header with Company Selector -->
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                            <h2 style="color: #2c3e50; margin: 0;">🌐 Network Analysis</h2>
+                            <div style="display: flex; gap: 15px; align-items: center;">
+                                <div>
+                                    <label style="display: block; font-size: 12px; color: #666; margin-bottom: 5px;">Select Company:</label>
+                                    <select id="networkCompanySelector" class="e-field" style="padding: 10px 15px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; min-width: 250px;">
+                                        <option value="">-- Select a company --</option>
+                                    </select>
+                                </div>
+                                <button id="refreshNetworkBtn" class="e-btn e-primary" style="margin-top: 22px; padding: 10px 20px;">
+                                    🔄 Refresh Data
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Network Health Overview Cards -->
+                        <div id="networkHealthCards" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px;">
+                            <!-- Cards will be populated by JavaScript -->
+                        </div>
+
+                        <!-- Main Content Area -->
+                        <div style="display: grid; grid-template-columns: 1fr 350px; gap: 20px;">
+                            <!-- Left Column: Charts and Analysis -->
+                            <div style="display: flex; flex-direction: column; gap: 20px;">
+                                <!-- Network Topology Map -->
+                                <div style="background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                                    <h3 style="margin: 0 0 20px 0; color: #2c3e50; display: flex; align-items: center; gap: 10px;">
+                                        <span>🗺️ Network Topology</span>
+                                        <span style="font-size: 12px; background: #e8f4f8; color: #2980b9; padding: 4px 10px; border-radius: 12px; font-weight: normal;">Live View</span>
+                                    </h3>
+                                    <div id="networkTopologyMap" style="height: 400px; background: #f8f9fa; border-radius: 8px; position: relative; overflow: hidden;">
+                                        <!-- Network visualization will be rendered here -->
+                                    </div>
+                                </div>
+
+                                <!-- Bandwidth Usage Chart -->
+                                <div style="background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                                    <h3 style="margin: 0 0 20px 0; color: #2c3e50;">📊 Bandwidth Usage (Last 24 Hours)</h3>
+                                    <canvas id="bandwidthChart" style="max-height: 300px;"></canvas>
+                                </div>
+
+                                <!-- Device Status Table -->
+                                <div style="background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                                    <h3 style="margin: 0 0 20px 0; color: #2c3e50;">💻 Device Status Monitor</h3>
+                                    <div id="deviceStatusGrid">
+                                        <!-- Grid will be populated by JavaScript -->
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right Column: Details and Alerts -->
+                            <div style="display: flex; flex-direction: column; gap: 20px;">
+                                <!-- Network Alerts -->
+                                <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                                    <h3 style="margin: 0 0 15px 0; color: #2c3e50; font-size: 16px;">⚠️ Active Alerts</h3>
+                                    <div id="networkAlerts" style="display: flex; flex-direction: column; gap: 10px;">
+                                        <!-- Alerts will be populated by JavaScript -->
+                                    </div>
+                                </div>
+
+                                <!-- Security Score -->
+                                <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                                    <h3 style="margin: 0 0 15px 0; color: #2c3e50; font-size: 16px;">🔒 Security Score</h3>
+                                    <div style="text-align: center; padding: 20px 0;">
+                                        <div id="securityScoreCircle" style="width: 120px; height: 120px; margin: 0 auto 15px; position: relative;">
+                                            <!-- Security score circle will be rendered here -->
+                                        </div>
+                                        <div id="securityScoreText" style="font-size: 14px; color: #666; line-height: 1.6;">
+                                            <!-- Score details will be populated -->
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Quick Actions -->
+                                <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                                    <h3 style="margin: 0 0 15px 0; color: #2c3e50; font-size: 16px;">⚡ Quick Actions</h3>
+                                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                                        <button class="e-btn e-outline" style="width: 100%; justify-content: flex-start; padding: 10px 15px;">
+                                            📥 Export Report
+                                        </button>
+                                        <button class="e-btn e-outline" style="width: 100%; justify-content: flex-start; padding: 10px 15px;">
+                                            📧 Email Summary
+                                        </button>
+                                        <button class="e-btn e-outline" style="width: 100%; justify-content: flex-start; padding: 10px 15px;">
+                                            ⚙️ Configure Monitoring
+                                        </button>
+                                        <button class="e-btn e-outline" style="width: 100%; justify-content: flex-start; padding: 10px 15px;">
+                                            📊 View Historical Data
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Network Info -->
+                                <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                                    <h3 style="margin: 0 0 15px 0; color: #2c3e50; font-size: 16px;">ℹ️ Network Info</h3>
+                                    <div id="networkInfoDetails" style="font-size: 13px; color: #666; line-height: 1.8;">
+                                        <!-- Network info will be populated -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Info Box -->
+                        <div style="background: #e8f4f8; padding: 20px; border-radius: 8px; border-left: 4px solid #3498db; margin-top: 25px;">
+                            <strong style="color: #2980b9; display: block; margin-bottom: 8px;">💡 Network Analysis Feature</strong>
+                            <p style="margin: 0; color: #555; font-size: 13px; line-height: 1.6;">
+                                This network analysis dashboard provides real-time monitoring of client networks. It displays network topology, 
+                                bandwidth usage, device status, and security metrics. Data can be collected via SNMP, network monitoring agents, 
+                                or integrated with tools like PRTG, Nagios, or SolarWinds.
+                            </p>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- Page: Client Profile -->
                 <div id="page-client-profile" class="page-content">
@@ -1704,11 +1810,12 @@
     <script src="js/email-campaigns.js?v=20260123-1500"></script>
     <script src="js/e-signature.js?v=20260123-1500"></script>
     <script src="js/voip.js?v=20260123-1500"></script>
-    <script src="js/leads.js?v=20260207-0700"></script></script></script></script></script></script></script></script></script></script></script></script></script>
+    <script src="js/leads.js?v=20260207-0800"></script></script>
     <script src="js/billing.js?v=20260125-0200"></script>
     <script src="js/client-profile.js?v=20260206-0300"></script>
+    <script src="js/network-analysis.js?v=20260207-0600"></script></script></script></script></script>
     
     <!-- Main Application Coordinator -->
-    <script src="js/app-main.js?v=20260206-0900"></script></script></script></script>
+    <script src="js/app-main.js?v=20260207-0200"></script></script>
 </body>
 </html>

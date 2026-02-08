@@ -305,6 +305,22 @@ function switchPage(pageName, targetTab) {
                         }
                     }
                 }, isLeadsInitialized ? 100 : 500);
+            } else if (targetTab === 'network') {
+                console.log('🌐 Switching to Network Analysis tab');
+                setTimeout(() => {
+                    if (window.leadsData && window.leadsData.length > 0) {
+                        if (isLeadsInitialized && window.leadDetailTabsInstance) {
+                            // Leads already open, just switch tabs
+                            console.log('↔️ Leads already open, switching to tab 4');
+                            window.leadDetailTabsInstance.select(4);
+                        } else if (window.openLeadWithTab) {
+                            // Leads not open yet, use deep linking
+                            console.log('🔗 Opening leads with Network Analysis tab');
+                            const firstCompany = window.leadsData[0].Company;
+                            window.openLeadWithTab(firstCompany, 0, 4); // Network Analysis is tab index 4
+                        }
+                    }
+                }, isLeadsInitialized ? 100 : 500);
             }
         }
         
@@ -339,6 +355,11 @@ function switchPage(pageName, targetTab) {
         if (pageName === 'company-research' && window.CompanyResearch) {
             console.log('🔍 Initializing company research page');
             window.CompanyResearch.initializeCompanyResearchPage();
+        }
+        
+        if (pageName === 'network-analysis' && window.initializeNetworkAnalysis) {
+            console.log('🌐 Initializing network analysis page');
+            window.initializeNetworkAnalysis();
         }
         
         if (pageName === 'email-campaigns' && window.EmailCampaigns) {

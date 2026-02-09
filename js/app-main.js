@@ -454,6 +454,11 @@ function switchPage(pageName, targetTab) {
             console.log('🔒 Initializing filter management page');
             window.FilterManagement.initializeFilterManagementPage();
         }
+        
+        if (pageName === 'documentation' && window.Documentation) {
+            console.log('📚 Initializing documentation page');
+            window.Documentation.initializeDocumentationPage();
+        }
     }, 100);
 }
 

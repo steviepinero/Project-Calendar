@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdn.syncfusion.com/ej2/24.2.9/material.css">
     <link rel="stylesheet" href="https://cdn.syncfusion.com/ej2/24.2.9/material.css" id="theme">
     
-    <link rel="stylesheet" href="styles.css?v=20260208-0200">
+    <link rel="stylesheet" href="styles.css?v=20260208-0400">
 </head>
 <body>
     <div class="ej2-container">
@@ -69,7 +69,7 @@
                                 <div class="e-acrdn-content">
                                     <ul class="sidebar-menu">
                                         <li><a href="#" class="sidebar-link">Filter Management</a></li>
-                                        <li><a href="#" class="sidebar-link">Data Points</a></li>
+                                        <li><a href="#" class="nav-item" data-page="data-points">Data Points</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -114,7 +114,7 @@
                             <div class="e-acrdn-panel">
                                 <div class="e-acrdn-content">
                                     <ul class="sidebar-menu">
-                                        <li><a href="#" class="sidebar-link">Reports</a></li>
+                                        <li><a href="#" class="nav-item" data-page="reports">Reports</a></li>
                                         <li><a href="#" class="sidebar-link">Documentation</a></li>
                                     </ul>
                                 </div>
@@ -398,6 +398,588 @@
                         <!-- Software Grid -->
                         <div class="software-grid-container">
                             <div id="softwareGrid"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Page: Reports -->
+                <div id="page-reports" class="page-content">
+                    <div class="reports-page">
+                        <div class="reports-header">
+                            <h2>📊 Reports & Analytics</h2>
+                            <button id="scheduleReportBtn" class="e-btn e-primary">📅 Schedule Report</button>
+                        </div>
+
+                        <!-- Report Categories -->
+                        <div class="report-categories">
+                            <div class="category-card active" data-category="executive">
+                                <div class="category-icon">📈</div>
+                                <div class="category-name">Executive</div>
+                                <div class="category-count">5 reports</div>
+                            </div>
+                            <div class="category-card" data-category="technical">
+                                <div class="category-icon">🔧</div>
+                                <div class="category-name">Technical</div>
+                                <div class="category-count">8 reports</div>
+                            </div>
+                            <div class="category-card" data-category="financial">
+                                <div class="category-icon">💰</div>
+                                <div class="category-name">Financial</div>
+                                <div class="category-count">4 reports</div>
+                            </div>
+                            <div class="category-card" data-category="compliance">
+                                <div class="category-icon">✓</div>
+                                <div class="category-name">Compliance</div>
+                                <div class="category-count">3 reports</div>
+                            </div>
+                            <div class="category-card" data-category="custom">
+                                <div class="category-icon">⚙️</div>
+                                <div class="category-name">Custom</div>
+                                <div class="category-count">0 reports</div>
+                            </div>
+                        </div>
+
+                        <!-- Report Controls -->
+                        <div class="report-controls e-card">
+                            <div class="control-group">
+                                <label>Client</label>
+                                <select id="reportClientFilter" class="e-field">
+                                    <option value="">All Clients</option>
+                                </select>
+                            </div>
+                            <div class="control-group">
+                                <label>Date Range</label>
+                                <select id="reportDateRange" class="e-field">
+                                    <option value="today">Today</option>
+                                    <option value="week">This Week</option>
+                                    <option value="month" selected>This Month</option>
+                                    <option value="quarter">This Quarter</option>
+                                    <option value="year">This Year</option>
+                                    <option value="custom">Custom Range</option>
+                                </select>
+                            </div>
+                            <div class="control-group">
+                                <label>Format</label>
+                                <select id="reportFormat" class="e-field">
+                                    <option value="pdf">PDF</option>
+                                    <option value="excel">Excel</option>
+                                    <option value="csv">CSV</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Reports Grid -->
+                        <div id="reportsContainer" class="reports-grid">
+                            <!-- Executive Reports -->
+                            <div class="report-section" data-category="executive">
+                                <h3 class="section-title">📈 Executive Reports</h3>
+                                <div class="reports-list">
+                                    <div class="report-card">
+                                        <div class="report-icon">📊</div>
+                                        <div class="report-info">
+                                            <h4>Executive Summary</h4>
+                                            <p>High-level overview of IT services, costs, and KPIs</p>
+                                        </div>
+                                        <button class="e-btn e-primary e-small generate-report-btn" data-report="executive-summary">Generate</button>
+                                    </div>
+                                    <div class="report-card">
+                                        <div class="report-icon">📈</div>
+                                        <div class="report-info">
+                                            <h4>Business Performance</h4>
+                                            <p>Revenue, profitability, and growth metrics</p>
+                                        </div>
+                                        <button class="e-btn e-primary e-small generate-report-btn" data-report="business-performance">Generate</button>
+                                    </div>
+                                    <div class="report-card">
+                                        <div class="report-icon">🎯</div>
+                                        <div class="report-info">
+                                            <h4>SLA Compliance</h4>
+                                            <p>Service level agreement performance and uptime</p>
+                                        </div>
+                                        <button class="e-btn e-primary e-small generate-report-btn" data-report="sla-compliance">Generate</button>
+                                    </div>
+                                    <div class="report-card">
+                                        <div class="report-icon">📉</div>
+                                        <div class="report-info">
+                                            <h4>Incident Summary</h4>
+                                            <p>Overview of tickets, incidents, and resolution times</p>
+                                        </div>
+                                        <button class="e-btn e-primary e-small generate-report-btn" data-report="incident-summary">Generate</button>
+                                    </div>
+                                    <div class="report-card">
+                                        <div class="report-icon">👥</div>
+                                        <div class="report-info">
+                                            <h4>Client Satisfaction</h4>
+                                            <p>Customer feedback and satisfaction scores</p>
+                                        </div>
+                                        <button class="e-btn e-primary e-small generate-report-btn" data-report="client-satisfaction">Generate</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Technical Reports -->
+                            <div class="report-section" data-category="technical" style="display: none;">
+                                <h3 class="section-title">🔧 Technical Reports</h3>
+                                <div class="reports-list">
+                                    <div class="report-card">
+                                        <div class="report-icon">💻</div>
+                                        <div class="report-info">
+                                            <h4>Device Inventory</h4>
+                                            <p>Complete hardware and software asset inventory</p>
+                                        </div>
+                                        <button class="e-btn e-primary e-small generate-report-btn" data-report="device-inventory">Generate</button>
+                                    </div>
+                                    <div class="report-card">
+                                        <div class="report-icon">🔒</div>
+                                        <div class="report-info">
+                                            <h4>Security Assessment</h4>
+                                            <p>Vulnerabilities, patches, and security posture</p>
+                                        </div>
+                                        <button class="e-btn e-primary e-small generate-report-btn" data-report="security-assessment">Generate</button>
+                                    </div>
+                                    <div class="report-card">
+                                        <div class="report-icon">📡</div>
+                                        <div class="report-info">
+                                            <h4>Network Performance</h4>
+                                            <p>Bandwidth usage, latency, and network health</p>
+                                        </div>
+                                        <button class="e-btn e-primary e-small generate-report-btn" data-report="network-performance">Generate</button>
+                                    </div>
+                                    <div class="report-card">
+                                        <div class="report-icon">🔄</div>
+                                        <div class="report-info">
+                                            <h4>Backup & Recovery</h4>
+                                            <p>Backup status, success rates, and storage usage</p>
+                                        </div>
+                                        <button class="e-btn e-primary e-small generate-report-btn" data-report="backup-recovery">Generate</button>
+                                    </div>
+                                    <div class="report-card">
+                                        <div class="report-icon">⚡</div>
+                                        <div class="report-info">
+                                            <h4>System Uptime</h4>
+                                            <p>Server availability and downtime analysis</p>
+                                        </div>
+                                        <button class="e-btn e-primary e-small generate-report-btn" data-report="system-uptime">Generate</button>
+                                    </div>
+                                    <div class="report-card">
+                                        <div class="report-icon">🔐</div>
+                                        <div class="report-info">
+                                            <h4>Access Logs</h4>
+                                            <p>User authentication and access history</p>
+                                        </div>
+                                        <button class="e-btn e-primary e-small generate-report-btn" data-report="access-logs">Generate</button>
+                                    </div>
+                                    <div class="report-card">
+                                        <div class="report-icon">📦</div>
+                                        <div class="report-info">
+                                            <h4>Software Licensing</h4>
+                                            <p>License usage, compliance, and expiration dates</p>
+                                        </div>
+                                        <button class="e-btn e-primary e-small generate-report-btn" data-report="software-licensing">Generate</button>
+                                    </div>
+                                    <div class="report-card">
+                                        <div class="report-icon">🌐</div>
+                                        <div class="report-info">
+                                            <h4>Web Traffic Analysis</h4>
+                                            <p>Internet usage patterns and bandwidth consumption</p>
+                                        </div>
+                                        <button class="e-btn e-primary e-small generate-report-btn" data-report="web-traffic">Generate</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Financial Reports -->
+                            <div class="report-section" data-category="financial" style="display: none;">
+                                <h3 class="section-title">💰 Financial Reports</h3>
+                                <div class="reports-list">
+                                    <div class="report-card">
+                                        <div class="report-icon">💵</div>
+                                        <div class="report-info">
+                                            <h4>Billing Summary</h4>
+                                            <p>Invoices, payments, and outstanding balances</p>
+                                        </div>
+                                        <button class="e-btn e-primary e-small generate-report-btn" data-report="billing-summary">Generate</button>
+                                    </div>
+                                    <div class="report-card">
+                                        <div class="report-icon">📊</div>
+                                        <div class="report-info">
+                                            <h4>Revenue Analysis</h4>
+                                            <p>Monthly recurring revenue and growth trends</p>
+                                        </div>
+                                        <button class="e-btn e-primary e-small generate-report-btn" data-report="revenue-analysis">Generate</button>
+                                    </div>
+                                    <div class="report-card">
+                                        <div class="report-icon">💳</div>
+                                        <div class="report-info">
+                                            <h4>Cost Analysis</h4>
+                                            <p>IT spending breakdown by category and client</p>
+                                        </div>
+                                        <button class="e-btn e-primary e-small generate-report-btn" data-report="cost-analysis">Generate</button>
+                                    </div>
+                                    <div class="report-card">
+                                        <div class="report-icon">📈</div>
+                                        <div class="report-info">
+                                            <h4>Profitability Report</h4>
+                                            <p>Profit margins and ROI by client and service</p>
+                                        </div>
+                                        <button class="e-btn e-primary e-small generate-report-btn" data-report="profitability">Generate</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Compliance Reports -->
+                            <div class="report-section" data-category="compliance" style="display: none;">
+                                <h3 class="section-title">✓ Compliance Reports</h3>
+                                <div class="reports-list">
+                                    <div class="report-card">
+                                        <div class="report-icon">🔐</div>
+                                        <div class="report-info">
+                                            <h4>HIPAA Compliance</h4>
+                                            <p>Health data protection and audit logs</p>
+                                        </div>
+                                        <button class="e-btn e-primary e-small generate-report-btn" data-report="hipaa">Generate</button>
+                                    </div>
+                                    <div class="report-card">
+                                        <div class="report-icon">🛡️</div>
+                                        <div class="report-info">
+                                            <h4>GDPR Compliance</h4>
+                                            <p>Data privacy and protection assessment</p>
+                                        </div>
+                                        <button class="e-btn e-primary e-small generate-report-btn" data-report="gdpr">Generate</button>
+                                    </div>
+                                    <div class="report-card">
+                                        <div class="report-icon">📋</div>
+                                        <div class="report-info">
+                                            <h4>Audit Trail</h4>
+                                            <p>Complete system activity and change logs</p>
+                                        </div>
+                                        <button class="e-btn e-primary e-small generate-report-btn" data-report="audit-trail">Generate</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Custom Reports -->
+                            <div class="report-section" data-category="custom" style="display: none;">
+                                <h3 class="section-title">⚙️ Custom Reports</h3>
+                                <div class="reports-list">
+                                    <div class="report-card empty-state">
+                                        <div class="empty-state-icon">📝</div>
+                                        <div class="empty-state-text">
+                                            <h4>No Custom Reports Yet</h4>
+                                            <p>Create custom reports tailored to your specific needs</p>
+                                            <button class="e-btn e-primary" id="createCustomReportBtn">+ Create Custom Report</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Page: Data Points -->
+                <div id="page-data-points" class="page-content">
+                    <div class="data-points-page">
+                        <div class="data-points-header">
+                            <h2>📊 Data Points & KPIs</h2>
+                            <div class="header-actions">
+                                <button id="refreshDataBtn" class="e-btn e-outline">🔄 Refresh</button>
+                                <button id="exportDataBtn" class="e-btn e-primary">📥 Export Data</button>
+                            </div>
+                        </div>
+
+                        <!-- Time Period Selector -->
+                        <div class="time-period-selector e-card">
+                            <div class="period-buttons">
+                                <button class="period-btn" data-period="today">Today</button>
+                                <button class="period-btn active" data-period="week">This Week</button>
+                                <button class="period-btn" data-period="month">This Month</button>
+                                <button class="period-btn" data-period="quarter">This Quarter</button>
+                                <button class="period-btn" data-period="year">This Year</button>
+                            </div>
+                            <div class="comparison-toggle">
+                                <label class="toggle-label">
+                                    <input type="checkbox" id="showComparisonToggle" checked>
+                                    <span>Show vs Previous Period</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Main Metrics Dashboard -->
+                        <div class="metrics-dashboard">
+                            <!-- Financial Metrics -->
+                            <div class="metrics-section">
+                                <h3 class="section-title">💰 Financial Metrics</h3>
+                                <div class="metrics-grid">
+                                    <div class="metric-card">
+                                        <div class="metric-icon">💵</div>
+                                        <div class="metric-content">
+                                            <div class="metric-label">Monthly Recurring Revenue</div>
+                                            <div class="metric-value">$125,450</div>
+                                            <div class="metric-change positive">
+                                                <span class="change-icon">↑</span>
+                                                <span class="change-value">12.5%</span>
+                                                <span class="change-text">vs last period</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="metric-card">
+                                        <div class="metric-icon">📈</div>
+                                        <div class="metric-content">
+                                            <div class="metric-label">Annual Recurring Revenue</div>
+                                            <div class="metric-value">$1,505,400</div>
+                                            <div class="metric-change positive">
+                                                <span class="change-icon">↑</span>
+                                                <span class="change-value">8.3%</span>
+                                                <span class="change-text">vs last period</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="metric-card">
+                                        <div class="metric-icon">💳</div>
+                                        <div class="metric-content">
+                                            <div class="metric-label">Average Revenue Per Client</div>
+                                            <div class="metric-value">$2,845</div>
+                                            <div class="metric-change negative">
+                                                <span class="change-icon">↓</span>
+                                                <span class="change-value">2.1%</span>
+                                                <span class="change-text">vs last period</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="metric-card">
+                                        <div class="metric-icon">📊</div>
+                                        <div class="metric-content">
+                                            <div class="metric-label">Gross Profit Margin</div>
+                                            <div class="metric-value">42.8%</div>
+                                            <div class="metric-change positive">
+                                                <span class="change-icon">↑</span>
+                                                <span class="change-value">1.5%</span>
+                                                <span class="change-text">vs last period</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Client Metrics -->
+                            <div class="metrics-section">
+                                <h3 class="section-title">👥 Client Metrics</h3>
+                                <div class="metrics-grid">
+                                    <div class="metric-card">
+                                        <div class="metric-icon">🏢</div>
+                                        <div class="metric-content">
+                                            <div class="metric-label">Active Clients</div>
+                                            <div class="metric-value">44</div>
+                                            <div class="metric-change positive">
+                                                <span class="change-icon">↑</span>
+                                                <span class="change-value">3 new</span>
+                                                <span class="change-text">vs last period</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="metric-card">
+                                        <div class="metric-icon">📉</div>
+                                        <div class="metric-content">
+                                            <div class="metric-label">Churn Rate</div>
+                                            <div class="metric-value">2.3%</div>
+                                            <div class="metric-change positive">
+                                                <span class="change-icon">↓</span>
+                                                <span class="change-value">0.5%</span>
+                                                <span class="change-text">vs last period</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="metric-card">
+                                        <div class="metric-icon">⭐</div>
+                                        <div class="metric-content">
+                                            <div class="metric-label">Client Satisfaction Score</div>
+                                            <div class="metric-value">4.6/5.0</div>
+                                            <div class="metric-change positive">
+                                                <span class="change-icon">↑</span>
+                                                <span class="change-value">0.2</span>
+                                                <span class="change-text">vs last period</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="metric-card">
+                                        <div class="metric-icon">📅</div>
+                                        <div class="metric-content">
+                                            <div class="metric-label">Average Client Lifetime</div>
+                                            <div class="metric-value">3.2 years</div>
+                                            <div class="metric-change neutral">
+                                                <span class="change-icon">→</span>
+                                                <span class="change-value">0.0%</span>
+                                                <span class="change-text">vs last period</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Service Desk Metrics -->
+                            <div class="metrics-section">
+                                <h3 class="section-title">🎫 Service Desk Metrics</h3>
+                                <div class="metrics-grid">
+                                    <div class="metric-card">
+                                        <div class="metric-icon">📋</div>
+                                        <div class="metric-content">
+                                            <div class="metric-label">Total Tickets</div>
+                                            <div class="metric-value">284</div>
+                                            <div class="metric-change negative">
+                                                <span class="change-icon">↑</span>
+                                                <span class="change-value">15.2%</span>
+                                                <span class="change-text">vs last period</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="metric-card">
+                                        <div class="metric-icon">⏱️</div>
+                                        <div class="metric-content">
+                                            <div class="metric-label">Average Response Time</div>
+                                            <div class="metric-value">12 min</div>
+                                            <div class="metric-change positive">
+                                                <span class="change-icon">↓</span>
+                                                <span class="change-value">3 min</span>
+                                                <span class="change-text">vs last period</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="metric-card">
+                                        <div class="metric-icon">✅</div>
+                                        <div class="metric-content">
+                                            <div class="metric-label">First Call Resolution</div>
+                                            <div class="metric-value">68.5%</div>
+                                            <div class="metric-change positive">
+                                                <span class="change-icon">↑</span>
+                                                <span class="change-value">4.2%</span>
+                                                <span class="change-text">vs last period</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="metric-card">
+                                        <div class="metric-icon">⏳</div>
+                                        <div class="metric-content">
+                                            <div class="metric-label">Average Resolution Time</div>
+                                            <div class="metric-value">4.2 hours</div>
+                                            <div class="metric-change positive">
+                                                <span class="change-icon">↓</span>
+                                                <span class="change-value">0.8 hrs</span>
+                                                <span class="change-text">vs last period</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Technical Metrics -->
+                            <div class="metrics-section">
+                                <h3 class="section-title">🔧 Technical Metrics</h3>
+                                <div class="metrics-grid">
+                                    <div class="metric-card">
+                                        <div class="metric-icon">💻</div>
+                                        <div class="metric-content">
+                                            <div class="metric-label">Devices Under Management</div>
+                                            <div class="metric-value">1,248</div>
+                                            <div class="metric-change positive">
+                                                <span class="change-icon">↑</span>
+                                                <span class="change-value">42</span>
+                                                <span class="change-text">vs last period</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="metric-card">
+                                        <div class="metric-icon">⚡</div>
+                                        <div class="metric-content">
+                                            <div class="metric-label">System Uptime</div>
+                                            <div class="metric-value">99.94%</div>
+                                            <div class="metric-change positive">
+                                                <span class="change-icon">↑</span>
+                                                <span class="change-value">0.12%</span>
+                                                <span class="change-text">vs last period</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="metric-card">
+                                        <div class="metric-icon">🔒</div>
+                                        <div class="metric-content">
+                                            <div class="metric-label">Security Incidents</div>
+                                            <div class="metric-value">3</div>
+                                            <div class="metric-change positive">
+                                                <span class="change-icon">↓</span>
+                                                <span class="change-value">2</span>
+                                                <span class="change-text">vs last period</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="metric-card">
+                                        <div class="metric-icon">🔄</div>
+                                        <div class="metric-content">
+                                            <div class="metric-label">Backup Success Rate</div>
+                                            <div class="metric-value">98.7%</div>
+                                            <div class="metric-change neutral">
+                                                <span class="change-icon">→</span>
+                                                <span class="change-value">0.0%</span>
+                                                <span class="change-text">vs last period</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Efficiency Metrics -->
+                            <div class="metrics-section">
+                                <h3 class="section-title">⚙️ Efficiency Metrics</h3>
+                                <div class="metrics-grid">
+                                    <div class="metric-card">
+                                        <div class="metric-icon">👨‍💼</div>
+                                        <div class="metric-content">
+                                            <div class="metric-label">Technician Utilization</div>
+                                            <div class="metric-value">82.4%</div>
+                                            <div class="metric-change positive">
+                                                <span class="change-icon">↑</span>
+                                                <span class="change-value">3.1%</span>
+                                                <span class="change-text">vs last period</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="metric-card">
+                                        <div class="metric-icon">🤖</div>
+                                        <div class="metric-content">
+                                            <div class="metric-label">Automation Rate</div>
+                                            <div class="metric-value">45.2%</div>
+                                            <div class="metric-change positive">
+                                                <span class="change-icon">↑</span>
+                                                <span class="change-value">6.8%</span>
+                                                <span class="change-text">vs last period</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="metric-card">
+                                        <div class="metric-icon">💲</div>
+                                        <div class="metric-content">
+                                            <div class="metric-label">Cost Per Ticket</div>
+                                            <div class="metric-value">$48.50</div>
+                                            <div class="metric-change positive">
+                                                <span class="change-icon">↓</span>
+                                                <span class="change-value">$4.20</span>
+                                                <span class="change-text">vs last period</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="metric-card">
+                                        <div class="metric-icon">📞</div>
+                                        <div class="metric-content">
+                                            <div class="metric-label">Remote Resolution Rate</div>
+                                            <div class="metric-value">87.3%</div>
+                                            <div class="metric-change positive">
+                                                <span class="change-icon">↑</span>
+                                                <span class="change-value">2.5%</span>
+                                                <span class="change-text">vs last period</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1925,11 +2507,13 @@
     <script src="js/voip.js?v=20260123-1500"></script>
     <script src="js/leads.js?v=20260208-0206"></script></script></script></script></script></script></script></script></script></script></script>
     <script src="js/billing.js?v=20260125-0200"></script>
-    <script src="js/software.js?v=20260208-0203"></script></script></script></script>
+    <script src="js/software.js?v=20260208-0203"></script>
+    <script src="js/reports.js?v=20260208-0100"></script>
+    <script src="js/data-points.js?v=20260208-0100"></script></script></script></script>
     <script src="js/client-profile.js?v=20260206-0300"></script>
     <script src="js/network-analysis.js?v=20260207-0600"></script></script></script></script></script>
     
     <!-- Main Application Coordinator -->
-    <script src="js/app-main.js?v=20260208-0200"></script></script></script></script></script></script>
+    <script src="js/app-main.js?v=20260208-0400"></script></script></script></script></script></script></script></script>
 </body>
 </html>

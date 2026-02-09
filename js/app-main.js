@@ -434,6 +434,16 @@ function switchPage(pageName, targetTab) {
             console.log('💿 Initializing software page');
             window.Software.initializeSoftwarePage();
         }
+        
+        if (pageName === 'reports' && window.Reports) {
+            console.log('📊 Initializing reports page');
+            window.Reports.initializeReportsPage();
+        }
+        
+        if (pageName === 'data-points' && window.DataPoints) {
+            console.log('📊 Initializing data points page');
+            window.DataPoints.initializeDataPointsPage();
+        }
     }, 100);
 }
 

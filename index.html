@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdn.syncfusion.com/ej2/24.2.9/material.css">
     <link rel="stylesheet" href="https://cdn.syncfusion.com/ej2/24.2.9/material.css" id="theme">
     
-    <link rel="stylesheet" href="styles.css?v=20260208-0400">
+    <link rel="stylesheet" href="styles.css?v=20260208-0600">
 </head>
 <body>
     <div class="ej2-container">
@@ -68,7 +68,7 @@
                             <div class="e-acrdn-panel">
                                 <div class="e-acrdn-content">
                                     <ul class="sidebar-menu">
-                                        <li><a href="#" class="sidebar-link">Filter Management</a></li>
+                                        <li><a href="#" class="nav-item" data-page="filter-management">Filter Management</a></li>
                                         <li><a href="#" class="nav-item" data-page="data-points">Data Points</a></li>
                                     </ul>
                                 </div>
@@ -977,6 +977,424 @@
                                                 <span class="change-text">vs last period</span>
                                             </div>
                                         </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Page: Lifecycle Management -->
+                <div id="page-lifecycle" class="page-content">
+                    <div class="lifecycle-page">
+                        <div class="lifecycle-header">
+                            <h2>🔄 Device Lifecycle Management</h2>
+                            <button id="addDeviceBtn" class="e-btn e-primary">+ Add Device</button>
+                        </div>
+
+                        <!-- Summary Cards -->
+                        <div class="lifecycle-summary">
+                            <div class="summary-card" style="border-left-color: #e74c3c;">
+                                <div class="summary-icon">⚠️</div>
+                                <div class="summary-content">
+                                    <div class="summary-value">23</div>
+                                    <div class="summary-label">Overdue Replacement</div>
+                                </div>
+                            </div>
+                            <div class="summary-card" style="border-left-color: #f39c12;">
+                                <div class="summary-icon">⏰</div>
+                                <div class="summary-content">
+                                    <div class="summary-value">45</div>
+                                    <div class="summary-label">Due This Quarter</div>
+                                </div>
+                            </div>
+                            <div class="summary-card" style="border-left-color: #3498db;">
+                                <div class="summary-icon">📅</div>
+                                <div class="summary-content">
+                                    <div class="summary-value">92</div>
+                                    <div class="summary-label">Due This Year</div>
+                                </div>
+                            </div>
+                            <div class="summary-card" style="border-left-color: #27ae60;">
+                                <div class="summary-icon">✅</div>
+                                <div class="summary-content">
+                                    <div class="summary-value">1,088</div>
+                                    <div class="summary-label">Within Lifecycle</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Lifecycle Chart -->
+                        <div class="lifecycle-chart-section e-card">
+                            <div class="chart-header">
+                                <h3>Replacement Timeline (Next 12 Months)</h3>
+                                <div class="chart-legend">
+                                    <span class="legend-item"><span class="legend-color" style="background: #e74c3c;"></span>Overdue</span>
+                                    <span class="legend-item"><span class="legend-color" style="background: #f39c12;"></span>Due Soon</span>
+                                    <span class="legend-item"><span class="legend-color" style="background: #3498db;"></span>Scheduled</span>
+                                </div>
+                            </div>
+                            <div id="lifecycleChart" style="height: 300px;"></div>
+                        </div>
+
+                        <!-- Filters -->
+                        <div class="lifecycle-filters e-card">
+                            <div class="filter-group">
+                                <label>Company</label>
+                                <select id="lifecycleCompanyFilter" class="e-field">
+                                    <option value="">All Companies</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label>Device Type</label>
+                                <select id="lifecycleDeviceType" class="e-field">
+                                    <option value="">All Types</option>
+                                    <option value="Laptop">Laptop</option>
+                                    <option value="Desktop">Desktop</option>
+                                    <option value="Server">Server</option>
+                                    <option value="Network Device">Network Device</option>
+                                    <option value="Mobile">Mobile</option>
+                                    <option value="Printer">Printer</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label>Status</label>
+                                <select id="lifecycleStatus" class="e-field">
+                                    <option value="">All Status</option>
+                                    <option value="Overdue">Overdue Replacement</option>
+                                    <option value="Due Soon">Due Soon (< 90 days)</option>
+                                    <option value="Scheduled">Scheduled Replacement</option>
+                                    <option value="Active">Active (Within Lifecycle)</option>
+                                    <option value="Warranty Expired">Warranty Expired</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label>Lifecycle Years</label>
+                                <select id="lifecycleYears" class="e-field">
+                                    <option value="">All Cycles</option>
+                                    <option value="3">3 Year Cycle</option>
+                                    <option value="4" selected>4 Year Cycle</option>
+                                    <option value="5">5 Year Cycle</option>
+                                </select>
+                            </div>
+                            <button id="clearLifecycleFilters" class="e-btn e-small">Clear Filters</button>
+                        </div>
+
+                        <!-- Devices Grid -->
+                        <div class="lifecycle-grid-container">
+                            <div id="lifecycleGrid"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Page: Filter Management -->
+                <div id="page-filter-management" class="page-content">
+                    <div class="filter-management-page">
+                        <div class="filter-management-header">
+                            <h2>🔒 Filter Management</h2>
+                            <button id="createFilterBtn" class="e-btn e-primary">+ Create Filter</button>
+                        </div>
+
+                        <!-- Filter Categories -->
+                        <div class="filter-categories">
+                            <div class="filter-category-card active" data-category="email">
+                                <div class="category-icon">📧</div>
+                                <div class="category-info">
+                                    <div class="category-name">Email Filters</div>
+                                    <div class="category-count">24 active</div>
+                                </div>
+                            </div>
+                            <div class="filter-category-card" data-category="spam">
+                                <div class="category-icon">🚫</div>
+                                <div class="category-info">
+                                    <div class="category-name">Spam Filters</div>
+                                    <div class="category-count">12 active</div>
+                                </div>
+                            </div>
+                            <div class="filter-category-card" data-category="firewall">
+                                <div class="category-icon">🛡️</div>
+                                <div class="category-info">
+                                    <div class="category-name">Firewall Rules</div>
+                                    <div class="category-count">38 active</div>
+                                </div>
+                            </div>
+                            <div class="filter-category-card" data-category="content">
+                                <div class="category-icon">🌐</div>
+                                <div class="category-info">
+                                    <div class="category-name">Content Filtering</div>
+                                    <div class="category-count">15 active</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Filter Controls -->
+                        <div class="filter-controls e-card">
+                            <div class="control-group">
+                                <label>Client</label>
+                                <select id="filterClientSelect" class="e-field">
+                                    <option value="">All Clients</option>
+                                </select>
+                            </div>
+                            <div class="control-group">
+                                <label>Status</label>
+                                <select id="filterStatusSelect" class="e-field">
+                                    <option value="">All Status</option>
+                                    <option value="Active">Active</option>
+                                    <option value="Inactive">Inactive</option>
+                                    <option value="Pending">Pending Review</option>
+                                </select>
+                            </div>
+                            <div class="control-group">
+                                <label>Search</label>
+                                <input type="text" id="filterSearchInput" class="e-field" placeholder="Search filters...">
+                            </div>
+                            <button id="clearFilterSearch" class="e-btn e-small">Clear</button>
+                        </div>
+
+                        <!-- Email Filters Section -->
+                        <div class="filters-section" data-category="email">
+                            <div class="section-header">
+                                <h3 class="section-title">📧 Email Filters</h3>
+                                <button class="e-btn e-small e-primary section-add-btn" data-type="email">+ Add Email Filter</button>
+                            </div>
+                            <div id="emailFiltersContainer" class="filters-list">
+                                <div class="filter-item">
+                                    <div class="filter-icon">📨</div>
+                                    <div class="filter-details">
+                                        <div class="filter-name">Invoice Auto-Filing</div>
+                                        <div class="filter-description">Move emails with "invoice" in subject to Invoices folder</div>
+                                        <div class="filter-meta">
+                                            <span class="meta-item">📁 Target: Invoices</span>
+                                            <span class="meta-item">👥 All Clients</span>
+                                            <span class="meta-item">📊 Applied: 1,245 times</span>
+                                        </div>
+                                    </div>
+                                    <div class="filter-status">
+                                        <span class="status-badge active">Active</span>
+                                    </div>
+                                    <div class="filter-actions">
+                                        <button class="e-btn e-small e-outline edit-filter-btn">Edit</button>
+                                        <button class="e-btn e-small e-danger delete-filter-btn">Delete</button>
+                                    </div>
+                                </div>
+                                <div class="filter-item">
+                                    <div class="filter-icon">🔔</div>
+                                    <div class="filter-details">
+                                        <div class="filter-name">Alert Notifications</div>
+                                        <div class="filter-description">Flag emails from monitoring systems as important</div>
+                                        <div class="filter-meta">
+                                            <span class="meta-item">⭐ Action: Flag Important</span>
+                                            <span class="meta-item">🏢 Anderson Cabinet Designs</span>
+                                            <span class="meta-item">📊 Applied: 892 times</span>
+                                        </div>
+                                    </div>
+                                    <div class="filter-status">
+                                        <span class="status-badge active">Active</span>
+                                    </div>
+                                    <div class="filter-actions">
+                                        <button class="e-btn e-small e-outline edit-filter-btn">Edit</button>
+                                        <button class="e-btn e-small e-danger delete-filter-btn">Delete</button>
+                                    </div>
+                                </div>
+                                <div class="filter-item">
+                                    <div class="filter-icon">📋</div>
+                                    <div class="filter-details">
+                                        <div class="filter-name">Ticket Updates</div>
+                                        <div class="filter-description">Auto-categorize ticket system notifications</div>
+                                        <div class="filter-meta">
+                                            <span class="meta-item">🏷️ Action: Categorize</span>
+                                            <span class="meta-item">👥 All Clients</span>
+                                            <span class="meta-item">📊 Applied: 3,421 times</span>
+                                        </div>
+                                    </div>
+                                    <div class="filter-status">
+                                        <span class="status-badge active">Active</span>
+                                    </div>
+                                    <div class="filter-actions">
+                                        <button class="e-btn e-small e-outline edit-filter-btn">Edit</button>
+                                        <button class="e-btn e-small e-danger delete-filter-btn">Delete</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Spam Filters Section -->
+                        <div class="filters-section" data-category="spam" style="display: none;">
+                            <div class="section-header">
+                                <h3 class="section-title">🚫 Spam Filters</h3>
+                                <button class="e-btn e-small e-primary section-add-btn" data-type="spam">+ Add Spam Filter</button>
+                            </div>
+                            <div id="spamFiltersContainer" class="filters-list">
+                                <div class="filter-item">
+                                    <div class="filter-icon">⚠️</div>
+                                    <div class="filter-details">
+                                        <div class="filter-name">Suspicious Sender Domains</div>
+                                        <div class="filter-description">Block emails from known phishing domains</div>
+                                        <div class="filter-meta">
+                                            <span class="meta-item">🎯 Blocked: 1,245 domains</span>
+                                            <span class="meta-item">👥 All Clients</span>
+                                            <span class="meta-item">📊 Blocked: 8,932 emails</span>
+                                        </div>
+                                    </div>
+                                    <div class="filter-status">
+                                        <span class="status-badge active">Active</span>
+                                    </div>
+                                    <div class="filter-actions">
+                                        <button class="e-btn e-small e-outline edit-filter-btn">Edit</button>
+                                        <button class="e-btn e-small e-danger delete-filter-btn">Delete</button>
+                                    </div>
+                                </div>
+                                <div class="filter-item">
+                                    <div class="filter-icon">💰</div>
+                                    <div class="filter-details">
+                                        <div class="filter-name">Financial Scam Keywords</div>
+                                        <div class="filter-description">Flag emails with common scam phrases</div>
+                                        <div class="filter-meta">
+                                            <span class="meta-item">🔑 Keywords: 47</span>
+                                            <span class="meta-item">👥 All Clients</span>
+                                            <span class="meta-item">📊 Flagged: 2,156 emails</span>
+                                        </div>
+                                    </div>
+                                    <div class="filter-status">
+                                        <span class="status-badge active">Active</span>
+                                    </div>
+                                    <div class="filter-actions">
+                                        <button class="e-btn e-small e-outline edit-filter-btn">Edit</button>
+                                        <button class="e-btn e-small e-danger delete-filter-btn">Delete</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Firewall Rules Section -->
+                        <div class="filters-section" data-category="firewall" style="display: none;">
+                            <div class="section-header">
+                                <h3 class="section-title">🛡️ Firewall Rules</h3>
+                                <button class="e-btn e-small e-primary section-add-btn" data-type="firewall">+ Add Firewall Rule</button>
+                            </div>
+                            <div id="firewallFiltersContainer" class="filters-list">
+                                <div class="filter-item">
+                                    <div class="filter-icon">🚪</div>
+                                    <div class="filter-details">
+                                        <div class="filter-name">RDP Access - Office Network</div>
+                                        <div class="filter-description">Allow RDP from office IP range only</div>
+                                        <div class="filter-meta">
+                                            <span class="meta-item">🔌 Port: 3389</span>
+                                            <span class="meta-item">🌐 Source: 192.168.1.0/24</span>
+                                            <span class="meta-item">✅ Protocol: TCP</span>
+                                        </div>
+                                    </div>
+                                    <div class="filter-status">
+                                        <span class="status-badge active">Active</span>
+                                    </div>
+                                    <div class="filter-actions">
+                                        <button class="e-btn e-small e-outline edit-filter-btn">Edit</button>
+                                        <button class="e-btn e-small e-danger delete-filter-btn">Delete</button>
+                                    </div>
+                                </div>
+                                <div class="filter-item">
+                                    <div class="filter-icon">🔒</div>
+                                    <div class="filter-details">
+                                        <div class="filter-name">Block Known Malicious IPs</div>
+                                        <div class="filter-description">Deny traffic from threat intelligence list</div>
+                                        <div class="filter-meta">
+                                            <span class="meta-item">🎯 Blocked IPs: 12,453</span>
+                                            <span class="meta-item">🚫 Action: Drop</span>
+                                            <span class="meta-item">📊 Blocked: 45,892 attempts</span>
+                                        </div>
+                                    </div>
+                                    <div class="filter-status">
+                                        <span class="status-badge active">Active</span>
+                                    </div>
+                                    <div class="filter-actions">
+                                        <button class="e-btn e-small e-outline edit-filter-btn">Edit</button>
+                                        <button class="e-btn e-small e-danger delete-filter-btn">Delete</button>
+                                    </div>
+                                </div>
+                                <div class="filter-item">
+                                    <div class="filter-icon">🌐</div>
+                                    <div class="filter-details">
+                                        <div class="filter-name">HTTPS Traffic - Public Web Server</div>
+                                        <div class="filter-description">Allow inbound HTTPS to web server</div>
+                                        <div class="filter-meta">
+                                            <span class="meta-item">🔌 Port: 443</span>
+                                            <span class="meta-item">🌐 Source: Any</span>
+                                            <span class="meta-item">✅ Protocol: TCP</span>
+                                        </div>
+                                    </div>
+                                    <div class="filter-status">
+                                        <span class="status-badge active">Active</span>
+                                    </div>
+                                    <div class="filter-actions">
+                                        <button class="e-btn e-small e-outline edit-filter-btn">Edit</button>
+                                        <button class="e-btn e-small e-danger delete-filter-btn">Delete</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Content Filtering Section -->
+                        <div class="filters-section" data-category="content" style="display: none;">
+                            <div class="section-header">
+                                <h3 class="section-title">🌐 Content Filtering</h3>
+                                <button class="e-btn e-small e-primary section-add-btn" data-type="content">+ Add Content Filter</button>
+                            </div>
+                            <div id="contentFiltersContainer" class="filters-list">
+                                <div class="filter-item">
+                                    <div class="filter-icon">🎮</div>
+                                    <div class="filter-details">
+                                        <div class="filter-name">Block Gaming Websites</div>
+                                        <div class="filter-description">Restrict access to gaming sites during work hours</div>
+                                        <div class="filter-meta">
+                                            <span class="meta-item">⏰ Time: 9 AM - 5 PM</span>
+                                            <span class="meta-item">🏢 Harbor Light Financial</span>
+                                            <span class="meta-item">📊 Blocked: 342 attempts</span>
+                                        </div>
+                                    </div>
+                                    <div class="filter-status">
+                                        <span class="status-badge active">Active</span>
+                                    </div>
+                                    <div class="filter-actions">
+                                        <button class="e-btn e-small e-outline edit-filter-btn">Edit</button>
+                                        <button class="e-btn e-small e-danger delete-filter-btn">Delete</button>
+                                    </div>
+                                </div>
+                                <div class="filter-item">
+                                    <div class="filter-icon">🔞</div>
+                                    <div class="filter-details">
+                                        <div class="filter-name">Adult Content Filter</div>
+                                        <div class="filter-description">Block inappropriate websites across all users</div>
+                                        <div class="filter-meta">
+                                            <span class="meta-item">🎯 Categories: 8</span>
+                                            <span class="meta-item">👥 All Clients</span>
+                                            <span class="meta-item">📊 Blocked: 1,245 attempts</span>
+                                        </div>
+                                    </div>
+                                    <div class="filter-status">
+                                        <span class="status-badge active">Active</span>
+                                    </div>
+                                    <div class="filter-actions">
+                                        <button class="e-btn e-small e-outline edit-filter-btn">Edit</button>
+                                        <button class="e-btn e-small e-danger delete-filter-btn">Delete</button>
+                                    </div>
+                                </div>
+                                <div class="filter-item">
+                                    <div class="filter-icon">📱</div>
+                                    <div class="filter-details">
+                                        <div class="filter-name">Social Media - Limited Access</div>
+                                        <div class="filter-description">Allow social media only during breaks</div>
+                                        <div class="filter-meta">
+                                            <span class="meta-item">⏰ Allowed: 12-1 PM, 3-3:15 PM</span>
+                                            <span class="meta-item">🏢 Anderson Cabinet Designs</span>
+                                            <span class="meta-item">📊 Enforced: 2,891 times</span>
+                                        </div>
+                                    </div>
+                                    <div class="filter-status">
+                                        <span class="status-badge active">Active</span>
+                                    </div>
+                                    <div class="filter-actions">
+                                        <button class="e-btn e-small e-outline edit-filter-btn">Edit</button>
+                                        <button class="e-btn e-small e-danger delete-filter-btn">Delete</button>
                                     </div>
                                 </div>
                             </div>
@@ -2509,11 +2927,13 @@
     <script src="js/billing.js?v=20260125-0200"></script>
     <script src="js/software.js?v=20260208-0203"></script>
     <script src="js/reports.js?v=20260208-0100"></script>
-    <script src="js/data-points.js?v=20260208-0100"></script></script></script></script>
+    <script src="js/data-points.js?v=20260208-0100"></script>
+    <script src="js/lifecycle.js?v=20260208-0100"></script>
+    <script src="js/filter-management.js?v=20260208-0100"></script></script></script></script>
     <script src="js/client-profile.js?v=20260206-0300"></script>
     <script src="js/network-analysis.js?v=20260207-0600"></script></script></script></script></script>
     
     <!-- Main Application Coordinator -->
-    <script src="js/app-main.js?v=20260208-0400"></script></script></script></script></script></script></script></script>
+    <script src="js/app-main.js?v=20260208-0600"></script></script></script></script></script></script></script></script></script>
 </body>
 </html>

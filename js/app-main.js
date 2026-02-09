@@ -444,6 +444,16 @@ function switchPage(pageName, targetTab) {
             console.log('📊 Initializing data points page');
             window.DataPoints.initializeDataPointsPage();
         }
+        
+        if (pageName === 'lifecycle' && window.Lifecycle) {
+            console.log('🔄 Initializing lifecycle page');
+            window.Lifecycle.initializeLifecyclePage();
+        }
+        
+        if (pageName === 'filter-management' && window.FilterManagement) {
+            console.log('🔒 Initializing filter management page');
+            window.FilterManagement.initializeFilterManagementPage();
+        }
     }, 100);
 }
 

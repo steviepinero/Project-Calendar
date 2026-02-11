@@ -4575,3 +4575,75 @@ body > #campaignModal {
 /* ============================================
    END DOCUMENTATION PAGE STYLES
    ============================================ */
+
+/* ============================================
+   RESPONSIVE GRID UTILITIES
+   ============================================ */
+
+/* Ensure all grid containers are responsive */
+.e-grid {
+    width: 100% !important;
+    min-height: 400px;
+}
+
+.e-grid .e-gridcontent {
+    overflow-x: auto !important;
+    overflow-y: auto !important;
+}
+
+.e-grid .e-headercontent {
+    overflow-x: hidden !important;
+}
+
+/* Grid container wrappers */
+.billing-grid-container,
+.software-grid-container,
+.lifecycle-grid-container,
+[id$="Grid"],
+[id$="GridContainer"] {
+    width: 100% !important;
+    overflow: visible !important;
+}
+
+/* Ensure grids resize with window */
+@media (max-width: 1400px) {
+    .e-grid .e-rowcell {
+        font-size: 12px !important;
+        padding: 8px 10px !important;
+    }
+    
+    .e-grid .e-headercelldiv {
+        font-size: 12px !important;
+    }
+}
+
+@media (max-width: 1024px) {
+    .e-grid .e-rowcell {
+        font-size: 11px !important;
+        padding: 6px 8px !important;
+    }
+    
+    .e-grid .e-headercelldiv {
+        font-size: 11px !important;
+    }
+}
+
+/* Allow horizontal scrolling on small screens */
+@media (max-width: 768px) {
+    .e-grid {
+        min-width: 100%;
+    }
+    
+    .e-grid .e-gridcontent {
+        overflow-x: scroll !important;
+    }
+    
+    /* Make grid scrollable */
+    .e-grid .e-content {
+        overflow-x: auto !important;
+    }
+}
+
+/* ============================================
+   END RESPONSIVE GRID UTILITIES
+   ============================================ */

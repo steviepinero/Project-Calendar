@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdn.syncfusion.com/ej2/24.2.9/material.css">
     <link rel="stylesheet" href="https://cdn.syncfusion.com/ej2/24.2.9/material.css" id="theme">
     
-    <link rel="stylesheet" href="styles.css?v=20260208-0800">
+    <link rel="stylesheet" href="styles.css?v=20260208-1000">
 </head>
 <body>
     <div class="ej2-container">
@@ -114,6 +114,7 @@
                             <div class="e-acrdn-panel">
                                 <div class="e-acrdn-content">
                                     <ul class="sidebar-menu">
+                                        <li><a href="#" class="nav-item sidebar-link" data-page="dashboards">Dashboard</a></li>
                                         <li><a href="#" class="nav-item" data-page="reports">Reports</a></li>
                                         <li><a href="#" class="nav-item" data-page="documentation">Documentation</a></li>
                                     </ul>
@@ -2887,14 +2888,56 @@
                     </div>
                 </div>
 
-                <!-- Page: Dashboards / Triggers (Placeholder) -->
+                <!-- Page: Dashboard with Charts -->
                 <div id="page-dashboards" class="page-content">
-                    <div class="e-card">
-                        <div class="e-card-header">
-                            <div class="e-card-header-title">Dashboards / Triggers</div>
+                    <div class="dashboard-header">
+                        <h2>MSP Analytics Dashboard</h2>
+                        <p class="dashboard-subtitle">Real-time insights and performance metrics</p>
+                    </div>
+
+                    <div class="dashboard-grid">
+                        <!-- Row 1: Top 4 Charts (Compact Grid) -->
+                        <div class="chart-card">
+                            <canvas id="activeProposalChart"></canvas>
                         </div>
-                        <div class="e-card-content">
-                            <p>Dashboards page content coming soon...</p>
+                        <div class="chart-card">
+                            <canvas id="oneDriveSyncChart"></canvas>
+                        </div>
+                        <div class="chart-card">
+                            <canvas id="userLoginTypeChart"></canvas>
+                        </div>
+                        <div class="chart-card">
+                            <canvas id="backupStatusChart"></canvas>
+                        </div>
+
+                        <!-- Row 2: Next 4 Charts -->
+                        <div class="chart-card">
+                            <canvas id="serverHealthChart"></canvas>
+                        </div>
+                        <div class="chart-card">
+                            <canvas id="securityComplianceChart"></canvas>
+                        </div>
+                        <div class="chart-card">
+                            <canvas id="deviceTypeChart"></canvas>
+                        </div>
+                        <div class="chart-card">
+                            <canvas id="ticketStatusChart"></canvas>
+                        </div>
+
+                        <!-- Row 3: Wide Charts (2 columns each) -->
+                        <div class="chart-card chart-card-wide">
+                            <canvas id="licenseUtilizationChart"></canvas>
+                        </div>
+                        <div class="chart-card chart-card-wide">
+                            <canvas id="responseTimeChart"></canvas>
+                        </div>
+
+                        <!-- Row 4: Trend Lines (2 columns each) -->
+                        <div class="chart-card chart-card-wide">
+                            <canvas id="monthlyRevenueChart"></canvas>
+                        </div>
+                        <div class="chart-card chart-card-wide">
+                            <canvas id="networkUptimeChart"></canvas>
                         </div>
                     </div>
                 </div>
@@ -3307,6 +3350,9 @@
     <!-- jsPDF for PDF generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     
+    <!-- Chart.js for Dashboard Charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
+    
     <!-- Syncfusion Initialization Manager -->
     <script src="syncfusion-init.js?v=20260123-1500"></script>
     
@@ -3323,7 +3369,7 @@
     <script src="js/e-signature.js?v=20260123-1500"></script>
     <script src="js/voip.js?v=20260123-1500"></script>
     <script src="js/grid-utils.js?v=20260208-0100"></script>
-    <script src="js/leads.js?v=20260208-0206"></script>
+    <script src="js/leads.js?v=20260208-1200"></script>
     <script src="js/billing.js?v=20260125-0200"></script>
     <script src="js/software.js?v=20260208-0203"></script>
     <script src="js/reports.js?v=20260208-0100"></script>
@@ -3331,10 +3377,11 @@
     <script src="js/lifecycle.js?v=20260208-0100"></script>
     <script src="js/filter-management.js?v=20260208-0100"></script>
     <script src="js/documentation.js?v=20260208-0100"></script>
+    <script src="js/dashboard.js?v=20260208-1000"></script>
     <script src="js/client-profile.js?v=20260206-0300"></script>
     <script src="js/network-analysis.js?v=20260207-0600"></script>
     
     <!-- Main Application Coordinator -->
-    <script src="js/app-main.js?v=20260208-0700"></script>
+    <script src="js/app-main.js?v=20260208-0900"></script>
 </body>
 </html>

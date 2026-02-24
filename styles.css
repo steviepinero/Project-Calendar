@@ -4647,3 +4647,154 @@ body > #campaignModal {
 /* ============================================
    END RESPONSIVE GRID UTILITIES
    ============================================ */
+
+/* ============================================
+   DASHBOARD CHARTS PAGE STYLES
+   ============================================ */
+
+#page-dashboards {
+    overflow-y: auto;
+    height: calc(100vh - 100px);
+    padding: 20px;
+}
+
+.dashboard-header {
+    margin-bottom: 15px;
+    padding: 10px 0;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.dashboard-header h2 {
+    margin: 0 0 5px 0;
+    font-size: 24px;
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+.dashboard-subtitle {
+    margin: 0;
+    font-size: 13px;
+    color: #666;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    padding: 10px 0;
+}
+
+.chart-card {
+    background: white;
+    border-radius: 6px;
+    padding: 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s, box-shadow 0.2s;
+    min-height: 240px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.chart-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+}
+
+.chart-card-wide {
+    grid-column: span 2;
+}
+
+.chart-card canvas {
+    max-height: 200px;
+    width: 100% !important;
+    height: auto !important;
+}
+
+/* Responsive Dashboard */
+@media (max-width: 1600px) {
+    .dashboard-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .chart-card-wide {
+        grid-column: span 1;
+    }
+}
+
+@media (max-width: 1400px) {
+    .dashboard-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .chart-card {
+        min-height: 220px;
+    }
+    
+    .chart-card canvas {
+        max-height: 180px;
+    }
+}
+
+@media (max-width: 1200px) {
+    .dashboard-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .chart-card-wide {
+        grid-column: span 1;
+    }
+}
+
+@media (max-width: 1024px) {
+    .dashboard-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+    
+    .chart-card-wide {
+        grid-column: span 1;
+    }
+    
+    .chart-card {
+        min-height: 280px;
+        padding: 15px;
+    }
+    
+    .chart-card canvas {
+        max-height: 220px;
+    }
+}
+
+@media (max-width: 768px) {
+    #page-dashboards {
+        height: auto;
+        overflow-y: scroll;
+    }
+    
+    .dashboard-header h2 {
+        font-size: 20px;
+    }
+    
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    
+    .chart-card-wide {
+        grid-column: span 1;
+    }
+    
+    .chart-card {
+        padding: 12px;
+        min-height: 260px;
+    }
+    
+    .chart-card canvas {
+        max-height: 220px;
+    }
+}
+
+/* ============================================
+   END DASHBOARD CHARTS PAGE STYLES
+   ============================================ */

@@ -459,6 +459,11 @@ function switchPage(pageName, targetTab) {
             console.log('📚 Initializing documentation page');
             window.Documentation.initializeDocumentationPage();
         }
+        
+        if (pageName === 'dashboards' && window.initDashboardPage) {
+            console.log('📊 Initializing dashboard page');
+            window.initDashboardPage();
+        }
     }, 100);
 }
 

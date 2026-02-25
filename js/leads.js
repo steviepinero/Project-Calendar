@@ -442,7 +442,7 @@ function initializeLeadDetailTabs() {
 }
 
 /**
- * Initialize the Profile Tab
+ * Initialize the Profile Tab - Matching Mockup Layout
  */
 function initializeProfileTab() {
     const profileContainer = document.getElementById('profileTabContent');
@@ -457,190 +457,294 @@ function initializeProfileTab() {
         return;
     }
     
-    // Build comprehensive profile HTML
+    // Build profile HTML matching the mockup
     const profileHTML = `
-        <div style="padding: 20px;">
-            <!-- Company Overview Stats -->
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px;">
-                <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-left: 4px solid #3498db;">
-                    <div style="color: #999; font-size: 13px; margin-bottom: 5px;">Account Status</div>
-                    <div style="font-size: 18px; font-weight: 700; color: #27ae60;">${currentCompany.Status || 'Active'}</div>
+        <div style="display: grid; grid-template-columns: 420px 1fr; gap: 20px; padding: 20px; height: 100%;">
+            <!-- Left Side: Client Information -->
+            <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); overflow-y: auto;">
+                <!-- Client Header -->
+                <div style="margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px solid #e0e0e0;">
+                    <h3 style="margin: 0 0 5px 0; font-size: 16px; font-weight: 600; color: #333;">Client</h3>
+                    <div style="font-size: 14px; color: #0066cc; margin-bottom: 3px;">${currentCompany.Company}</div>
+                    <div style="font-size: 13px; color: #666;">1234 Main St</div>
+                    <div style="font-size: 13px; color: #666;">${currentCompany.City}, FL 34232</div>
                 </div>
-                <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-left: 4px solid #27ae60;">
-                    <div style="color: #999; font-size: 13px; margin-bottom: 5px;">Estimated Value</div>
-                    <div style="font-size: 18px; font-weight: 700; color: #2c3e50;">${currentCompany.Amount || 'N/A'}</div>
-                </div>
-                <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-left: 4px solid #f39c12;">
-                    <div style="color: #999; font-size: 13px; margin-bottom: 5px;">Total Touches</div>
-                    <div style="font-size: 18px; font-weight: 700; color: #2c3e50;">${currentCompany.Touches || 0}</div>
-                </div>
-                <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-left: 4px solid #9b59b6;">
-                    <div style="color: #999; font-size: 13px; margin-bottom: 5px;">Next Follow-up</div>
-                    <div style="font-size: 18px; font-weight: 700; color: #2c3e50;">${currentCompany.FollowUp || 'TBD'}</div>
-                </div>
-            </div>
 
-            <!-- Tabs for Different Sections -->
-            <div style="margin-bottom: 20px;">
-                <div style="display: flex; gap: 10px; border-bottom: 2px solid #ecf0f1;">
-                    <button class="profile-subtab active" data-tab="overview" style="padding: 12px 20px; background: none; border: none; color: #2c3e50; font-weight: 600; cursor: pointer; border-bottom: 3px solid #3498db; margin-bottom: -2px;">
-                        Overview
-                    </button>
-                    <button class="profile-subtab" data-tab="contacts" style="padding: 12px 20px; background: none; border: none; color: #555; font-weight: 600; cursor: pointer;">
-                        Contacts
-                    </button>
-                    <button class="profile-subtab" data-tab="services" style="padding: 12px 20px; background: none; border: none; color: #555; font-weight: 600; cursor: pointer;">
-                        Services
-                    </button>
-                    <button class="profile-subtab" data-tab="notes" style="padding: 12px 20px; background: none; border: none; color: #555; font-weight: 600; cursor: pointer;">
-                        Notes
-                    </button>
-                </div>
-            </div>
-
-            <!-- Tab Content: Overview -->
-            <div id="profile-subtab-overview" class="profile-subtab-content">
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                    <!-- Company Information -->
-                    <div style="background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
-                        <h3 style="margin: 0 0 20px 0; color: #2c3e50; display: flex; align-items: center; gap: 8px;">
-                            🏢 Company Information
-                        </h3>
-                        <div style="display: grid; gap: 12px;">
-                            <div>
-                                <label style="font-size: 12px; color: #999; display: block; margin-bottom: 3px;">Company Name</label>
-                                <div style="font-size: 14px; color: #2c3e50; font-weight: 600;">${currentCompany.Company}</div>
-                            </div>
-                            <div>
-                                <label style="font-size: 12px; color: #999; display: block; margin-bottom: 3px;">Industry</label>
-                                <div style="font-size: 14px; color: #2c3e50;">${currentCompany.Industry || 'N/A'}</div>
-                            </div>
-                            <div>
-                                <label style="font-size: 12px; color: #999; display: block; margin-bottom: 3px;">Location</label>
-                                <div style="font-size: 14px; color: #2c3e50;">${currentCompany.City || 'N/A'}, FL</div>
-                            </div>
-                            <div>
-                                <label style="font-size: 12px; color: #999; display: block; margin-bottom: 3px;">Website</label>
-                                <div style="font-size: 14px; color: #3498db;"><a href="#" style="text-decoration: none; color: #3498db;">www.${currentCompany.Company.toLowerCase().replace(/\s+/g, '')}.com</a></div>
-                            </div>
-                            <div>
-                                <label style="font-size: 12px; color: #999; display: block; margin-bottom: 3px;">Lead Source</label>
-                                <div style="font-size: 14px; color: #2c3e50;">${currentCompany.Source || 'N/A'}</div>
-                            </div>
-                        </div>
+                <!-- Services Section -->
+                <div style="margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px solid #e0e0e0;">
+                    <h3 style="margin: 0 0 12px 0; font-size: 16px; font-weight: 600; color: #333;">Services</h3>
+                    <div style="font-size: 13px; color: #666; line-height: 1.8;">
+                        <div>MSP</div>
+                        <div>Copier/Print</div>
+                        <div>VoIP</div>
                     </div>
+                </div>
 
-                    <!-- Account Details -->
-                    <div style="background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
-                        <h3 style="margin: 0 0 20px 0; color: #2c3e50; display: flex; align-items: center; gap: 8px;">
-                            📋 Sales Information
-                        </h3>
-                        <div style="display: grid; gap: 12px;">
-                            <div>
-                                <label style="font-size: 12px; color: #999; display: block; margin-bottom: 3px;">Account Representative</label>
-                                <div style="font-size: 14px; color: #2c3e50; font-weight: 600;">${currentCompany.Rep || 'Unassigned'}</div>
-                            </div>
-                            <div>
-                                <label style="font-size: 12px; color: #999; display: block; margin-bottom: 3px;">Lead Status</label>
-                                <div style="font-size: 14px; color: #2c3e50;">${currentCompany.Status || 'Active'}</div>
-                            </div>
-                            <div>
-                                <label style="font-size: 12px; color: #999; display: block; margin-bottom: 3px;">Solutions Interest</label>
-                                <div style="font-size: 14px; color: #2c3e50;">${currentCompany.Solutions || 'N/A'}</div>
-                            </div>
-                            <div>
-                                <label style="font-size: 12px; color: #999; display: block; margin-bottom: 3px;">Estimated Value</label>
-                                <div style="font-size: 14px; color: #2c3e50;">${currentCompany.Amount || 'N/A'}</div>
-                            </div>
-                            <div>
-                                <label style="font-size: 12px; color: #999; display: block; margin-bottom: 3px;">Next Step</label>
-                                <div style="font-size: 14px; color: #2c3e50;">${currentCompany.NextStep || 'TBD'}</div>
-                            </div>
+                <!-- Contact's Section -->
+                <div style="margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px solid #e0e0e0;">
+                    <h3 style="margin: 0 0 12px 0; font-size: 16px; font-weight: 600; color: #333;">Contact's</h3>
+                    <table style="width: 100%; font-size: 12px; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background: #f5f5f5;">
+                                <th style="padding: 8px 5px; text-align: left; font-weight: 600; border-bottom: 1px solid #ddd;">Name</th>
+                                <th style="padding: 8px 5px; text-align: left; font-weight: 600; border-bottom: 1px solid #ddd;">Title</th>
+                                <th style="padding: 8px 5px; text-align: left; font-weight: 600; border-bottom: 1px solid #ddd;">Email</th>
+                                <th style="padding: 8px 5px; text-align: left; font-weight: 600; border-bottom: 1px solid #ddd;">Office</th>
+                                <th style="padding: 8px 5px; text-align: left; font-weight: 600; border-bottom: 1px solid #ddd;">Cell</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="border-bottom: 1px solid #eee;">
+                                <td style="padding: 10px 5px; color: #0066cc;">Jessica Smithfield</td>
+                                <td style="padding: 10px 5px; color: #666;">Owner</td>
+                                <td style="padding: 10px 5px; color: #0066cc;">Jessica.Smithfield@BlueHeronCapital.co</td>
+                                <td style="padding: 10px 5px; color: #0066cc;">(813) 908-541</td>
+                                <td style="padding: 10px 5px; color: #0066cc;">(813) 431-511</td>
+                            </tr>
+                            <tr style="background: #e8f4ff;">
+                                <td style="padding: 10px 5px; color: #0066cc; font-weight: 600;">Mark Ryburn</td>
+                                <td style="padding: 10px 5px; color: #666;">IT</td>
+                                <td style="padding: 10px 5px; color: #0066cc;">Mark.Ryburn@BlueHeronCapital.com</td>
+                                <td style="padding: 10px 5px; color: #0066cc;">(813) 908-628</td>
+                                <td style="padding: 10px 5px; color: #0066cc;">(813) 431-414</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Default Site Settings -->
+                <div style="margin-bottom: 20px;">
+                    <h3 style="margin: 0 0 12px 0; font-size: 16px; font-weight: 600; color: #333;">Default Site Settings</h3>
+                    <div style="font-size: 12px; line-height: 2;">
+                        <div style="display: grid; grid-template-columns: 100px 1fr; gap: 5px;">
+                            <span style="font-weight: 600;">Login Type</span>
+                            <span style="color: #0066cc;">Entrra ID</span>
+                            
+                            <span style="font-weight: 600;">Public</span>
+                            <span style="color: #0066cc;">72.186.117.61</span>
+                            
+                            <span style="font-weight: 600;">Private</span>
+                            <span style="color: #0066cc;">192.168.1.x</span>
+                            
+                            <span style="font-weight: 600;">DNS</span>
+                            <span style="color: #0066cc;">192.168.1.1</span>
+                            
+                            <span style="font-weight: 600;">DHCP</span>
+                            <span style="color: #0066cc;">192.168.1.10 ~ 100</span>
+                        </div>
+                        
+                        <div style="margin-top: 15px; display: grid; grid-template-columns: 100px 1fr; gap: 5px;">
+                            <span style="font-weight: 600;">Antivirus</span>
+                            <span style="color: #0066cc;">SentinelOne</span>
+                            
+                            <span style="font-weight: 600;">Mapped Drives</span>
+                            <span style="color: #0066cc;">Admin (\\SharePoint\Sites) (S:</span>
+                            
+                            <span></span>
+                            <span style="color: #0066cc;">HR (\\Server) (H:)</span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Tab Content: Contacts -->
-            <div id="profile-subtab-contacts" class="profile-subtab-content" style="display: none;">
-                <div style="background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                        <h3 style="margin: 0; color: #2c3e50;">Contact List</h3>
-                        <button class="e-btn e-primary" style="padding: 10px 16px;">+ Add Contact</button>
-                    </div>
-                    <div style="display: grid; gap: 15px;">
-                        <div style="padding: 15px; border: 1px solid #eee; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
-                            <div style="display: flex; gap: 15px; align-items: center;">
-                                <div style="width: 50px; height: 50px; border-radius: 50%; background: #3498db; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 18px;">${currentCompany.Company.substring(0, 2).toUpperCase()}</div>
-                                <div>
-                                    <div style="font-weight: 600; color: #2c3e50; margin-bottom: 3px;">Primary Contact</div>
-                                    <div style="font-size: 13px; color: #666; margin-bottom: 2px;">Decision Maker</div>
-                                    <div style="font-size: 13px; color: #999;">
-                                        📧 contact@${currentCompany.Company.toLowerCase().replace(/\s+/g, '')}.com | ☎️ (555) 123-4567
-                                    </div>
-                                </div>
-                            </div>
-                            <div style="display: flex; gap: 8px;">
-                                <button class="e-btn e-outline e-small">✉️ Email</button>
-                                <button class="e-btn e-outline e-small">☎️ Call</button>
-                            </div>
-                        </div>
-                    </div>
+            <!-- Right Side: Schedule, Tasks, and Actions -->
+            <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); display: flex; flex-direction: column;">
+                <!-- Top Tabs -->
+                <div style="display: flex; gap: 2px; margin-bottom: 20px; border-bottom: 2px solid #e0e0e0;">
+                    <button class="profile-right-tab active" data-righttab="schedule" style="padding: 12px 24px; background: white; border: none; border-bottom: 3px solid #0066cc; color: #0066cc; font-weight: 600; cursor: pointer; font-size: 14px;">Schedule</button>
+                    <button class="profile-right-tab" data-righttab="tasks" style="padding: 12px 24px; background: white; border: none; border-bottom: 3px solid transparent; color: #666; font-weight: 600; cursor: pointer; font-size: 14px;">Tasks</button>
+                    <button class="profile-right-tab" data-righttab="summary" style="padding: 12px 24px; background: white; border: none; border-bottom: 3px solid transparent; color: #666; font-weight: 600; cursor: pointer; font-size: 14px;">Client AI Summary</button>
+                    <button class="profile-right-tab" data-righttab="report" style="padding: 12px 24px; background: white; border: none; border-bottom: 3px solid transparent; color: #666; font-weight: 600; cursor: pointer; font-size: 14px;">Dark Web Report</button>
                 </div>
-            </div>
 
-            <!-- Tab Content: Services -->
-            <div id="profile-subtab-services" class="profile-subtab-content" style="display: none;">
-                <div style="background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                        <h3 style="margin: 0; color: #2c3e50;">Proposed Services</h3>
-                        <button class="e-btn e-primary" style="padding: 10px 16px;">+ Add Service</button>
-                    </div>
-                    <div style="display: grid; gap: 15px;">
-                        <div style="padding: 15px; border: 1px solid #eee; border-radius: 6px;">
-                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
-                                <div>
-                                    <div style="font-weight: 600; color: #2c3e50; font-size: 16px; margin-bottom: 5px;">🖥️ Managed IT Services</div>
-                                    <div style="font-size: 13px; color: #666; line-height: 1.6;">
-                                        24/7 monitoring, helpdesk support, patch management, and proactive maintenance.
-                                    </div>
-                                </div>
-                                <span style="background: #f39c12; color: white; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600; white-space: nowrap; margin-left: 15px;">Proposed</span>
-                            </div>
-                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; padding-top: 10px; border-top: 1px solid #eee;">
-                                <div>
-                                    <span style="font-size: 12px; color: #999;">Estimated Monthly:</span>
-                                    <div style="font-weight: 600; color: #2c3e50;">${currentCompany.Amount || 'TBD'}</div>
-                                </div>
-                                <div>
-                                    <span style="font-size: 12px; color: #999;">Solutions:</span>
-                                    <div style="font-weight: 600; color: #2c3e50;">${currentCompany.Solutions || 'ALL'}</div>
+                <!-- Schedule Tab Content -->
+                <div id="profile-righttab-schedule" class="profile-righttab-content" style="flex: 1; overflow-y: auto;">
+                    <!-- Gather Data On Client To Review -->
+                    <div style="margin-bottom: 20px; border: 1px solid #ddd; border-radius: 6px;">
+                        <div style="padding: 12px 15px; background: #f8f8f8; border-bottom: 1px solid #ddd; display: flex; align-items: center; gap: 8px; cursor: pointer;" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'">
+                            <span style="font-weight: 600; font-size: 14px;">▶ Gather Data On Client To Review</span>
+                        </div>
+                        <div style="padding: 15px; display: block;">
+                            <div style="font-size: 13px; line-height: 2; color: #666;">
+                                <div style="padding: 5px 0; border-bottom: 1px dotted #ddd;">Web Site</div>
+                                <div style="padding: 5px 0; border-bottom: 1px dotted #ddd;">LinkedIn</div>
+                                <div style="padding: 5px 0; border-bottom: 1px dotted #ddd;">References</div>
+                                <div style="padding: 5px 0; display: flex; justify-content: space-between;">
+                                    <span>Other</span>
+                                    <span style="color: #999;">???...</span>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
 
-            <!-- Tab Content: Notes -->
-            <div id="profile-subtab-notes" class="profile-subtab-content" style="display: none;">
-                <div style="background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                        <h3 style="margin: 0; color: #2c3e50;">Lead Notes</h3>
-                        <button class="e-btn e-primary" style="padding: 10px 16px;">+ Add Note</button>
-                    </div>
-                    <div style="display: grid; gap: 15px;">
-                        <div style="padding: 15px; border-left: 4px solid #3498db; background: #f8f9fa; border-radius: 4px;">
-                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
-                                <div style="font-weight: 600; color: #2c3e50;">Initial Contact - ${currentCompany.Source}</div>
-                                <span style="font-size: 12px; color: #999; white-space: nowrap; margin-left: 15px;">Follow-up: ${currentCompany.FollowUp}</span>
-                            </div>
-                            <p style="margin: 0; color: #666; font-size: 14px; line-height: 1.6;">
-                                Lead source: ${currentCompany.Source}. Interested in ${currentCompany.Solutions || 'multiple solutions'}. 
-                                Estimated value: ${currentCompany.Amount}. Total touches: ${currentCompany.Touches}.
-                                ${currentCompany.NextStep ? 'Next step: ' + currentCompany.NextStep : 'Planning next engagement.'}
-                            </p>
+                    <!-- Set "Initial Meeting" -->
+                    <div style="margin-bottom: 20px; border: 1px solid #ddd; border-radius: 6px;">
+                        <div style="padding: 12px 15px; background: #f8f8f8; border-bottom: 1px solid #ddd; display: flex; align-items: center; gap: 8px; cursor: pointer;" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'">
+                            <span style="font-weight: 600; font-size: 14px;">▶ Set "Initial Meeting"</span>
                         </div>
+                        <div style="padding: 15px; display: block;">
+                            <div style="font-size: 13px; line-height: 2; color: #666;">
+                                <div style="padding: 5px 0; display: flex; justify-content: space-between; border-bottom: 1px dotted #ddd;">
+                                    <span>Identify Team</span>
+                                    <span style="color: #999; font-style: italic;">determine the Rep, Backoffice, vCIO</span>
+                                </div>
+                                <div style="padding: 5px 0; display: flex; justify-content: space-between; border-bottom: 1px dotted #ddd;">
+                                    <span>Review "Data" with team</span>
+                                </div>
+                                <div style="padding: 5px 0; display: flex; justify-content: space-between; border-bottom: 1px dotted #ddd;">
+                                    <span>Identify Client's Needs</span>
+                                    <span style="color: #999; font-style: italic;">identify if needs are: Regulatory, MSP Responsivenes...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Present "Initial Meeting" -->
+                    <div style="margin-bottom: 20px; border: 1px solid #ddd; border-radius: 6px;">
+                        <div style="padding: 12px 15px; background: #f8f8f8; border-bottom: 1px solid #ddd; display: flex; align-items: center; gap: 8px; cursor: pointer;" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'">
+                            <span style="font-weight: 600; font-size: 14px;">▶ Present "Initial Meeting"</span>
+                        </div>
+                        <div style="padding: 15px; display: block;">
+                            <div style="font-size: 13px; line-height: 2; color: #666;">
+                                <div style="padding: 5px 0; display: flex; justify-content: space-between; border-bottom: 1px dotted #ddd;">
+                                    <span>Present MSP Presentation</span>
+                                    <span style="color: #999; font-style: italic;">Presentation on Why MSP & Why</span>
+                                </div>
+                                <div style="padding: 5px 0; display: flex; justify-content: space-between; border-bottom: 1px dotted #ddd;">
+                                    <span>Install Data Collect Agent On Endpoints</span>
+                                    <span style="color: #999; font-style: italic;">determine if Web Based or Local Agent</span>
+                                </div>
+                                <div style="padding: 5px 0; border-bottom: 1px dotted #ddd;">
+                                    <span>Set "Present Propsal" Meeting</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Review "Initial Meeting" -->
+                    <div style="margin-bottom: 20px; border: 1px solid #ddd; border-radius: 6px;">
+                        <div style="padding: 12px 15px; background: #f8f8f8; border-bottom: 1px solid #ddd; display: flex; align-items: center; gap: 8px; cursor: pointer;" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'">
+                            <span style="font-weight: 600; font-size: 14px;">▶ Review "Initial Meeting"</span>
+                        </div>
+                        <div style="padding: 15px; display: block;">
+                            <div style="font-size: 13px; line-height: 2; color: #666;">
+                                <div style="padding: 5px 0; display: flex; justify-content: space-between; border-bottom: 1px dotted #ddd;">
+                                    <span>Presentation</span>
+                                    <span style="color: #999; font-style: italic;">Presentation on Why MSP & Why</span>
+                                </div>
+                                <div style="padding: 5px 0; border-bottom: 1px dotted #ddd;">
+                                    <span>Collect Endpoint Data</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tasks Tab Content (Hidden by default) -->
+                <div id="profile-righttab-tasks" class="profile-righttab-content" style="flex: 1; overflow-y: auto; display: none;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; gap: 10px; flex-wrap: wrap;">
+                        <h3 style="margin: 0; color: #2c3e50;">Tasks for ${currentCompany.Company}</h3>
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            <select id="profileTaskFilter" style="padding: 7px 10px; border: 1px solid #dcdcdc; border-radius: 6px; font-size: 12px;">
+                                <option value="all">All Statuses</option>
+                                <option value="open">Open</option>
+                                <option value="in-progress">In Progress</option>
+                                <option value="blocked">Blocked</option>
+                                <option value="done">Done</option>
+                            </select>
+                            <button id="addProfileTaskBtn" class="e-btn e-primary e-small">+ Add Task</button>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(4, minmax(120px, 1fr)); gap: 10px; margin-bottom: 14px;">
+                        <div style="background: #eef6ff; border: 1px solid #d5e9ff; border-radius: 8px; padding: 12px;">
+                            <div style="font-size: 12px; color: #5f6b7a;">Open</div>
+                            <div id="profileTaskOpenCount" style="font-size: 22px; font-weight: 700; color: #1b4f9c;">3</div>
+                        </div>
+                        <div style="background: #fff8ea; border: 1px solid #ffe1a8; border-radius: 8px; padding: 12px;">
+                            <div style="font-size: 12px; color: #7d6224;">In Progress</div>
+                            <div id="profileTaskInProgressCount" style="font-size: 22px; font-weight: 700; color: #9a6a00;">2</div>
+                        </div>
+                        <div style="background: #fff2f2; border: 1px solid #ffd5d5; border-radius: 8px; padding: 12px;">
+                            <div style="font-size: 12px; color: #7d2f2f;">Blocked</div>
+                            <div id="profileTaskBlockedCount" style="font-size: 22px; font-weight: 700; color: #b32222;">1</div>
+                        </div>
+                        <div style="background: #ecfff2; border: 1px solid #c7f2d7; border-radius: 8px; padding: 12px;">
+                            <div style="font-size: 12px; color: #256842;">Done</div>
+                            <div id="profileTaskDoneCount" style="font-size: 22px; font-weight: 700; color: #0f8a49;">2</div>
+                        </div>
+                    </div>
+
+                    <div style="border: 1px solid #e4e4e4; border-radius: 8px; overflow: hidden;">
+                        <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+                            <thead>
+                                <tr style="background: #f6f8fa;">
+                                    <th style="padding: 10px 8px; text-align: left; border-bottom: 1px solid #e4e4e4;">Done</th>
+                                    <th style="padding: 10px 8px; text-align: left; border-bottom: 1px solid #e4e4e4;">Task</th>
+                                    <th style="padding: 10px 8px; text-align: left; border-bottom: 1px solid #e4e4e4;">Owner</th>
+                                    <th style="padding: 10px 8px; text-align: left; border-bottom: 1px solid #e4e4e4;">Due</th>
+                                    <th style="padding: 10px 8px; text-align: left; border-bottom: 1px solid #e4e4e4;">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="profileTaskTableBody">
+                                <tr data-status="open">
+                                    <td style="padding: 10px 8px; border-bottom: 1px solid #f0f0f0;"><input type="checkbox" class="profile-task-checkbox"></td>
+                                    <td style="padding: 10px 8px; border-bottom: 1px solid #f0f0f0;">Confirm stakeholder list for kickoff</td>
+                                    <td style="padding: 10px 8px; border-bottom: 1px solid #f0f0f0;">${currentCompany.Rep || 'Unassigned'}</td>
+                                    <td style="padding: 10px 8px; border-bottom: 1px solid #f0f0f0;">2/28/2026</td>
+                                    <td style="padding: 10px 8px; border-bottom: 1px solid #f0f0f0;"><span style="background:#eef6ff;color:#1b4f9c;padding:2px 8px;border-radius:10px;">Open</span></td>
+                                </tr>
+                                <tr data-status="in-progress">
+                                    <td style="padding: 10px 8px; border-bottom: 1px solid #f0f0f0;"><input type="checkbox" class="profile-task-checkbox"></td>
+                                    <td style="padding: 10px 8px; border-bottom: 1px solid #f0f0f0;">Gather endpoint inventory export</td>
+                                    <td style="padding: 10px 8px; border-bottom: 1px solid #f0f0f0;">Back Office</td>
+                                    <td style="padding: 10px 8px; border-bottom: 1px solid #f0f0f0;">3/01/2026</td>
+                                    <td style="padding: 10px 8px; border-bottom: 1px solid #f0f0f0;"><span style="background:#fff8ea;color:#9a6a00;padding:2px 8px;border-radius:10px;">In Progress</span></td>
+                                </tr>
+                                <tr data-status="blocked">
+                                    <td style="padding: 10px 8px; border-bottom: 1px solid #f0f0f0;"><input type="checkbox" class="profile-task-checkbox"></td>
+                                    <td style="padding: 10px 8px; border-bottom: 1px solid #f0f0f0;">Validate DNS records with ISP</td>
+                                    <td style="padding: 10px 8px; border-bottom: 1px solid #f0f0f0;">Network Team</td>
+                                    <td style="padding: 10px 8px; border-bottom: 1px solid #f0f0f0;">3/02/2026</td>
+                                    <td style="padding: 10px 8px; border-bottom: 1px solid #f0f0f0;"><span style="background:#fff2f2;color:#b32222;padding:2px 8px;border-radius:10px;">Blocked</span></td>
+                                </tr>
+                                <tr data-status="done">
+                                    <td style="padding: 10px 8px; border-bottom: 1px solid #f0f0f0;"><input type="checkbox" class="profile-task-checkbox" checked></td>
+                                    <td style="padding: 10px 8px; border-bottom: 1px solid #f0f0f0;">Schedule initial meeting</td>
+                                    <td style="padding: 10px 8px; border-bottom: 1px solid #f0f0f0;">${currentCompany.Rep || 'Unassigned'}</td>
+                                    <td style="padding: 10px 8px; border-bottom: 1px solid #f0f0f0;">2/25/2026</td>
+                                    <td style="padding: 10px 8px; border-bottom: 1px solid #f0f0f0;"><span style="background:#ecfff2;color:#0f8a49;padding:2px 8px;border-radius:10px;">Done</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Client AI Summary Tab Content (Hidden by default) -->
+                <div id="profile-righttab-summary" class="profile-righttab-content" style="flex: 1; overflow-y: auto; display: none;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; gap: 8px; flex-wrap: wrap;">
+                        <h3 style="margin: 0; color: #2c3e50;">Client AI Summary</h3>
+                        <div style="display: flex; gap: 8px;">
+                            <button id="generateClientSummaryBtn" class="e-btn e-primary e-small">Generate Summary</button>
+                            <button id="copyClientSummaryBtn" class="e-btn e-outline e-small">Copy</button>
+                        </div>
+                    </div>
+
+                    <div id="clientSummaryStatus" style="font-size: 12px; color: #6c757d; margin-bottom: 10px;">
+                        Click "Generate Summary" to research this company.
+                    </div>
+
+                    <div id="clientSummaryOutput" style="line-height: 1.6; font-size: 13px; color: #2c3e50; background: white; border: 1px solid #e3e7eb; border-radius: 8px; padding: 14px; min-height: 260px;">
+                        <div style="background:#f7f9fc; border:1px dashed #c9d4e0; color:#607080; border-radius:8px; padding:14px;">
+                            No summary generated yet.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dark Web Report Tab Content (Hidden by default) -->
+                <div id="profile-righttab-report" class="profile-righttab-content" style="flex: 1; overflow-y: auto; display: none;">
+                    <div style="padding: 20px; text-align: center; color: #999;">
+                        <p>Dark Web Report coming soon...</p>
                     </div>
                 </div>
             </div>
@@ -649,48 +753,438 @@ function initializeProfileTab() {
     
     profileContainer.innerHTML = profileHTML;
     
-    // Set up subtab navigation
-    setupProfileSubtabs();
+    // Set up right-side tab navigation and tasks interactions
+    setupProfileRightTabs(currentCompany);
+    setupProfileTasksTab();
+    setupClientAISummaryTab(currentCompany);
     
     console.log('✅ Profile tab initialized for:', currentCompany.Company);
 }
 
 /**
- * Setup profile subtab navigation
+ * Setup Profile Right-Side Tab Navigation
  */
-function setupProfileSubtabs() {
-    const subtabs = document.querySelectorAll('.profile-subtab');
-    subtabs.forEach(tab => {
+function setupProfileRightTabs(currentCompany) {
+    const tabs = document.querySelectorAll('.profile-right-tab');
+    const contents = document.querySelectorAll('.profile-righttab-content');
+    
+    tabs.forEach(tab => {
         tab.addEventListener('click', function() {
-            const targetTab = this.getAttribute('data-tab');
+            const targetTab = this.getAttribute('data-righttab');
             
-            // Update tab buttons
-            subtabs.forEach(t => {
-                const isActive = t.getAttribute('data-tab') === targetTab;
-                if (isActive) {
-                    t.style.color = '#2c3e50';
-                    t.style.borderBottom = '3px solid #3498db';
-                    t.classList.add('active');
-                } else {
-                    t.style.color = '#555';
-                    t.style.borderBottom = 'none';
-                    t.classList.remove('active');
-                }
+            // Update tab styles
+            tabs.forEach(t => {
+                t.style.borderBottomColor = 'transparent';
+                t.style.color = '#666';
             });
+            this.style.borderBottomColor = '#0066cc';
+            this.style.color = '#0066cc';
             
-            // Update tab content
-            const tabContents = document.querySelectorAll('.profile-subtab-content');
-            tabContents.forEach(content => {
-                if (content.id === `profile-subtab-${targetTab}`) {
-                    content.style.display = 'block';
-                } else {
-                    content.style.display = 'none';
-                }
+            // Show/hide content
+            contents.forEach(content => {
+                content.style.display = 'none';
             });
+            const targetContent = document.getElementById(`profile-righttab-${targetTab}`);
+            if (targetContent) {
+                targetContent.style.display = 'block';
+                if (targetTab === 'summary' && currentCompany) {
+                    initializeClientAISummaryPrompt(currentCompany);
+                }
+            }
         });
     });
 }
 
+function getGeminiApiKey() {
+    return (
+        window.CONFIG?.GEMINI_API_KEY ||
+        localStorage.getItem('gemini_api_key') ||
+        localStorage.getItem('geminiApiKey') ||
+        ''
+    );
+}
+
+function buildClientResearchPrompt(company) {
+    return `Research company intelligence for "${company.Company}".
+
+Known CRM context:
+- Company: ${company.Company}
+- Industry: ${company.Industry || 'Unknown'}
+- City: ${company.City || 'Unknown'}
+- Lead Source: ${company.Source || 'Unknown'}
+- Account Rep: ${company.Rep || 'Unknown'}
+
+Return a concise professional report with these sections:
+1) Company Overview (what they do, headquarters, founded year)
+2) Ownership & Leadership (owners/founders/executives)
+3) Company Size (employee range)
+4) Estimated Financials (revenue range if available)
+5) Technology Footprint (likely stack, tools, security posture hints)
+6) Recent Signals (news, hiring, funding, expansion, risks)
+7) Sales Talking Points for an MSP (3-5 bullets)
+8) Confidence & Gaps (what is verified vs unknown)
+
+Rules:
+- Do not invent facts.
+- If data is unavailable, state "Unknown".
+- Prefer bullet points and short paragraphs.
+- Include a final "Suggested Discovery Questions" list (5 questions).`;
+}
+
+function initializeClientAISummaryPrompt(company) {
+    // Prompt is intentionally hidden from UI per product request.
+    // Keep this function to preserve call sites and future optional debug views.
+    void company;
+}
+
+async function fetchClientAISummaryFromGemini(company) {
+    const apiKey = getGeminiApiKey();
+    if (!apiKey) {
+        throw new Error('Gemini API key not found. Add GEMINI_API_KEY to config.js.');
+    }
+
+    const prompt = buildClientResearchPrompt(company);
+    const API_BASE = 'https://generativelanguage.googleapis.com';
+    const versionsToTry = ['v1', 'v1beta'];
+    let lastError = 'Unknown Gemini error';
+    const discoveredModels = [];
+
+    function normalizeModelName(name) {
+        return name.startsWith('models/') ? name : `models/${name}`;
+    }
+
+    function scoreModel(name) {
+        const lower = name.toLowerCase();
+        if (lower.includes('gemini-2.5-flash')) return 100;
+        if (lower.includes('gemini-2.0-flash')) return 95;
+        if (lower.includes('gemini-1.5-flash')) return 90;
+        if (lower.includes('gemini-1.5-pro')) return 80;
+        if (lower.includes('gemini') && lower.includes('flash')) return 70;
+        if (lower.includes('gemini')) return 50;
+        return 0;
+    }
+
+    for (const apiVersion of versionsToTry) {
+        const listUrl = `${API_BASE}/${apiVersion}/models?key=${encodeURIComponent(apiKey)}`;
+        try {
+            const listResp = await fetch(listUrl);
+            if (!listResp.ok) {
+                const txt = await listResp.text();
+                lastError = `ListModels ${apiVersion} failed (${listResp.status}): ${txt.slice(0, 140)}`;
+                continue;
+            }
+
+            const listData = await listResp.json();
+            const models = (listData.models || [])
+                .filter(model => Array.isArray(model.supportedGenerationMethods) && model.supportedGenerationMethods.includes('generateContent'))
+                .map(model => normalizeModelName(model.name))
+                .filter(name => name.toLowerCase().includes('gemini'))
+                .sort((a, b) => scoreModel(b) - scoreModel(a));
+
+            models.forEach(modelName => discoveredModels.push({ apiVersion, modelName }));
+        } catch (error) {
+            lastError = `ListModels ${apiVersion} network error: ${error.message}`;
+        }
+    }
+
+    if (discoveredModels.length === 0) {
+        throw new Error(`No compatible Gemini model found from ListModels. ${lastError}`);
+    }
+
+    async function generateWithCandidate(candidateModel, basePrompt) {
+        const endpoint = `${API_BASE}/${candidateModel.apiVersion}/${candidateModel.modelName}:generateContent?key=${encodeURIComponent(apiKey)}`;
+        let combined = '';
+        let currentPrompt = basePrompt;
+        const maxChunks = 4; // Prevent runaway continuation loops
+
+        for (let chunkIndex = 0; chunkIndex < maxChunks; chunkIndex++) {
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: currentPrompt }] }],
+                    generationConfig: {
+                        temperature: 0.2,
+                        maxOutputTokens: 4096
+                    }
+                })
+            });
+
+            if (!response.ok) {
+                const errText = await response.text();
+                throw new Error(`${candidateModel.modelName} (${candidateModel.apiVersion}) failed (${response.status}): ${errText.slice(0, 160)}`);
+            }
+
+            const data = await response.json();
+            const candidateData = data?.candidates?.[0];
+            const textChunk = (candidateData?.content?.parts || [])
+                .map(part => part.text || '')
+                .join('\n')
+                .trim();
+            const finishReason = candidateData?.finishReason || '';
+
+            if (!textChunk) {
+                throw new Error(`${candidateModel.modelName} returned empty response.`);
+            }
+
+            combined += (combined ? '\n\n' : '') + textChunk;
+
+            // Continue only when the model explicitly stopped due to max token limit.
+            if (finishReason === 'MAX_TOKENS') {
+                currentPrompt = `Continue exactly where you left off from the previous response for "${company.Company}". Do not repeat previous content. Output only the continuation text.`;
+                continue;
+            }
+
+            return combined;
+        }
+
+        return combined;
+    }
+
+    for (const candidate of discoveredModels) {
+        try {
+            const text = await generateWithCandidate(candidate, prompt);
+            if (text) {
+                return text;
+            }
+            lastError = `${candidate.modelName} returned empty response.`;
+        } catch (error) {
+            lastError = error.message || String(error);
+        }
+    }
+
+    throw new Error(`No compatible Gemini model found. Last error: ${lastError}`);
+}
+
+function setupClientAISummaryTab(company) {
+    initializeClientAISummaryPrompt(company);
+
+    const generateBtn = document.getElementById('generateClientSummaryBtn');
+    const copyBtn = document.getElementById('copyClientSummaryBtn');
+    const output = document.getElementById('clientSummaryOutput');
+    const status = document.getElementById('clientSummaryStatus');
+
+    if (!generateBtn || !output || !status) return;
+
+    generateBtn.addEventListener('click', async () => {
+        const original = generateBtn.textContent;
+        generateBtn.disabled = true;
+        generateBtn.textContent = 'Generating...';
+        status.textContent = `Researching ${company.Company} with Gemini...`;
+
+        try {
+            const summary = await fetchClientAISummaryFromGemini(company);
+            output.dataset.rawSummary = summary;
+            output.innerHTML = renderLeadClientSummary(summary);
+            status.textContent = `Summary generated for ${company.Company}.`;
+        } catch (error) {
+            output.dataset.rawSummary = '';
+            output.innerHTML = '';
+            status.textContent = `Error: ${error.message}`;
+        } finally {
+            generateBtn.disabled = false;
+            generateBtn.textContent = original;
+        }
+    });
+
+    if (copyBtn) {
+        copyBtn.addEventListener('click', async () => {
+            try {
+                await navigator.clipboard.writeText(output.dataset.rawSummary || output.textContent || '');
+                status.textContent = 'Summary copied to clipboard.';
+            } catch (error) {
+                status.textContent = 'Unable to copy summary.';
+            }
+        });
+    }
+}
+
+function escapeLeadSummaryHtml(text) {
+    return String(text || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+function normalizeLeadSummaryInlineMarkdown(text) {
+    const escaped = escapeLeadSummaryHtml(text);
+    return escaped
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.*?)\*/g, '<em>$1</em>');
+}
+
+function renderLeadClientSummary(rawText) {
+    const lines = String(rawText || '')
+        .split('\n')
+        .map(line => line.trim());
+
+    const sections = [];
+    let currentSection = { title: 'Executive Summary', content: [] };
+
+    const isHeading = (line) =>
+        /^\*\*.+\*\*$/.test(line) ||
+        /^\d+\)\s+.+/.test(line) ||
+        /^[A-Za-z][A-Za-z0-9\s&/-]{2,}:\s*$/.test(line);
+
+    const cleanHeading = (line) =>
+        line
+            .replace(/^\*\*/, '')
+            .replace(/\*\*$/, '')
+            .replace(/^\d+\)\s+/, '')
+            .replace(/:\s*$/, '')
+            .trim();
+
+    for (const line of lines) {
+        if (!line) {
+            currentSection.content.push({ type: 'spacer', value: '' });
+            continue;
+        }
+
+        if (isHeading(line)) {
+            if (currentSection.content.length > 0) {
+                sections.push(currentSection);
+            }
+            currentSection = { title: cleanHeading(line), content: [] };
+            continue;
+        }
+
+        if (/^[-*•]\s+/.test(line)) {
+            currentSection.content.push({ type: 'bullet', value: line.replace(/^[-*•]\s+/, '') });
+            continue;
+        }
+
+        const keyValueMatch = line.match(/^\*\*?([^:*]{2,})\*?\*?:\s+(.+)$/);
+        if (keyValueMatch) {
+            currentSection.content.push({
+                type: 'kv',
+                key: keyValueMatch[1].trim(),
+                value: keyValueMatch[2].trim()
+            });
+            continue;
+        }
+
+        currentSection.content.push({ type: 'text', value: line });
+    }
+
+    if (currentSection.content.length > 0) {
+        sections.push(currentSection);
+    }
+
+    const cards = sections.map(section => {
+        const body = section.content.map(item => {
+            if (item.type === 'bullet') {
+                return `<div style="display:flex; gap:8px; margin:6px 0;"><span style="color:#3498db;">•</span><span>${normalizeLeadSummaryInlineMarkdown(item.value)}</span></div>`;
+            }
+            if (item.type === 'kv') {
+                return `<div style="display:grid; grid-template-columns:170px 1fr; gap:8px; margin:6px 0;"><div style="font-weight:600; color:#2f3f52;">${escapeLeadSummaryHtml(item.key)}</div><div>${normalizeLeadSummaryInlineMarkdown(item.value)}</div></div>`;
+            }
+            if (item.type === 'spacer') {
+                return '<div style="height:6px;"></div>';
+            }
+            return `<p style="margin:6px 0; line-height:1.6;">${normalizeLeadSummaryInlineMarkdown(item.value)}</p>`;
+        }).join('');
+
+        return `
+            <section style="background:#fff; border:1px solid #e3e7eb; border-radius:10px; padding:12px 14px; margin-bottom:10px; box-shadow:0 1px 2px rgba(0,0,0,0.03);">
+                <h4 style="margin:0 0 8px 0; color:#1f2d3d; font-size:15px; border-left:3px solid #3498db; padding-left:8px;">
+                    ${escapeLeadSummaryHtml(section.title)}
+                </h4>
+                <div style="font-size:13px; color:#2c3e50;">
+                    ${body}
+                </div>
+            </section>
+        `;
+    }).join('');
+
+    return `
+        <div style="background:#f7f9fc; border:1px solid #dde5ef; border-radius:10px; padding:10px;">
+            ${cards || '<p style="margin:0;">No summary available.</p>'}
+        </div>
+    `;
+}
+
+/**
+ * Setup interactions for Profile Tasks tab
+ */
+function setupProfileTasksTab() {
+    const filter = document.getElementById('profileTaskFilter');
+    const tableBody = document.getElementById('profileTaskTableBody');
+    const addTaskBtn = document.getElementById('addProfileTaskBtn');
+
+    if (!tableBody) return;
+
+    function updateCounts() {
+        const rows = Array.from(tableBody.querySelectorAll('tr'));
+        const counts = { open: 0, 'in-progress': 0, blocked: 0, done: 0 };
+        rows.forEach(row => {
+            const status = row.getAttribute('data-status');
+            if (counts[status] !== undefined) counts[status] += 1;
+        });
+
+        const openEl = document.getElementById('profileTaskOpenCount');
+        const progressEl = document.getElementById('profileTaskInProgressCount');
+        const blockedEl = document.getElementById('profileTaskBlockedCount');
+        const doneEl = document.getElementById('profileTaskDoneCount');
+        if (openEl) openEl.textContent = String(counts.open);
+        if (progressEl) progressEl.textContent = String(counts['in-progress']);
+        if (blockedEl) blockedEl.textContent = String(counts.blocked);
+        if (doneEl) doneEl.textContent = String(counts.done);
+    }
+
+    if (filter) {
+        filter.addEventListener('change', function() {
+            const selected = this.value;
+            const rows = tableBody.querySelectorAll('tr');
+            rows.forEach(row => {
+                const status = row.getAttribute('data-status');
+                row.style.display = selected === 'all' || selected === status ? '' : 'none';
+            });
+        });
+    }
+
+    tableBody.addEventListener('change', function(event) {
+        const target = event.target;
+        if (!(target instanceof HTMLInputElement) || !target.classList.contains('profile-task-checkbox')) return;
+
+        const row = target.closest('tr');
+        if (!row) return;
+
+        if (target.checked) {
+            row.setAttribute('data-status', 'done');
+            row.cells[4].innerHTML = '<span style="background:#ecfff2;color:#0f8a49;padding:2px 8px;border-radius:10px;">Done</span>';
+            row.style.opacity = '0.75';
+        } else {
+            row.setAttribute('data-status', 'open');
+            row.cells[4].innerHTML = '<span style="background:#eef6ff;color:#1b4f9c;padding:2px 8px;border-radius:10px;">Open</span>';
+            row.style.opacity = '1';
+        }
+        updateCounts();
+    });
+
+    if (addTaskBtn) {
+        addTaskBtn.addEventListener('click', function() {
+            const newRow = document.createElement('tr');
+            newRow.setAttribute('data-status', 'open');
+            newRow.innerHTML = `
+                <td style="padding: 10px 8px; border-bottom: 1px solid #f0f0f0;"><input type="checkbox" class="profile-task-checkbox"></td>
+                <td style="padding: 10px 8px; border-bottom: 1px solid #f0f0f0;">New task item</td>
+                <td style="padding: 10px 8px; border-bottom: 1px solid #f0f0f0;">Unassigned</td>
+                <td style="padding: 10px 8px; border-bottom: 1px solid #f0f0f0;">TBD</td>
+                <td style="padding: 10px 8px; border-bottom: 1px solid #f0f0f0;"><span style="background:#eef6ff;color:#1b4f9c;padding:2px 8px;border-radius:10px;">Open</span></td>
+            `;
+            tableBody.appendChild(newRow);
+            updateCounts();
+        });
+    }
+
+    updateCounts();
+}
+
+/**
+ * Setup profile subtab navigation
+ */
 /**
  * Initialize the Site Overview Tab with Site Survey, Layout, and Devices
  */

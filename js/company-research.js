@@ -328,14 +328,18 @@ async function performSearch() {
             if (company) {
                 displayCompanyDetails(company);
             } else {
-                showNoResultsMessage();
+                const fallbackCompany = createFallbackCompanyFromQuery(query, true);
+                displayCompanyDetails(fallbackCompany);
+                showFallbackMessage(`No exact company record found for "${query}". Generated AI research profile from your search input.`);
             }
         } else {
             // Search by company name
             const results = await COMPANY_API.searchCompanies(query);
             
             if (results.length === 0) {
-                showNoResultsMessage();
+                const fallbackCompany = createFallbackCompanyFromQuery(query, false);
+                displayCompanyDetails(fallbackCompany);
+                showFallbackMessage(`No direct dataset match found for "${query}". Generated AI research profile from your search input.`);
                 return;
             }
             
@@ -353,10 +357,36 @@ async function performSearch() {
         
     } catch (error) {
         console.error('❌ Search error:', error);
-        showErrorMessage('Failed to search companies. Please try again.');
+        const fallbackCompany = createFallbackCompanyFromQuery(query, query.includes('.') && !query.includes(' '));
+        displayCompanyDetails(fallbackCompany);
+        showFallbackMessage(`Search service had an issue. Showing AI-generated profile for "${query}".`);
     } finally {
         showLoadingState(false);
     }
+}
+
+function createFallbackCompanyFromQuery(query, isDomain) {
+    const sanitized = (query || '').trim();
+    const cleanDomain = isDomain
+        ? sanitized.replace(/^https?:\/\//i, '').replace(/^www\./i, '')
+        : `${sanitized.toLowerCase().replace(/[^a-z0-9]+/g, '') || 'company'}.com`;
+
+    const companyName = isDomain
+        ? cleanDomain.split('.')[0].replace(/[-_]/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+        : sanitized;
+
+    return {
+        name: companyName || 'Unknown Company',
+        domain: cleanDomain,
+        url: `https://${cleanDomain}`,
+        description: 'AI-generated profile based on user search input.',
+        location: 'Unknown',
+        foundedYear: 'Unknown',
+        category: { industry: 'Unknown', sector: 'Unknown' },
+        metrics: { employeesRange: 'Unknown' },
+        tags: ['AI Research'],
+        tech: []
+    };
 }
 
 function displaySearchResults(results) {
@@ -485,166 +515,355 @@ async function selectCompany(company, index) {
     }
 }
 
+// ===== COMPANY RESEARCH AI SUMMARY (GEMINI) =====
+function getResearchGeminiApiKey() {
+    return (
+        window.CONFIG?.GEMINI_API_KEY ||
+        localStorage.getItem('gemini_api_key') ||
+        localStorage.getItem('geminiApiKey') ||
+        ''
+    );
+}
+
+function buildCompanyResearchPrompt(company) {
+    const companyName = company?.name || company?.domain || 'Unknown Company';
+    const industry = company?.category?.industry || 'Unknown';
+    const sector = company?.category?.sector || 'Unknown';
+    const location = company?.location || company?.geo?.city || 'Unknown';
+    const founded = company?.foundedYear || 'Unknown';
+
+    return `Research company intelligence for "${companyName}".
+
+Known context:
+- Company: ${companyName}
+- Industry: ${industry}
+- Sector: ${sector}
+- Location: ${location}
+- Founded: ${founded}
+- Domain: ${company?.domain || 'Unknown'}
+
+Return a concise professional report with these sections:
+1) Company Overview
+2) Ownership & Leadership (owners/founders/executives)
+3) Company Size (employee range)
+4) Estimated Financials (revenue range if available)
+5) Technology Footprint
+6) Recent Signals (news, hiring, funding, risks)
+7) MSP Opportunity Assessment (3-5 bullets)
+8) Confidence & Gaps
+9) Suggested Discovery Questions (5)
+
+Rules:
+- Do not invent facts.
+- If data is unavailable, state "Unknown".
+- Use bullets and short paragraphs.`;
+}
+
+async function fetchCompanyResearchSummaryFromGemini(company) {
+    const apiKey = getResearchGeminiApiKey();
+    if (!apiKey) {
+        throw new Error('Gemini API key not found. Add GEMINI_API_KEY to config.js.');
+    }
+
+    const API_BASE = 'https://generativelanguage.googleapis.com';
+    const versionsToTry = ['v1', 'v1beta'];
+    const prompt = buildCompanyResearchPrompt(company);
+    const discoveredModels = [];
+    let lastError = 'Unknown Gemini error';
+
+    function normalizeModelName(name) {
+        return name.startsWith('models/') ? name : `models/${name}`;
+    }
+
+    function scoreModel(name) {
+        const lower = name.toLowerCase();
+        if (lower.includes('gemini-2.5-flash')) return 100;
+        if (lower.includes('gemini-2.0-flash')) return 95;
+        if (lower.includes('gemini-1.5-flash')) return 90;
+        if (lower.includes('gemini-1.5-pro')) return 80;
+        if (lower.includes('gemini') && lower.includes('flash')) return 70;
+        if (lower.includes('gemini')) return 50;
+        return 0;
+    }
+
+    for (const apiVersion of versionsToTry) {
+        const listUrl = `${API_BASE}/${apiVersion}/models?key=${encodeURIComponent(apiKey)}`;
+        try {
+            const listResp = await fetch(listUrl);
+            if (!listResp.ok) {
+                const txt = await listResp.text();
+                lastError = `ListModels ${apiVersion} failed (${listResp.status}): ${txt.slice(0, 140)}`;
+                continue;
+            }
+
+            const listData = await listResp.json();
+            const models = (listData.models || [])
+                .filter(model => Array.isArray(model.supportedGenerationMethods) && model.supportedGenerationMethods.includes('generateContent'))
+                .map(model => normalizeModelName(model.name))
+                .filter(name => name.toLowerCase().includes('gemini'))
+                .sort((a, b) => scoreModel(b) - scoreModel(a));
+
+            models.forEach(modelName => discoveredModels.push({ apiVersion, modelName }));
+        } catch (error) {
+            lastError = `ListModels ${apiVersion} network error: ${error.message}`;
+        }
+    }
+
+    if (discoveredModels.length === 0) {
+        throw new Error(`No compatible Gemini model found from ListModels. ${lastError}`);
+    }
+
+    async function generateWithCandidate(candidateModel, basePrompt) {
+        const endpoint = `${API_BASE}/${candidateModel.apiVersion}/${candidateModel.modelName}:generateContent?key=${encodeURIComponent(apiKey)}`;
+        let combined = '';
+        let currentPrompt = basePrompt;
+        const maxChunks = 4;
+
+        for (let chunkIndex = 0; chunkIndex < maxChunks; chunkIndex++) {
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: currentPrompt }] }],
+                    generationConfig: {
+                        temperature: 0.2,
+                        maxOutputTokens: 4096
+                    }
+                })
+            });
+
+            if (!response.ok) {
+                const errText = await response.text();
+                throw new Error(`${candidateModel.modelName} (${candidateModel.apiVersion}) failed (${response.status}): ${errText.slice(0, 160)}`);
+            }
+
+            const data = await response.json();
+            const candidateData = data?.candidates?.[0];
+            const textChunk = (candidateData?.content?.parts || [])
+                .map(part => part.text || '')
+                .join('\n')
+                .trim();
+            const finishReason = candidateData?.finishReason || '';
+
+            if (!textChunk) {
+                throw new Error(`${candidateModel.modelName} returned empty response.`);
+            }
+
+            combined += (combined ? '\n\n' : '') + textChunk;
+
+            if (finishReason === 'MAX_TOKENS') {
+                currentPrompt = `Continue exactly where you left off for "${company?.name || 'the company'}". Do not repeat prior text. Output continuation only.`;
+                continue;
+            }
+
+            return combined;
+        }
+
+        return combined;
+    }
+
+    for (const candidate of discoveredModels) {
+        try {
+            const text = await generateWithCandidate(candidate, prompt);
+            if (text) return text;
+            lastError = `${candidate.modelName} returned empty response.`;
+        } catch (error) {
+            lastError = error.message || String(error);
+        }
+    }
+
+    throw new Error(`No compatible Gemini model found. Last error: ${lastError}`);
+}
+
+function setupCompanyResearchAISummary(company) {
+    const generateBtn = document.getElementById('crGenerateAiSummary');
+    const copyBtn = document.getElementById('crCopyAiSummary');
+    const status = document.getElementById('crAiSummaryStatus');
+    const output = document.getElementById('crAiSummaryOutput');
+
+    if (!generateBtn || !status || !output) return;
+
+    const runSummary = async () => {
+        const originalText = generateBtn.textContent;
+        generateBtn.disabled = true;
+        generateBtn.textContent = 'Generating...';
+        status.textContent = `Researching ${company?.name || 'company'} with Gemini...`;
+
+        try {
+            const summary = await fetchCompanyResearchSummaryFromGemini(company);
+            output.dataset.rawSummary = summary;
+            output.innerHTML = renderCompanyResearchSummary(summary);
+            status.textContent = 'AI company summary generated.';
+        } catch (error) {
+            output.dataset.rawSummary = '';
+            output.innerHTML = '';
+            status.textContent = `Error: ${error.message}`;
+        } finally {
+            generateBtn.disabled = false;
+            generateBtn.textContent = originalText;
+        }
+    };
+
+    generateBtn.addEventListener('click', runSummary);
+
+    if (copyBtn) {
+        copyBtn.addEventListener('click', async () => {
+            try {
+                await navigator.clipboard.writeText(output.dataset.rawSummary || output.textContent || '');
+                status.textContent = 'Summary copied to clipboard.';
+            } catch (error) {
+                status.textContent = 'Unable to copy summary.';
+            }
+        });
+    }
+
+    // Auto-generate so users get intelligence for any searched company immediately.
+    runSummary();
+}
+
+function escapeHtml(text) {
+    return String(text || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+function normalizeInlineMarkdown(text) {
+    const escaped = escapeHtml(text);
+    return escaped
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.*?)\*/g, '<em>$1</em>');
+}
+
+function renderCompanyResearchSummary(rawText) {
+    const lines = String(rawText || '')
+        .split('\n')
+        .map(line => line.trim());
+
+    const sections = [];
+    let currentSection = { title: 'Executive Summary', content: [] };
+
+    const isHeading = (line) =>
+        /^\*\*.+\*\*$/.test(line) ||
+        /^\d+\)\s+.+/.test(line) ||
+        /^[A-Za-z][A-Za-z0-9\s&/-]{2,}:\s*$/.test(line);
+
+    const cleanHeading = (line) =>
+        line
+            .replace(/^\*\*/, '')
+            .replace(/\*\*$/, '')
+            .replace(/^\d+\)\s+/, '')
+            .replace(/:\s*$/, '')
+            .trim();
+
+    for (const line of lines) {
+        if (!line) {
+            currentSection.content.push({ type: 'spacer', value: '' });
+            continue;
+        }
+
+        if (isHeading(line)) {
+            if (currentSection.content.length > 0) {
+                sections.push(currentSection);
+            }
+            currentSection = { title: cleanHeading(line), content: [] };
+            continue;
+        }
+
+        if (/^[-*•]\s+/.test(line)) {
+            currentSection.content.push({ type: 'bullet', value: line.replace(/^[-*•]\s+/, '') });
+            continue;
+        }
+
+        const keyValueMatch = line.match(/^\*\*?([^:*]{2,})\*?\*?:\s+(.+)$/);
+        if (keyValueMatch) {
+            currentSection.content.push({
+                type: 'kv',
+                key: keyValueMatch[1].trim(),
+                value: keyValueMatch[2].trim()
+            });
+            continue;
+        }
+
+        currentSection.content.push({ type: 'text', value: line });
+    }
+
+    if (currentSection.content.length > 0) {
+        sections.push(currentSection);
+    }
+
+    const cards = sections.map(section => {
+        const body = section.content.map(item => {
+            if (item.type === 'bullet') {
+                return `<div style="display:flex; gap:8px; margin:6px 0;"><span style="color:#3498db;">•</span><span>${normalizeInlineMarkdown(item.value)}</span></div>`;
+            }
+            if (item.type === 'kv') {
+                return `<div style="display:grid; grid-template-columns:170px 1fr; gap:8px; margin:6px 0;"><div style="font-weight:600; color:#2f3f52;">${escapeHtml(item.key)}</div><div>${normalizeInlineMarkdown(item.value)}</div></div>`;
+            }
+            if (item.type === 'spacer') {
+                return '<div style="height:6px;"></div>';
+            }
+            return `<p style="margin:6px 0; line-height:1.6;">${normalizeInlineMarkdown(item.value)}</p>`;
+        }).join('');
+
+        return `
+            <section style="background:#fff; border:1px solid #e3e7eb; border-radius:10px; padding:12px 14px; margin-bottom:10px; box-shadow:0 1px 2px rgba(0,0,0,0.03);">
+                <h4 style="margin:0 0 8px 0; color:#1f2d3d; font-size:15px; border-left:3px solid #3498db; padding-left:8px;">
+                    ${escapeHtml(section.title)}
+                </h4>
+                <div style="font-size:13px; color:#2c3e50;">
+                    ${body}
+                </div>
+            </section>
+        `;
+    }).join('');
+
+    return `
+        <div style="background:#f7f9fc; border:1px solid #dde5ef; border-radius:10px; padding:10px;">
+            ${cards || '<p style="margin:0;">No summary available.</p>'}
+        </div>
+    `;
+}
+
 function displayCompanyDetails(company) {
     const container = document.getElementById('companyProfileCard');
     if (!container) return;
     
     container.style.display = 'block';
-    
-    // Clearbit data structure
-    const logo = company.logo || '';
-    const description = company.description || 'No description available';
-    const location = company.location || company.geo?.city || 'N/A';
-    const employees = company.metrics?.employees || company.metrics?.employeesRange || 'N/A';
-    const founded = company.foundedYear || 'N/A';
-    const industry = company.category?.industry || 'N/A';
-    const sector = company.category?.sector || '';
-    const tags = company.tags || [];
-    const tech = company.tech || [];
-    
+    container.style.maxHeight = 'calc(100vh - 180px)';
+    container.style.overflowY = 'auto';
+
     container.innerHTML = `
-        <div style="border-bottom: 2px solid #3498db; padding-bottom: 15px; margin-bottom: 20px;">
-            <div style="display: flex; align-items: center; gap: 15px;">
-                ${logo ? `<img src="${logo}" alt="${company.name}" style="width: 64px; height: 64px; border-radius: 8px; object-fit: contain; background: #f8f9fa; padding: 8px;">` : ''}
-                <div style="flex: 1;">
-                    <h2 style="margin: 0 0 5px 0; color: #2c3e50; font-size: 24px;">${company.name}</h2>
-                    <div style="color: #666; font-size: 14px;">
-                        🌐 ${company.domain || 'N/A'}
-                        ${company.url ? ` • <a href="${company.url}" target="_blank" style="color: #3498db;">Visit Website ↗</a>` : ''}
-                    </div>
-                </div>
+        <div style="border-bottom: 2px solid #3498db; padding-bottom: 15px; margin-bottom: 16px;">
+            <h2 style="margin: 0 0 5px 0; color: #2c3e50; font-size: 24px;">${company.name || 'Company Research'}</h2>
+            <div style="color: #666; font-size: 14px;">
+                🌐 ${company.domain || 'N/A'}
+                ${company.url ? ` • <a href="${company.url}" target="_blank" style="color: #3498db;">Visit Website ↗</a>` : ''}
             </div>
         </div>
-        
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
-            <!-- Left Column -->
-            <div style="display: grid; gap: 20px;">
-                <div>
-                    <h3 style="margin: 0 0 10px 0; color: #2c3e50; font-size: 16px; border-bottom: 1px solid #ecf0f1; padding-bottom: 8px;">
-                        📋 Company Overview
-                    </h3>
-                    <div style="font-size: 14px; color: #555; line-height: 1.6; margin-bottom: 15px;">
-                        ${description}
-                    </div>
-                    <div style="display: grid; gap: 10px; font-size: 14px;">
-                        <div>
-                            <strong style="color: #555;">Industry:</strong>
-                            <span style="color: #2c3e50;">${industry}${sector ? ` (${sector})` : ''}</span>
-                        </div>
-                        <div>
-                            <strong style="color: #555;">Location:</strong>
-                            <span style="color: #2c3e50;">${location}</span>
-                        </div>
-                        <div>
-                            <strong style="color: #555;">Founded:</strong>
-                            <span style="color: #2c3e50;">${founded}</span>
-                        </div>
-                        <div>
-                            <strong style="color: #555;">Employees:</strong>
-                            <span style="color: #2c3e50;">${employees}</span>
-                        </div>
-                        ${company.metrics?.marketCap ? `
-                        <div>
-                            <strong style="color: #555;">Market Cap:</strong>
-                            <span style="color: #2c3e50;">$${company.metrics.marketCap.toLocaleString()}</span>
-                        </div>
-                        ` : ''}
-                        ${company.metrics?.annualRevenue ? `
-                        <div>
-                            <strong style="color: #555;">Annual Revenue:</strong>
-                            <span style="color: #2c3e50;">$${company.metrics.annualRevenue.toLocaleString()}</span>
-                        </div>
-                        ` : ''}
-                    </div>
+
+        <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 10px;">
+                <h3 style="margin: 0; color: #2c3e50;">🤖 AI Company Intelligence</h3>
+                <div style="display: flex; gap: 8px;">
+                    <button id="crGenerateAiSummary" class="e-btn e-primary e-small">Generate AI Summary</button>
+                    <button id="crCopyAiSummary" class="e-btn e-outline e-small">Copy</button>
                 </div>
-                
-                ${tags.length > 0 ? `
-                <div>
-                    <h3 style="margin: 0 0 10px 0; color: #2c3e50; font-size: 16px; border-bottom: 1px solid #ecf0f1; padding-bottom: 8px;">
-                        🏷️ Tags
-                    </h3>
-                    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-                        ${tags.map(tag => `
-                            <span style="background: #e8f4f8; color: #3498db; padding: 4px 12px; border-radius: 12px; font-size: 12px;">
-                                ${tag}
-                            </span>
-                        `).join('')}
-                    </div>
-                </div>
-                ` : ''}
             </div>
-            
-            <!-- Right Column -->
-            <div style="display: grid; gap: 20px;">
-                ${tech.length > 0 ? `
-                <div>
-                    <h3 style="margin: 0 0 10px 0; color: #2c3e50; font-size: 16px; border-bottom: 1px solid #ecf0f1; padding-bottom: 8px;">
-                        💻 Technology Stack
-                    </h3>
-                    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-                        ${tech.slice(0, 15).map(t => `
-                            <span style="background: #f0f0f0; color: #555; padding: 4px 10px; border-radius: 4px; font-size: 12px;">
-                                ${t}
-                            </span>
-                        `).join('')}
-                        ${tech.length > 15 ? `
-                            <span style="color: #666; font-size: 12px; font-style: italic; padding: 4px 10px;">
-                                +${tech.length - 15} more
-                            </span>
-                        ` : ''}
-                    </div>
+            <div id="crAiSummaryStatus" style="font-size: 12px; color: #6c757d; margin-bottom: 10px;">
+                Generate a full company intelligence report using Gemini.
+            </div>
+            <div id="crAiSummaryOutput" style="line-height: 1.6; font-size: 13px; color: #2c3e50; background: white; border: 1px solid #e3e7eb; border-radius: 8px; padding: 14px; min-height: 220px;">
+                <div style="background:#f7f9fc; border:1px dashed #c9d4e0; color:#607080; border-radius:8px; padding:14px;">
+                    No AI summary generated yet.
                 </div>
-                ` : ''}
-                
-                ${company.linkedin?.handle || company.twitter?.handle || company.facebook?.handle ? `
-                <div>
-                    <h3 style="margin: 0 0 10px 0; color: #2c3e50; font-size: 16px; border-bottom: 1px solid #ecf0f1; padding-bottom: 8px;">
-                        🔗 Social Media
-                    </h3>
-                    <div style="display: flex; flex-direction: column; gap: 8px;">
-                        ${company.linkedin?.handle ? `
-                            <a href="https://linkedin.com/company/${company.linkedin.handle}" target="_blank" style="color: #0077b5; text-decoration: none; font-size: 14px;">
-                                → LinkedIn ↗
-                            </a>
-                        ` : ''}
-                        ${company.twitter?.handle ? `
-                            <a href="https://twitter.com/${company.twitter.handle}" target="_blank" style="color: #1da1f2; text-decoration: none; font-size: 14px;">
-                                → Twitter ↗
-                            </a>
-                        ` : ''}
-                        ${company.facebook?.handle ? `
-                            <a href="https://facebook.com/${company.facebook.handle}" target="_blank" style="color: #1877f2; text-decoration: none; font-size: 14px;">
-                                → Facebook ↗
-                            </a>
-                        ` : ''}
-                    </div>
-                </div>
-                ` : ''}
-                
-                ${company.phone || company.emailProvider ? `
-                <div>
-                    <h3 style="margin: 0 0 10px 0; color: #2c3e50; font-size: 16px; border-bottom: 1px solid #ecf0f1; padding-bottom: 8px;">
-                        📞 Contact Information
-                    </h3>
-                    <div style="display: grid; gap: 8px; font-size: 14px;">
-                        ${company.phone ? `
-                            <div>
-                                <strong style="color: #555;">Phone:</strong>
-                                <span style="color: #2c3e50;">${company.phone}</span>
-                            </div>
-                        ` : ''}
-                        ${company.emailProvider ? `
-                            <div>
-                                <strong style="color: #555;">Email Provider:</strong>
-                                <span style="color: #2c3e50;">${company.emailProvider}</span>
-                            </div>
-                        ` : ''}
-                    </div>
-                </div>
-                ` : ''}
             </div>
         </div>
     `;
+
+    setupCompanyResearchAISummary(company);
 }
 
 function formatAddress(address) {
@@ -710,6 +929,20 @@ function showNoResultsMessage() {
             </p>
             <p style="font-size: 14px; color: #999; margin: 10px 0 0 0;">
                 Try a different company name or check the spelling.
+            </p>
+        </div>
+    `;
+}
+
+function showFallbackMessage(message) {
+    const container = document.getElementById('companySearchResults');
+    if (!container) return;
+
+    container.style.display = 'block';
+    container.innerHTML = `
+        <div style="background: #eef8ff; padding: 16px; border-radius: 8px; border-left: 4px solid #3498db;">
+            <p style="font-size: 14px; color: #2c3e50; margin: 0;">
+                🤖 ${message}
             </p>
         </div>
     `;

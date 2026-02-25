@@ -1892,8 +1892,10 @@ function initializeDeviceAnalysisTab() {
     
     deviceContainer.innerHTML = deviceHTML;
     
-    // Initialize the hardware chart and grid for this tab
+    // Initialize the hardware chart and grid for this tab (only if still on Device Analysis tab when callback runs)
+    const DEVICE_TAB_INDEX = 5;
     setTimeout(() => {
+        if (window.leadDetailTabsInstance && window.leadDetailTabsInstance.selectedItem !== DEVICE_TAB_INDEX) return;
         if (window.Endpoint) {
             // Initialize chart
             if (window.Endpoint.initializeHardwareChartTab) {
@@ -1972,8 +1974,10 @@ function initializeNetworkAccessTab() {
     
     accessContainer.innerHTML = accessHTML;
     
-    // Initialize the network access list for this tab
+    // Initialize the network access list for this tab (only if still on Network Access tab when callback runs)
+    const NETWORK_ACCESS_TAB_INDEX = 6;
     setTimeout(() => {
+        if (window.leadDetailTabsInstance && window.leadDetailTabsInstance.selectedItem !== NETWORK_ACCESS_TAB_INDEX) return;
         if (window.NetworkAccess) {
             if (window.NetworkAccess.renderAllowListTab) {
                 window.NetworkAccess.renderAllowListTab();
@@ -2092,8 +2096,13 @@ function initializeSoftwareTabWrapper() {
     
     softwareContainer.innerHTML = softwareHTML;
     
-    // Initialize the software management for this tab
+    // Initialize the software management for this tab (only if still on Software tab when callback runs)
+    const SOFTWARE_TAB_INDEX = 7;
     setTimeout(() => {
+        // Don't update Software tab DOM if user has already switched to another tab - prevents tab snapping back
+        if (window.leadDetailTabsInstance && window.leadDetailTabsInstance.selectedItem !== SOFTWARE_TAB_INDEX) {
+            return;
+        }
         if (window.Software) {
             if (window.Software.initializeSoftwareTab) {
                 console.log('🔄 Calling initializeSoftwareTab with company:', companyName);

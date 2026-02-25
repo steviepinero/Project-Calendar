@@ -456,6 +456,11 @@ function initializeSoftwareTab(companyName) {
     
     // Wait a bit to ensure DOM is ready
     setTimeout(() => {
+        // If used on Leads page, don't update Software tab DOM if user has switched to another tab
+        const SOFTWARE_TAB_INDEX = 7;
+        if (window.leadDetailTabsInstance && window.leadDetailTabsInstance.selectedItem !== SOFTWARE_TAB_INDEX) {
+            return;
+        }
         const gridContainer = document.getElementById('softwareGridTab');
         if (!gridContainer) {
             console.error('❌ softwareGridTab element not found - DOM may not be ready yet');

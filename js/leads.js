@@ -743,8 +743,46 @@ function initializeProfileTab() {
 
                 <!-- Dark Web Report Tab Content (Hidden by default) -->
                 <div id="profile-righttab-report" class="profile-righttab-content" style="flex: 1; overflow-y: auto; display: none;">
-                    <div style="padding: 20px; text-align: center; color: #999;">
-                        <p>Dark Web Report coming soon...</p>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; gap: 10px; flex-wrap: wrap;">
+                        <h3 style="margin: 0; color: #2c3e50;">Dark Web Report — ${currentCompany.Company}</h3>
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            <span id="darkWebLastScan" style="font-size: 12px; color: #6c757d;">Last scan: —</span>
+                            <button id="runDarkWebScanBtn" class="e-btn e-primary e-small">Run Scan</button>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(4, minmax(100px, 1fr)); gap: 10px; margin-bottom: 16px;">
+                        <div style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 12px;">
+                            <div style="font-size: 12px; color: #5f6b7a;">Risk Level</div>
+                            <div id="darkWebRiskLevel" style="font-size: 18px; font-weight: 700; color: #2c3e50;">—</div>
+                        </div>
+                        <div style="background: #fff2f2; border: 1px solid #ffd5d5; border-radius: 8px; padding: 12px;">
+                            <div style="font-size: 12px; color: #7d2f2f;">Exposed Credentials</div>
+                            <div id="darkWebExposedCount" style="font-size: 22px; font-weight: 700; color: #b32222;">0</div>
+                        </div>
+                        <div style="background: #fff8ea; border: 1px solid #ffe1a8; border-radius: 8px; padding: 12px;">
+                            <div style="font-size: 12px; color: #7d6224;">Breached Emails</div>
+                            <div id="darkWebBreachedCount" style="font-size: 22px; font-weight: 700; color: #9a6a00;">0</div>
+                        </div>
+                        <div style="background: #eef6ff; border: 1px solid #d5e9ff; border-radius: 8px; padding: 12px;">
+                            <div style="font-size: 12px; color: #1b4f9c;">Domains Monitored</div>
+                            <div id="darkWebDomainsCount" style="font-size: 22px; font-weight: 700; color: #0066cc;">0</div>
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 10px; font-size: 13px; font-weight: 600; color: #2c3e50;">Findings</div>
+                    <div style="border: 1px solid #e4e4e4; border-radius: 8px; overflow: hidden;">
+                        <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+                            <thead>
+                                <tr style="background: #f6f8fa;">
+                                    <th style="padding: 10px 8px; text-align: left; border-bottom: 1px solid #e4e4e4;">Type</th>
+                                    <th style="padding: 10px 8px; text-align: left; border-bottom: 1px solid #e4e4e4;">Value / Domain</th>
+                                    <th style="padding: 10px 8px; text-align: left; border-bottom: 1px solid #e4e4e4;">Source</th>
+                                    <th style="padding: 10px 8px; text-align: left; border-bottom: 1px solid #e4e4e4;">Detected</th>
+                                </tr>
+                            </thead>
+                            <tbody id="darkWebFindingsBody">
+                                <tr><td colspan="4" style="padding: 24px; text-align: center; color: #6c757d;">No scan run yet. Click "Run Scan" to check for exposed credentials and breaches.</td></tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -757,6 +795,7 @@ function initializeProfileTab() {
     setupProfileRightTabs(currentCompany);
     setupProfileTasksTab();
     setupClientAISummaryTab(currentCompany);
+    setupDarkWebReportTab(currentCompany);
     
     console.log('✅ Profile tab initialized for:', currentCompany.Company);
 }
@@ -997,6 +1036,48 @@ function setupClientAISummaryTab(company) {
             }
         });
     }
+}
+
+/**
+ * Setup Dark Web Report tab: wire Run Scan and display mock/sample findings
+ */
+function setupDarkWebReportTab(company) {
+    const runBtn = document.getElementById('runDarkWebScanBtn');
+    const lastScanEl = document.getElementById('darkWebLastScan');
+    const riskEl = document.getElementById('darkWebRiskLevel');
+    const exposedEl = document.getElementById('darkWebExposedCount');
+    const breachedEl = document.getElementById('darkWebBreachedCount');
+    const domainsEl = document.getElementById('darkWebDomainsCount');
+    const tbody = document.getElementById('darkWebFindingsBody');
+    if (!runBtn || !tbody) return;
+
+    runBtn.addEventListener('click', () => {
+        const now = new Date();
+        const scanDateStr = now.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+        if (lastScanEl) lastScanEl.textContent = `Last scan: ${scanDateStr}`;
+
+        // Sample findings for demo (domain derived from company name)
+        const domain = (company.Company || '').replace(/\s+/g, '').toLowerCase() + '.com';
+        const findings = [
+            { type: 'Email', value: `contact@${domain}`, source: 'Breach (2023)', detected: 'Jan 2024' },
+            { type: 'Credential', value: `admin@${domain}`, source: 'Paste site', detected: 'Feb 2024' },
+            { type: 'Domain', value: domain, source: 'Monitoring', detected: scanDateStr }
+        ];
+
+        if (riskEl) riskEl.textContent = findings.length > 0 ? 'Medium' : 'Low';
+        if (exposedEl) exposedEl.textContent = '1';
+        if (breachedEl) breachedEl.textContent = String(findings.filter(f => f.type === 'Email' || f.source.includes('Breach')).length);
+        if (domainsEl) domainsEl.textContent = '1';
+
+        tbody.innerHTML = findings.map(f => `
+            <tr style="border-bottom: 1px solid #f0f0f0;">
+                <td style="padding: 10px 8px;">${f.type}</td>
+                <td style="padding: 10px 8px; color: #0066cc;">${f.value}</td>
+                <td style="padding: 10px 8px;">${f.source}</td>
+                <td style="padding: 10px 8px;">${f.detected}</td>
+            </tr>
+        `).join('');
+    });
 }
 
 function escapeLeadSummaryHtml(text) {

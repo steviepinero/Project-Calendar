@@ -862,7 +862,7 @@ function setupSidebarToggle() {
             e.preventDefault();
             sidebar.classList.toggle('sidebar-collapsed');
             if (toggleIcon) {
-                toggleIcon.textContent = sidebar.classList.contains('sidebar-collapsed') ? '+' : '−';
+                toggleIcon.textContent = sidebar.classList.contains('sidebar-collapsed') ? '☰' : '−';
             }
             console.log('🔄 [SIDEBAR] Toggled:', sidebar.classList.contains('sidebar-collapsed') ? 'collapsed' : 'expanded');
         });

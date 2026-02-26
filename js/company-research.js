@@ -330,7 +330,6 @@ async function performSearch() {
             } else {
                 const fallbackCompany = createFallbackCompanyFromQuery(query, true);
                 displayCompanyDetails(fallbackCompany);
-                showFallbackMessage(`No exact company record found for "${query}". Generated AI research profile from your search input.`);
             }
         } else {
             // Search by company name
@@ -339,7 +338,6 @@ async function performSearch() {
             if (results.length === 0) {
                 const fallbackCompany = createFallbackCompanyFromQuery(query, false);
                 displayCompanyDetails(fallbackCompany);
-                showFallbackMessage(`No direct dataset match found for "${query}". Generated AI research profile from your search input.`);
                 return;
             }
             

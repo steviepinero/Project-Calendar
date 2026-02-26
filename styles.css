@@ -86,6 +86,7 @@ header.hidden {
     overflow-y: auto;
     box-shadow: 2px 0 8px rgba(0,0,0,0.05);
     padding: 20px 0;
+    transition: width 0.3s ease, min-width 0.3s ease;
 }
 
 .sidebar-nav {
@@ -2474,55 +2475,40 @@ body > #campaignModal {
     font-size: 13px !important;
 }
 
-/* Collapsed Sidebar State */
+/* Collapsed Sidebar State - Fully collapsed, only toggle button visible */
 .sidebar-collapsed {
-    width: 60px;
+    width: 48px;
+    min-width: 48px;
     padding: 0;
+    overflow: hidden;
+    transition: width 0.3s ease, min-width 0.3s ease;
 }
 
 .sidebar-collapsed .sidebar-header {
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
     font-size: 12px;
-    padding: 10px 8px;
+    padding: 12px 8px;
+    justify-content: center;
 }
 
-.sidebar-collapsed .sidebar-header span {
+.sidebar-collapsed .sidebar-header > span {
     display: none;
 }
 
 .sidebar-collapsed .sidebar-toggle {
     width: 100%;
-    padding: 5px !important;
+    padding: 8px !important;
+    margin: 0;
 }
 
+/* Hide accordion and footer entirely when collapsed */
 .sidebar-collapsed #sidebarAccordion {
-    padding: 5px 0;
-}
-
-.sidebar-collapsed .e-accordion-header {
-    padding: 8px 10px !important;
-    font-size: 20px;
-    text-align: center;
-}
-
-.sidebar-collapsed .e-accordion-content .sidebar-menu a {
-    padding: 8px 15px;
-    font-size: 11px;
-    text-align: center;
-}
-
-.sidebar-collapsed .e-accordion-content .sidebar-menu a:hover {
-    padding-left: 15px;
+    display: none;
 }
 
 .sidebar-collapsed .sidebar-footer {
-    padding: 10px 8px !important;
-}
-
-.sidebar-collapsed .sidebar-footer .e-btn {
-    padding: 8px 4px !important;
-    font-size: 12px !important;
+    display: none;
 }
 
 /* Animation for Accordion */
@@ -2548,7 +2534,8 @@ body > #campaignModal {
     }
     
     .sidebar-collapsed {
-        width: 60px;
+        width: 48px;
+        min-width: 48px;
     }
     
     .e-accordion-header {

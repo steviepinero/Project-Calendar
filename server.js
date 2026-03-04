@@ -4,6 +4,7 @@
  */
 
 require('dotenv').config();
+const path = require('path');
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -42,8 +43,9 @@ app.use(cors({
     credentials: true
 }));
 
-// Serve static files (frontend)
-app.use(express.static('.'));
+// Serve static files (frontend) – use __dirname so CSS/JS load correctly in Docker and locally
+const staticRoot = path.join(__dirname);
+app.use(express.static(staticRoot));
 
 // ===== ROUTES =====
 

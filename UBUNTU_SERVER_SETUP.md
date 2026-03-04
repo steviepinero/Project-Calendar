@@ -99,15 +99,19 @@ Expected: `{"status":"ok","message":"Server is running"}`.
 
 ## 5. Firewall
 
+The app listens on **port 8000** by default. Open it (and 80/443 if using Nginx):
+
 ```bash
 sudo ufw allow 22/tcp
 sudo ufw allow 80/tcp
 sudo ufw allow 443/tcp
-# If you access the app directly on 8000:
+# App port (default 8000) – use this in browser: http://YOUR_IP:8000
 sudo ufw allow 8000/tcp
 sudo ufw enable
 sudo ufw status
 ```
+
+**Connection refused?** Use **port 8000**, not 8080: `http://YOUR_SERVER_IP:8000`. If you prefer 8080, set `PORT=8080` in `.env`, add `sudo ufw allow 8080/tcp`, and run `docker compose up -d` again.
 
 ---
 
@@ -247,3 +251,11 @@ curl http://localhost:8000/api/health
 ```
 
 The app will be available at `http://YOUR_SERVER_IP:8000`. Use Nginx (section 6) for port 80/443 and HTTPS.
+
+---
+
+## Troubleshooting
+
+- **Connection refused on port 8080** – The app uses **port 8000**. Use `http://YOUR_IP:8000`. To use 8080 instead, set `PORT=8080` in `.env`, run `sudo ufw allow 8080/tcp`, then `docker compose up -d`.
+- **Connection refused on 8000** – Check: `docker compose ps` (both containers Up?), `docker compose logs app` (errors?). Ensure firewall allows 8000: `sudo ufw allow 8000/tcp && sudo ufw reload`.
+- **Still failing** – From the server run `curl http://localhost:8000/api/health`. If that works, the issue is firewall or network (security group / cloud firewall).

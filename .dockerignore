@@ -1,0 +1,34 @@
+# Dependencies and build
+node_modules
+npm-debug.log*
+.git
+.gitignore
+
+# Environment and secrets (mount or pass at runtime)
+.env
+.env.*
+!.env.example
+
+# Docs and dev
+*.md
+!README.md
+.cursor
+terminals
+
+# Tests and tooling
+test
+tests
+*.test.js
+*.spec.js
+.coverage
+.nyc_output
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db

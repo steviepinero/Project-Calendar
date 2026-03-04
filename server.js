@@ -18,6 +18,21 @@ const ApiSettingsRepository = require('./db/repositories/apiSettingsRepository')
 
 const app = express();
 
+// ===== STATIC FILES FIRST (before other middleware that might affect responses) =====
+const staticRoot = path.join(__dirname);
+app.use(express.static(staticRoot, { index: false }));
+
+// Explicit CSS so it always loads (avoids 404 or wrong MIME type)
+app.get('/styles.css', (req, res) => {
+    res.type('text/css');
+    res.sendFile(path.join(staticRoot, 'styles.css'));
+});
+
+// Serve index.html for root (static has index: false so we do this explicitly)
+app.get('/', (req, res) => {
+    res.sendFile(path.join(staticRoot, 'index.html'));
+});
+
 // ===== MIDDLEWARE =====
 
 // Security
@@ -42,10 +57,6 @@ app.use(cors({
     origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
     credentials: true
 }));
-
-// Serve static files (frontend) – use __dirname so CSS/JS load correctly in Docker and locally
-const staticRoot = path.join(__dirname);
-app.use(express.static(staticRoot));
 
 // ===== ROUTES =====
 

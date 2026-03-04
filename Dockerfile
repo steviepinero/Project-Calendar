@@ -11,6 +11,8 @@ RUN npm ci --omit=dev 2>/dev/null || npm install --omit=dev
 
 # Copy application code
 COPY . .
+# Ensure critical static assets are present (styles, index)
+COPY index.html styles.css ./
 
 # Default port
 EXPOSE 8000

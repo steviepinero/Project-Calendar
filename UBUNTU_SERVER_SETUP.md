@@ -67,8 +67,9 @@ Set at least:
 - **Security:**
   - `JWT_SECRET=` **long random string**
 
-- **CORS (your public URL):**
-  - `CORS_ORIGIN=https://calendar.yourdomain.com` or `http://YOUR_SERVER_IP:8000`
+- **CORS (origin where you open the app in the browser):**
+  - Local/LAN: `CORS_ORIGIN=http://192.168.50.75:8000`
+  - Or domain: `CORS_ORIGIN=https://calendar.yourdomain.com`
 
 Save and exit (`Ctrl+O`, `Enter`, `Ctrl+X`).
 
@@ -105,13 +106,13 @@ The app listens on **port 8000** by default. Open it (and 80/443 if using Nginx)
 sudo ufw allow 22/tcp
 sudo ufw allow 80/tcp
 sudo ufw allow 443/tcp
-# App port (default 8000) – use this in browser: http://YOUR_IP:8000
+# App port (default 8000) – e.g. http://192.168.50.75:8000
 sudo ufw allow 8000/tcp
 sudo ufw enable
 sudo ufw status
 ```
 
-**Connection refused?** Use **port 8000**, not 8080: `http://YOUR_SERVER_IP:8000`. If you prefer 8080, set `PORT=8080` in `.env`, add `sudo ufw allow 8080/tcp`, and run `docker compose up -d` again.
+**Connection refused?** Use **port 8000**, not 8080 (e.g. `http://192.168.50.75:8000`). If you prefer 8080, set `PORT=8080` in `.env`, add `sudo ufw allow 8080/tcp`, and run `docker compose up -d` again.
 
 ---
 
@@ -250,12 +251,12 @@ docker compose up -d
 curl http://localhost:8000/api/health
 ```
 
-The app will be available at `http://YOUR_SERVER_IP:8000`. Use Nginx (section 6) for port 80/443 and HTTPS.
+The app will be available at `http://192.168.50.75:8000` (or your server’s IP). Use Nginx (section 6) for port 80/443 and HTTPS.
 
 ---
 
 ## Troubleshooting
 
 - **Connection refused on port 8080** – The app uses **port 8000**. Use `http://YOUR_IP:8000`. To use 8080 instead, set `PORT=8080` in `.env`, run `sudo ufw allow 8080/tcp`, then `docker compose up -d`.
-- **Connection refused on 8000** – Check: `docker compose ps` (both containers Up?), `docker compose logs app` (errors?). Ensure firewall allows 8000: `sudo ufw allow 8000/tcp && sudo ufw reload`.
+- **Connection refused on 8000** – Check: `docker compose ps` (both containers Up?), `docker compose logs app` (errors?). Ensure firewall allows 8000: `sudo ufw allow 8000/tcp && sudo ufw reload`. Open in browser: `http://192.168.50.75:8000`.
 - **Still failing** – From the server run `curl http://localhost:8000/api/health`. If that works, the issue is firewall or network (security group / cloud firewall).

@@ -32,6 +32,9 @@ services:
       PORT: "8000"
       DB_HOST: db
       DB_PORT: "5432"
+    # Mount config.js from host so API keys (OpenAI, Gemini) are available to the frontend
+    volumes:
+      - ./config.js:/app/config.js:ro
 
 volumes:
   postgres_data:

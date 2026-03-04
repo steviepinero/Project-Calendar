@@ -214,12 +214,108 @@ docker compose up -d --build
 
 ---
 
-## Updating the app (pull and redeploy)
+## Update the Docker instance from GitHub
+
+When you push changes to **https://github.com/steviepinero/Project-Calendar** and want the server to run the latest code:
+
+**On the Ubuntu server:**
 
 ```bash
 cd /opt/msp-project-calendar
-git pull
+git pull origin main
 docker compose build --no-cache app
+docker compose up -d
+```
+
+- `git pull origin main` – fetches and merges the latest code from GitHub (use `master` if your default branch is `master`).
+- Your `.env` and the `postgres_data` volume are not touched, so settings and database data stay as-is.
+
+**One-liner (same as above):**
+
+```bash
+cd /opt/msp-project-calendar && git pull origin main && docker compose build --no-cache app && docker compose up -d
+```
+
+**If you get “Already up to date”** but want to force a rebuild (e.g. after changing dependencies):
+
+```bash
+cd /opt/msp-project-calendar
+git fetch origin
+git reset --hard origin/main
+docker compose build --no-cache app
+docker compose up -d
+```
+
+---
+
+## Clone your local environment (.env) to the Ubuntu server
+
+To use the same API keys and settings on the server as on your local machine, copy your local `.env` to the server. **Never commit `.env` to Git** (it’s in `.gitignore`).
+
+### Option A: Copy from your local machine with SCP (Windows PowerShell or any terminal)
+
+From your **local machine** (in the project folder, e.g. `c:\Users\stevi\msp-project-calendar`), run:
+
+```powershell
+scp .env USER@192.168.50.75:/opt/msp-project-calendar/.env
+```
+
+Replace `USER` with your Ubuntu username (e.g. `ubuntu`). You’ll be prompted for the server password (or use SSH keys for passwordless copy).
+
+**Windows:** `scp` is available in PowerShell on Windows 10/11. If your server path is different, change `/opt/msp-project-calendar` to match.
+
+### Option B: Copy using RSYNC (if installed locally)
+
+```bash
+rsync -avz .env USER@192.168.50.75:/opt/msp-project-calendar/.env
+```
+
+### Option C: Copy-paste manually
+
+1. On your **local machine**, open `.env` and copy its full contents.
+2. On the **server**, run:
+   ```bash
+   cd /opt/msp-project-calendar
+   nano .env
+   ```
+3. Paste the contents, then adjust for production:
+   - `NODE_ENV=production`
+   - `CORS_ORIGIN=http://192.168.50.75:8000` (or your public URL)
+   - `DB_PASSWORD` – must be a strong password; the Postgres container uses it too.
+4. Save and exit (`Ctrl+O`, `Enter`, `Ctrl+X`).
+
+### After copying .env to the server
+
+Restart the app so it picks up the new env (including API keys):
+
+```bash
+cd /opt/msp-project-calendar
+docker compose up -d
+```
+
+Docker Compose uses `env_file: .env`, so all variables (OpenAI, Twilio, DocuSign, SendGrid, etc.) are available inside the app container.
+
+### Copy config.js (frontend API keys: OpenAI, Gemini)
+
+The app loads **config.js** in the browser for API keys used by the frontend (e.g. OpenAI summarization, Gemini company intelligence). It’s gitignored; copy it from your local machine or create it from the example.
+
+**Copy from local (same folder as `.env`):**
+
+```powershell
+scp config.js USER@192.168.50.75:/opt/msp-project-calendar/config.js
+```
+
+**Or on the server**, create it from the example and add your keys:
+
+```bash
+cd /opt/msp-project-calendar
+cp config.example.js config.js
+nano config.js   # add OPENAI_API_KEY and GEMINI_API_KEY
+```
+
+Docker Compose mounts `./config.js` into the app container, so the file is served at `/config.js` and the frontend can use `window.CONFIG`. Restart after adding or changing it:
+
+```bash
 docker compose up -d
 ```
 

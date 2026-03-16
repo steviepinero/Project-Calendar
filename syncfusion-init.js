@@ -843,6 +843,18 @@ function initializeSidebarAccordion() {
         // Setup toggle button
         setupSidebarToggle();
         
+        // When collapsed, clicking an accordion header expands the sidebar
+        const sidebarEl = document.querySelector('.sidebar');
+        accordionElement.addEventListener('click', function(e) {
+            const header = e.target.closest('.e-acrdn-header');
+            if (header && sidebarEl && sidebarEl.classList.contains('sidebar-collapsed')) {
+                sidebarEl.classList.remove('sidebar-collapsed');
+                if (document.getElementById('sidebarToggleIcon')) {
+                    document.getElementById('sidebarToggleIcon').textContent = '−';
+                }
+            }
+        });
+        
     } catch (error) {
         console.error('❌ [ACCORDION] Error during initialization:', error);
         console.error('Stack trace:', error.stack);

@@ -161,7 +161,7 @@ function initializeLifecycleGrid() {
     
     lifecycleGridInstance = new ej.grids.Grid({
         dataSource: gridData,
-        allowPaging: true,
+        allowPaging: false,
         allowSorting: true,
         allowFiltering: true,
         allowSelection: true,

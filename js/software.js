@@ -196,7 +196,7 @@ function initializeSoftwareGrid() {
     
     softwareGridInstance = new ej.grids.Grid({
         dataSource: gridData,
-        allowPaging: true,
+        allowPaging: false,
         allowSorting: true,
         allowFiltering: true,
         allowSelection: true,
@@ -529,7 +529,7 @@ function initializeSoftwareGridTab(companySoftware) {
     
     softwareGridTabInstance = new ej.grids.Grid({
         dataSource: gridData,
-        allowPaging: true,
+        allowPaging: false,
         allowSorting: true,
         allowFiltering: true,
         allowSelection: true,

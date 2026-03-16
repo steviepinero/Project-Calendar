@@ -35,6 +35,33 @@ const leadsData = [
     { Company: 'Zenithco Analytics', Industry: 'Retail', City: 'Sarasota', Source: 'Cold Call', Solutions: '📧📞💬📊', Amount: '$6,400', Rep: 'Nina Novak', Status: '', LastTouch: '10/5/2025', Touches: 4, FollowUp: '10/5/2025', NextStep: '' }
 ];
 
+// Schedule data - upcoming meetings per lead (Date, Time, Type, With, Notes)
+const scheduleData = {
+    'Blue Heron Capital': [
+        { Date: '2/15/2026', Time: '10:00 AM', Type: 'Demo', With: 'Dana Belew', Notes: 'Product overview' },
+        { Date: '2/22/2026', Time: '2:00 PM', Type: 'Proposal', With: 'Dana Belew, Mike Johnson', Notes: 'Present MSP proposal' }
+    ],
+    'Aalderson Cabinet Designs': [
+        { Date: '2/12/2026', Time: '9:30 AM', Type: 'Discovery', With: 'Sarah Anderson', Notes: 'Initial discovery call' },
+        { Date: '2/18/2026', Time: '11:00 AM', Type: 'Follow-up', With: 'Sarah Anderson', Notes: 'Technical questions' }
+    ],
+    'Aerowisp Technologies': [
+        { Date: '2/20/2026', Time: '1:45 PM', Type: 'Technical', With: 'Alex Martinez', Notes: 'Cloud migration discussion' }
+    ]
+};
+
+// Proposals data - multiple per lead (Name, Summary, Created, Status, Client)
+const proposalsData = [
+    { Client: 'Blue Heron Capital', Name: 'MSP Services - Initial', Summary: 'Comprehensive managed IT services package including 24/7 monitoring, help desk, and security.', Created: '2026-01-15', Status: 'Draft' },
+    { Client: 'Blue Heron Capital', Name: 'Cloud Migration Proposal', Summary: 'Azure migration for email and file servers. 100 users, Exchange Online and SharePoint.', Created: '2026-01-20', Status: 'Sent' },
+    { Client: 'Blue Heron Capital', Name: 'Security Assessment - 2026', Summary: 'Annual security assessment and penetration testing.', Created: '2026-01-25', Status: 'Pending' },
+    { Client: 'Cobalt Creative', Name: 'Design Studio IT Package', Summary: 'Creative agency IT support with Adobe Creative Cloud management.', Created: '2026-01-10', Status: 'Accepted' },
+    { Client: 'Cobalt Creative', Name: 'Backup & DR Proposal', Summary: 'Veeam backup and disaster recovery for critical design assets.', Created: '2026-01-18', Status: 'Draft' },
+    { Client: 'EchoValley Logistics', Name: 'Warehouse Network Upgrade', Summary: 'Network infrastructure upgrade for 3 warehouse locations.', Created: '2026-01-05', Status: 'Sent' },
+    { Client: 'Harbor Light Financial', Name: 'Compliance & Security Bundle', Summary: 'SOC 2 aligned monitoring and compliance reporting.', Created: '2026-01-12', Status: 'Pending' },
+    { Client: 'Oak & Anvil', Name: 'Full MSP Engagement', Summary: 'Complete managed services including M365, endpoint, and help desk.', Created: '2026-01-22', Status: 'Draft' },
+];
+
 let leadsGridInstance = null;
 let currentLeadIndex = null;
 let touchesGridInstance = null;
@@ -240,9 +267,8 @@ function initializeLeadsGrid() {
             dataSource: leadsData,
             allowSorting: true,
             allowFiltering: true,
-            allowPaging: true,
+            allowPaging: false,
             allowResizing: true,
-            pageSettings: { pageSize: 25 },
             filterSettings: { type: 'Excel' },
             columns: getResponsiveColumns(),
             height: '100%',
@@ -337,12 +363,12 @@ function initializeLeadDetailTabs() {
     try {
         const tabItems = [
             {
-                header: { text: 'Profile' },
-                content: '<div class="tab-content-section" id="profileTabContent" style="padding: 0;"></div>'
+                header: { text: 'Overview' },
+                content: '<div class="tab-content-section" id="overviewTabContent" style="padding: 0;"></div>'
             },
             {
                 header: { text: "Touch's" },
-                content: '<div class="tab-content-section" id="touchesTabContent"><div id="touchesGrid" style="width: 100%; min-height: 400px;"></div></div>'
+                content: '<div class="tab-content-section" id="touchesTabContent" style="padding: 20px;"><div class="touches-action-bar" style="display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap;"><button type="button" class="e-btn e-outline touches-action-btn" data-action="note" title="Add note"><span style="font-size: 18px; margin-right: 6px;">📝</span>Add Note</button><button type="button" class="e-btn e-outline touches-action-btn" data-action="email" title="Send email"><span style="font-size: 18px; margin-right: 6px;">✉️</span>Send Email</button><button type="button" class="e-btn e-outline touches-action-btn" data-action="call" title="Make phone call"><span style="font-size: 18px; margin-right: 6px;">📞</span>Make Call</button></div><div id="touchesGrid" style="width: 100%; min-height: 360px;"></div></div>'
             },
             {
                 header: { text: 'Site Overview' },
@@ -374,12 +400,12 @@ function initializeLeadDetailTabs() {
             items: tabItems,
             heightAdjustMode: 'Auto',
             created: function() {
-                // Initialize the first tab (Profile) when tabs are created
+                // Initialize the first tab (Overview) when tabs are created
                 // But only if we're not deep linking (which will handle initialization itself)
                 if (!isDeepLinking) {
-                    console.log('🎨 Tabs created, initializing Profile tab');
+                    console.log('🎨 Tabs created, initializing Overview tab');
                     setTimeout(() => {
-                        initializeProfileTab();
+                        initializeOverviewTab();
                     }, 100);
                 } else {
                     console.log('🎨 Tabs created during deep linking, skipping auto-init');
@@ -394,9 +420,9 @@ function initializeLeadDetailTabs() {
                     return;
                 }
                 
-                // When Profile tab is selected, initialize the profile
+                // When Overview tab is selected, initialize the overview
                 if (args.selectedIndex === 0) {
-                    initializeProfileTab();
+                    initializeOverviewTab();
                 }
                 // When Touch's tab is selected, initialize the grid
                 if (args.selectedIndex === 1) {
@@ -442,12 +468,12 @@ function initializeLeadDetailTabs() {
 }
 
 /**
- * Initialize the Profile Tab - Matching Mockup Layout
+ * Initialize the Overview Tab - Client info, Contacts (with LinkedIn/Facebook), Schedule, Tasks, etc.
  */
-function initializeProfileTab() {
-    const profileContainer = document.getElementById('profileTabContent');
-    if (!profileContainer) {
-        console.warn('⚠️ profileTabContent container not found');
+function initializeOverviewTab() {
+    const overviewContainer = document.getElementById('overviewTabContent');
+    if (!overviewContainer) {
+        console.warn('⚠️ overviewTabContent container not found');
         return;
     }
     
@@ -480,7 +506,7 @@ function initializeProfileTab() {
                     </div>
                 </div>
 
-                <!-- Contact's Section -->
+                <!-- Contact's Section (with LinkedIn, Facebook) -->
                 <div style="margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px solid #e0e0e0;">
                     <h3 style="margin: 0 0 12px 0; font-size: 16px; font-weight: 600; color: #333;">Contact's</h3>
                     <table style="width: 100%; font-size: 12px; border-collapse: collapse;">
@@ -491,6 +517,8 @@ function initializeProfileTab() {
                                 <th style="padding: 8px 5px; text-align: left; font-weight: 600; border-bottom: 1px solid #ddd;">Email</th>
                                 <th style="padding: 8px 5px; text-align: left; font-weight: 600; border-bottom: 1px solid #ddd;">Office</th>
                                 <th style="padding: 8px 5px; text-align: left; font-weight: 600; border-bottom: 1px solid #ddd;">Cell</th>
+                                <th style="padding: 8px 5px; text-align: left; font-weight: 600; border-bottom: 1px solid #ddd;">LinkedIn</th>
+                                <th style="padding: 8px 5px; text-align: left; font-weight: 600; border-bottom: 1px solid #ddd;">Facebook</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -500,6 +528,8 @@ function initializeProfileTab() {
                                 <td style="padding: 10px 5px; color: #0066cc;">Jessica.Smithfield@BlueHeronCapital.co</td>
                                 <td style="padding: 10px 5px; color: #0066cc;">(813) 908-541</td>
                                 <td style="padding: 10px 5px; color: #0066cc;">(813) 431-511</td>
+                                <td style="padding: 10px 5px;"><a href="#" style="color: #0066cc;">linkedin.com/in/jsmithfield</a></td>
+                                <td style="padding: 10px 5px;"><a href="#" style="color: #0066cc;">facebook.com/jsmithfield</a></td>
                             </tr>
                             <tr style="background: #e8f4ff;">
                                 <td style="padding: 10px 5px; color: #0066cc; font-weight: 600;">Mark Ryburn</td>
@@ -507,6 +537,8 @@ function initializeProfileTab() {
                                 <td style="padding: 10px 5px; color: #0066cc;">Mark.Ryburn@BlueHeronCapital.com</td>
                                 <td style="padding: 10px 5px; color: #0066cc;">(813) 908-628</td>
                                 <td style="padding: 10px 5px; color: #0066cc;">(813) 431-414</td>
+                                <td style="padding: 10px 5px;"><a href="#" style="color: #0066cc;">linkedin.com/in/mryburn</a></td>
+                                <td style="padding: 10px 5px;"><a href="#" style="color: #0066cc;">—</a></td>
                             </tr>
                         </tbody>
                     </table>
@@ -552,98 +584,106 @@ function initializeProfileTab() {
                 <!-- Top Tabs -->
                 <div style="display: flex; gap: 2px; margin-bottom: 20px; border-bottom: 2px solid #e0e0e0;">
                     <button class="profile-right-tab active" data-righttab="schedule" style="padding: 12px 24px; background: white; border: none; border-bottom: 3px solid #0066cc; color: #0066cc; font-weight: 600; cursor: pointer; font-size: 14px;">Schedule</button>
-                    <button class="profile-right-tab" data-righttab="tasks" style="padding: 12px 24px; background: white; border: none; border-bottom: 3px solid transparent; color: #666; font-weight: 600; cursor: pointer; font-size: 14px;">Tasks</button>
+                    <button class="profile-right-tab" data-righttab="tasks" style="padding: 12px 24px; background: white; border: none; border-bottom: 3px solid transparent; color: #666; font-weight: 600; cursor: pointer; font-size: 14px;">Todo's</button>
                     <button class="profile-right-tab" data-righttab="summary" style="padding: 12px 24px; background: white; border: none; border-bottom: 3px solid transparent; color: #666; font-weight: 600; cursor: pointer; font-size: 14px;">Client AI Summary</button>
                     <button class="profile-right-tab" data-righttab="report" style="padding: 12px 24px; background: white; border: none; border-bottom: 3px solid transparent; color: #666; font-weight: 600; cursor: pointer; font-size: 14px;">Dark Web Report</button>
                 </div>
 
-                <!-- Schedule Tab Content -->
+                <!-- Schedule Tab Content - Redesigned -->
                 <div id="profile-righttab-schedule" class="profile-righttab-content" style="flex: 1; overflow-y: auto;">
-                    <!-- Gather Data On Client To Review -->
-                    <div style="margin-bottom: 20px; border: 1px solid #ddd; border-radius: 6px;">
-                        <div style="padding: 12px 15px; background: #f8f8f8; border-bottom: 1px solid #ddd; display: flex; align-items: center; gap: 8px; cursor: pointer;" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'">
-                            <span style="font-weight: 600; font-size: 14px;">▶ Gather Data On Client To Review</span>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; gap: 10px; flex-wrap: wrap;">
+                        <div>
+                            <h3 style="margin: 0; color: #2c3e50;">Schedule</h3>
+                            <div style="font-size: 12px; color: #6c757d; margin-top: 4px;">Meetings and lead workflow</div>
                         </div>
-                        <div style="padding: 15px; display: block;">
-                            <div style="font-size: 13px; line-height: 2; color: #666;">
-                                <div style="padding: 5px 0; border-bottom: 1px dotted #ddd;">Web Site</div>
-                                <div style="padding: 5px 0; border-bottom: 1px dotted #ddd;">LinkedIn</div>
-                                <div style="padding: 5px 0; border-bottom: 1px dotted #ddd;">References</div>
-                                <div style="padding: 5px 0; display: flex; justify-content: space-between;">
-                                    <span>Other</span>
-                                    <span style="color: #999;">???...</span>
-                                </div>
-                            </div>
+                        <button id="profileAddMeetingBtn" class="e-btn e-primary e-small">+ Add Meeting</button>
+                    </div>
+
+                    <!-- Upcoming Meetings -->
+                    <div style="margin-bottom: 20px;">
+                        <div style="font-size: 13px; font-weight: 600; color: #2c3e50; margin-bottom: 10px;">Upcoming Meetings</div>
+                        <div style="border: 1px solid #e4e4e4; border-radius: 8px; overflow: hidden;">
+                            <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+                                <thead>
+                                    <tr style="background: #f6f8fa;">
+                                        <th style="padding: 10px 8px; text-align: left; border-bottom: 1px solid #e4e4e4;">Date</th>
+                                        <th style="padding: 10px 8px; text-align: left; border-bottom: 1px solid #e4e4e4;">Time</th>
+                                        <th style="padding: 10px 8px; text-align: left; border-bottom: 1px solid #e4e4e4;">Type</th>
+                                        <th style="padding: 10px 8px; text-align: left; border-bottom: 1px solid #e4e4e4;">With</th>
+                                        <th style="padding: 10px 8px; text-align: left; border-bottom: 1px solid #e4e4e4;">Notes</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="profileScheduleMeetingsBody">
+                                    <!-- Populated by setupScheduleTab() -->
+                                </tbody>
+                            </table>
+                            <div id="profileScheduleEmpty" style="display: none; padding: 24px; text-align: center; color: #6c757d; font-size: 13px;">No upcoming meetings. Click "Add Meeting" to schedule.</div>
                         </div>
                     </div>
 
-                    <!-- Set "Initial Meeting" -->
-                    <div style="margin-bottom: 20px; border: 1px solid #ddd; border-radius: 6px;">
-                        <div style="padding: 12px 15px; background: #f8f8f8; border-bottom: 1px solid #ddd; display: flex; align-items: center; gap: 8px; cursor: pointer;" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'">
-                            <span style="font-weight: 600; font-size: 14px;">▶ Set "Initial Meeting"</span>
-                        </div>
-                        <div style="padding: 15px; display: block;">
-                            <div style="font-size: 13px; line-height: 2; color: #666;">
-                                <div style="padding: 5px 0; display: flex; justify-content: space-between; border-bottom: 1px dotted #ddd;">
-                                    <span>Identify Team</span>
-                                    <span style="color: #999; font-style: italic;">determine the Rep, Backoffice, vCIO</span>
+                    <!-- Lead Workflow Phases -->
+                    <div style="margin-bottom: 10px;">
+                        <div style="font-size: 13px; font-weight: 600; color: #2c3e50; margin-bottom: 10px;">Lead Workflow</div>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <div class="schedule-phase-card" data-phase="gather">
+                                <div class="schedule-phase-header">
+                                    <span class="schedule-phase-num">1</span>
+                                    <span class="schedule-phase-title">Gather Data On Client To Review</span>
+                                    <span class="schedule-phase-toggle">▼</span>
                                 </div>
-                                <div style="padding: 5px 0; display: flex; justify-content: space-between; border-bottom: 1px dotted #ddd;">
-                                    <span>Review "Data" with team</span>
-                                </div>
-                                <div style="padding: 5px 0; display: flex; justify-content: space-between; border-bottom: 1px dotted #ddd;">
-                                    <span>Identify Client's Needs</span>
-                                    <span style="color: #999; font-style: italic;">identify if needs are: Regulatory, MSP Responsivenes...</span>
+                                <div class="schedule-phase-body" style="display: none;">
+                                    <div class="schedule-phase-item">Web Site</div>
+                                    <div class="schedule-phase-item">LinkedIn</div>
+                                    <div class="schedule-phase-item">References</div>
+                                    <div class="schedule-phase-item">Other sources</div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- Present "Initial Meeting" -->
-                    <div style="margin-bottom: 20px; border: 1px solid #ddd; border-radius: 6px;">
-                        <div style="padding: 12px 15px; background: #f8f8f8; border-bottom: 1px solid #ddd; display: flex; align-items: center; gap: 8px; cursor: pointer;" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'">
-                            <span style="font-weight: 600; font-size: 14px;">▶ Present "Initial Meeting"</span>
-                        </div>
-                        <div style="padding: 15px; display: block;">
-                            <div style="font-size: 13px; line-height: 2; color: #666;">
-                                <div style="padding: 5px 0; display: flex; justify-content: space-between; border-bottom: 1px dotted #ddd;">
-                                    <span>Present MSP Presentation</span>
-                                    <span style="color: #999; font-style: italic;">Presentation on Why MSP & Why</span>
+                            <div class="schedule-phase-card" data-phase="set">
+                                <div class="schedule-phase-header">
+                                    <span class="schedule-phase-num">2</span>
+                                    <span class="schedule-phase-title">Set Initial Meeting</span>
+                                    <span class="schedule-phase-toggle">▼</span>
                                 </div>
-                                <div style="padding: 5px 0; display: flex; justify-content: space-between; border-bottom: 1px dotted #ddd;">
-                                    <span>Install Data Collect Agent On Endpoints</span>
-                                    <span style="color: #999; font-style: italic;">determine if Web Based or Local Agent</span>
-                                </div>
-                                <div style="padding: 5px 0; border-bottom: 1px dotted #ddd;">
-                                    <span>Set "Present Propsal" Meeting</span>
+                                <div class="schedule-phase-body" style="display: none;">
+                                    <div class="schedule-phase-item">Identify team (Rep, Backoffice, vCIO)</div>
+                                    <div class="schedule-phase-item">Review data with team</div>
+                                    <div class="schedule-phase-item">Identify client needs (Regulatory, MSP responsiveness, etc.)</div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- Review "Initial Meeting" -->
-                    <div style="margin-bottom: 20px; border: 1px solid #ddd; border-radius: 6px;">
-                        <div style="padding: 12px 15px; background: #f8f8f8; border-bottom: 1px solid #ddd; display: flex; align-items: center; gap: 8px; cursor: pointer;" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'">
-                            <span style="font-weight: 600; font-size: 14px;">▶ Review "Initial Meeting"</span>
-                        </div>
-                        <div style="padding: 15px; display: block;">
-                            <div style="font-size: 13px; line-height: 2; color: #666;">
-                                <div style="padding: 5px 0; display: flex; justify-content: space-between; border-bottom: 1px dotted #ddd;">
-                                    <span>Presentation</span>
-                                    <span style="color: #999; font-style: italic;">Presentation on Why MSP & Why</span>
+                            <div class="schedule-phase-card" data-phase="present">
+                                <div class="schedule-phase-header">
+                                    <span class="schedule-phase-num">3</span>
+                                    <span class="schedule-phase-title">Present Initial Meeting</span>
+                                    <span class="schedule-phase-toggle">▼</span>
                                 </div>
-                                <div style="padding: 5px 0; border-bottom: 1px dotted #ddd;">
-                                    <span>Collect Endpoint Data</span>
+                                <div class="schedule-phase-body" style="display: none;">
+                                    <div class="schedule-phase-item">Present MSP presentation (Why MSP & Why)</div>
+                                    <div class="schedule-phase-item">Install data collect agent on endpoints</div>
+                                    <div class="schedule-phase-item">Set "Present Proposal" meeting</div>
+                                </div>
+                            </div>
+                            <div class="schedule-phase-card" data-phase="review">
+                                <div class="schedule-phase-header">
+                                    <span class="schedule-phase-num">4</span>
+                                    <span class="schedule-phase-title">Review Initial Meeting</span>
+                                    <span class="schedule-phase-toggle">▼</span>
+                                </div>
+                                <div class="schedule-phase-body" style="display: none;">
+                                    <div class="schedule-phase-item">Review presentation feedback</div>
+                                    <div class="schedule-phase-item">Collect endpoint data</div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Tasks Tab Content (Hidden by default) -->
+                <!-- Todo's Tab Content (limited to todo/action items) -->
                 <div id="profile-righttab-tasks" class="profile-righttab-content" style="flex: 1; overflow-y: auto; display: none;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; gap: 10px; flex-wrap: wrap;">
-                        <h3 style="margin: 0; color: #2c3e50;">Tasks for ${currentCompany.Company}</h3>
+                        <div>
+                            <h3 style="margin: 0; color: #2c3e50;">Todo's for ${currentCompany.Company}</h3>
+                            <div style="font-size: 12px; color: #6c757d; margin-top: 4px;">Action items and to-dos</div>
+                        </div>
                         <div style="display: flex; gap: 8px; align-items: center;">
                             <select id="profileTaskFilter" style="padding: 7px 10px; border: 1px solid #dcdcdc; border-radius: 6px; font-size: 12px;">
                                 <option value="all">All Statuses</option>
@@ -652,7 +692,7 @@ function initializeProfileTab() {
                                 <option value="blocked">Blocked</option>
                                 <option value="done">Done</option>
                             </select>
-                            <button id="addProfileTaskBtn" class="e-btn e-primary e-small">+ Add Task</button>
+                            <button id="addProfileTaskBtn" class="e-btn e-primary e-small">+ Add Todo</button>
                         </div>
                     </div>
 
@@ -789,10 +829,11 @@ function initializeProfileTab() {
         </div>
     `;
     
-    profileContainer.innerHTML = profileHTML;
+    overviewContainer.innerHTML = profileHTML;
     
     // Set up right-side tab navigation and tasks interactions
     setupProfileRightTabs(currentCompany);
+    setupScheduleTab(currentCompany);
     setupProfileTasksTab();
     setupClientAISummaryTab(currentCompany);
     setupDarkWebReportTab(currentCompany);
@@ -831,6 +872,57 @@ function setupProfileRightTabs(currentCompany) {
                 }
             }
         });
+    });
+}
+
+/**
+ * Setup Schedule Tab - meetings table + workflow phase cards
+ */
+function setupScheduleTab(currentCompany) {
+    const tbody = document.getElementById('profileScheduleMeetingsBody');
+    const empty = document.getElementById('profileScheduleEmpty');
+    const addBtn = document.getElementById('profileAddMeetingBtn');
+
+    // Populate meetings
+    const meetings = scheduleData[currentCompany?.Company] || [];
+    if (tbody) {
+        tbody.innerHTML = '';
+        if (meetings.length > 0) {
+            if (empty) empty.style.display = 'none';
+            meetings.forEach(m => {
+                const tr = document.createElement('tr');
+                tr.style.borderBottom = '1px solid #f0f0f0';
+                tr.innerHTML = `<td style="padding: 10px 8px;">${m.Date}</td>
+                    <td style="padding: 10px 8px;">${m.Time}</td>
+                    <td style="padding: 10px 8px;"><span style="background:#eef6ff;color:#1b4f9c;padding:2px 8px;border-radius:10px;font-size:11px;">${m.Type}</span></td>
+                    <td style="padding: 10px 8px;">${m.With}</td>
+                    <td style="padding: 10px 8px; color:#666;">${m.Notes || '—'}</td>`;
+                tbody.appendChild(tr);
+            });
+        } else {
+            if (empty) empty.style.display = 'block';
+        }
+    }
+
+    if (addBtn) {
+        addBtn.onclick = function() {
+            alert('Add Meeting\n\nThis would open a dialog to schedule a meeting:\n• Date & time\n• Type (Demo, Discovery, Proposal, Follow-up)\n• Attendees\n• Notes');
+        };
+    }
+
+    // Phase card expand/collapse
+    document.querySelectorAll('.schedule-phase-card').forEach(card => {
+        const header = card.querySelector('.schedule-phase-header');
+        const body = card.querySelector('.schedule-phase-body');
+        const toggle = card.querySelector('.schedule-phase-toggle');
+        if (header && body) {
+            header.style.cursor = 'pointer';
+            header.addEventListener('click', function() {
+                const show = body.style.display === 'none';
+                body.style.display = show ? 'block' : 'none';
+                if (toggle) toggle.textContent = show ? '▲' : '▼';
+            });
+        }
     });
 }
 
@@ -1578,10 +1670,37 @@ function initializeTouchesGrid() {
         
         touchesGridInstance.appendTo('#touchesGrid');
         
+        // Wire up Touches action buttons
+        setupTouchesActionButtons(currentCompany);
+        
         console.log('✅ Touches Grid initialized with', touches.length, 'touches for', currentCompany.Company);
     } catch (error) {
         console.error('❌ Error initializing Touches Grid:', error);
     }
+}
+
+/**
+ * Setup Touches action buttons: Add Note, Send Email, Make Call
+ */
+function setupTouchesActionButtons(currentCompany) {
+    document.querySelectorAll('.touches-action-btn').forEach(btn => {
+        btn.replaceWith(btn.cloneNode(true)); // Remove old listeners
+    });
+    document.querySelectorAll('.touches-action-btn').forEach(btn => {
+        const action = btn.getAttribute('data-action');
+        btn.addEventListener('click', () => {
+            if (action === 'note') {
+                const note = prompt('Add a note for ' + (currentCompany?.Company || 'this contact') + ':', '');
+                if (note) alert('💾 Note saved!\n\n' + note + '\n\n(In production, this would save to the touch history.)');
+            } else if (action === 'email') {
+                const contact = currentCompany?.Company || '';
+                window.location.href = 'mailto:?subject=Re: ' + encodeURIComponent(contact) + '&body=' + encodeURIComponent('');
+                alert('✉️ Opening your email client.\n\nIn production, this would pre-fill contact email and open compose.');
+            } else if (action === 'call') {
+                alert('📞 Make a call to ' + (currentCompany?.Company || 'contact') + '\n\nIn production, this would integrate with VoIP to dial the contact.');
+            }
+        });
+    });
 }
 
 /**
@@ -1613,11 +1732,40 @@ function setupLeadsEventListeners() {
     });
 }
 
+let leadProposalsGridInstance = null;
+
 /**
- * Initialize the Proposals Tab
+ * Initialize the proposals grid for the current lead (Name, Summary, Created, Status)
  */
+function initializeLeadProposalsGrid(leadProposals) {
+    const gridEl = document.getElementById('leadProposalsGrid');
+    if (!gridEl || typeof ej === 'undefined') return;
+    
+    if (leadProposalsGridInstance) {
+        leadProposalsGridInstance.destroy();
+        leadProposalsGridInstance = null;
+    }
+    
+    const data = leadProposals.length > 0 ? leadProposals : [];
+    
+    leadProposalsGridInstance = new ej.grids.Grid({
+        dataSource: data,
+        allowSorting: true,
+        allowFiltering: true,
+        allowPaging: false,
+        columns: [
+            { field: 'Name', headerText: 'Name', width: 180 },
+            { field: 'Summary', headerText: 'Summary', width: 300 },
+            { field: 'Created', headerText: 'Created', width: 110 },
+            { field: 'Status', headerText: 'Status', width: 90 }
+        ],
+        height: '100%'
+    });
+    leadProposalsGridInstance.appendTo('#leadProposalsGrid');
+}
+
 /**
- * Initialize the Proposals Tab - Business Proposal Generator
+ * Initialize the Proposals Tab - Proposals grid + Business Proposal Generator
  */
 function initializeProposalsTab() {
     const proposalsContainer = document.getElementById('proposalsTabContent');
@@ -1631,9 +1779,18 @@ function initializeProposalsTab() {
     
     const currentCompany = leadsData[currentLeadIndex];
     
-    // Build the comprehensive proposal generator HTML
+    // Filter proposals for current lead
+    const leadProposals = proposalsData.filter(p => p.Client === currentCompany.Company);
+    
+    // Build the proposals tab: grid of proposals (Name, Summary, Created, Status) + generator
     const proposalsHTML = `
         <div style="padding: 20px;">
+            <!-- Proposals Grid for this Lead -->
+            <div style="margin-bottom: 30px;">
+                <h3 style="color: #2c3e50; margin: 0 0 15px 0;">Proposals for ${currentCompany.Company}</h3>
+                <div id="leadProposalsGrid" style="width: 100%; min-height: 180px; max-height: 300px;"></div>
+            </div>
+            <hr style="margin: 25px 0; border: none; border-top: 1px solid #e0e0e0;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
                 <h2 style="color: #2c3e50; margin: 0;">📄 Business Proposal Generator</h2>
                 <div style="display: flex; gap: 10px;">
@@ -1881,6 +2038,9 @@ Phase 3 (Week 5-6): Go-Live & Training
     `;
     
     proposalsContainer.innerHTML = proposalsHTML;
+    
+    // Initialize proposals grid (Name, Summary, Created, Status)
+    initializeLeadProposalsGrid(leadProposals);
     
     // Set up event listeners (PDF and Save buttons use onclick, so they're handled separately)
     setupProposalEventListeners(currentCompany);
@@ -2556,8 +2716,8 @@ function refreshCurrentTabContent() {
     
     // Refresh based on which tab is currently active
     if (selectedIndex === 0) {
-        // Profile tab - reinitialize with new company data
-        initializeProfileTab();
+        // Overview tab - reinitialize with new company data
+        initializeOverviewTab();
     } else if (selectedIndex === 1) {
         // Touch's tab - reinitialize the grid with new company data
         initializeTouchesGrid();
@@ -2603,7 +2763,7 @@ function openLeadWithTab(companyName, leadIndex, tabIndex) {
             setTimeout(() => {
                 console.log('🎯 Manually initializing tab:', tabIndex);
                 if (tabIndex === 0) {
-                    initializeProfileTab();
+                    initializeOverviewTab();
                 } else if (tabIndex === 1) {
                     initializeTouchesGrid();
                 } else if (tabIndex === 2) {
@@ -2636,7 +2796,8 @@ function openLeadWithTab(companyName, leadIndex, tabIndex) {
 // Export functions and data
 if (typeof window !== 'undefined') {
     window.initializeLeadsPage = initializeLeadsPage;
-    window.leadsData = leadsData; // Export leadsData for use by other modules
+    window.leadsData = leadsData;
+    window.proposalsData = proposalsData; // Export for Proposals page
     window.showLeadDetail = showLeadDetail; // Export for deep linking to proposals
     window.openLeadWithTab = openLeadWithTab; // Export for deep linking with specific tab
     window.leadDetailTabsInstance = null; // Will be set when tabs are initialized

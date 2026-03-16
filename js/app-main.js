@@ -241,6 +241,12 @@ function switchPage(pageName, targetTab) {
         console.error('❌ switchPage called with no pageName');
         return;
     }
+    // Redirect legacy pages into Configuration tabs
+    const configTabMap = { 'email-campaigns': 'email', 'e-signature': 'signature', 'voip-calling': 'voip' };
+    if (configTabMap[pageName]) {
+        pageName = 'configuration';
+        targetTab = configTabMap[pageName];
+    }
     
     console.log('📄 Switching to page:', pageName, targetTab ? `with tab: ${targetTab}` : '');
     
@@ -289,8 +295,8 @@ function switchPage(pageName, targetTab) {
                         }
                     }
                 }, isLeadsInitialized ? 100 : 500);
-            } else if (targetTab === 'profile') {
-                console.log('👤 Switching to Profile tab');
+            } else if (targetTab === 'overview') {
+                console.log('📋 Switching to Overview tab');
                 setTimeout(() => {
                     if (window.leadsData && window.leadsData.length > 0) {
                         if (isLeadsInitialized && window.leadDetailTabsInstance) {
@@ -299,9 +305,9 @@ function switchPage(pageName, targetTab) {
                             window.leadDetailTabsInstance.select(0);
                         } else if (window.openLeadWithTab) {
                             // Leads not open yet, use deep linking
-                            console.log('🔗 Opening leads with Profile tab');
+                            console.log('🔗 Opening leads with Overview tab');
                             const firstCompany = window.leadsData[0].Company;
-                            window.openLeadWithTab(firstCompany, 0, 0); // Profile is tab index 0
+                            window.openLeadWithTab(firstCompany, 0, 0); // Overview is tab index 0
                         }
                     }
                 }, isLeadsInitialized ? 100 : 500);
@@ -463,6 +469,22 @@ function switchPage(pageName, targetTab) {
         if (pageName === 'dashboards' && window.initDashboardPage) {
             console.log('📊 Initializing dashboard page');
             window.initDashboardPage();
+        }
+
+        if (pageName === 'proposals' && window.initProposalsPage) {
+            console.log('📄 Initializing proposals page');
+            window.initProposalsPage();
+        }
+
+        if (pageName === 'configuration' && window.initConfigurationPage) {
+            console.log('⚙️ Initializing configuration page');
+            window.initConfigurationPage();
+            if (targetTab) {
+                setTimeout(() => {
+                    const btn = document.querySelector('.config-tab-btn[data-config-tab="' + targetTab + '"]');
+                    if (btn) btn.click();
+                }, 150);
+            }
         }
     }, 100);
 }

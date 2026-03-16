@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdn.syncfusion.com/ej2/24.2.9/material.css">
     <link rel="stylesheet" href="https://cdn.syncfusion.com/ej2/24.2.9/material.css" id="theme">
     
-    <link rel="stylesheet" href="/styles.css?v=20260208-2001">
+    <link rel="stylesheet" href="styles.css?v=20260208-2001">
 </head>
 <body>
     <div class="ej2-container">
@@ -40,7 +40,7 @@
                     <div id="sidebarAccordion" class="e-accordion">
                         <!-- ONBOARDING Section -->
                         <div class="e-acrdn-item">
-                            <div class="e-acrdn-header">
+                            <div class="e-acrdn-header" title="Onboarding">
                                 <span class="accordion-icon">📋</span> ONBOARDING
                             </div>
                             <div class="e-acrdn-panel">
@@ -49,11 +49,10 @@
                                         <li><a href="#" class="sidebar-link" data-page="leads">Leads</a></li>
                                         <li><a href="#" class="sidebar-link" data-page="scheduling">Scheduling</a></li>
                                         <li><a href="#" class="sidebar-link" data-page="company-research">Company Research</a></li>
-                                        <li><a href="#" class="sidebar-link" data-page="email-campaigns">Email Campaigns</a></li>
-                                        <li><a href="#" class="sidebar-link" data-page="e-signature">E-Signature</a></li>
-                                        <li><a href="#" class="sidebar-link" data-page="voip-calling">VoIP Calling</a></li>
-                                        <li><a href="#" class="sidebar-link" data-page="leads" data-tab="profile">Client Profile</a></li>
+                                        <li><a href="#" class="sidebar-link" data-page="configuration">Configuration</a></li>
+                                        <li><a href="#" class="sidebar-link" data-page="leads" data-tab="overview">Overview</a></li>
                                         <li><a href="#" class="sidebar-link" data-page="leads" data-tab="network">Network Analysis</a></li>
+                                        <li><a href="#" class="sidebar-link" data-page="proposals">Proposals</a></li>
                                         <li><a href="#" class="sidebar-link" data-page="leads" data-tab="proposals">Proposal Generator</a></li>
                                     </ul>
                                 </div>
@@ -62,7 +61,7 @@
 
                         <!-- CONFIGURATION Section -->
                         <div class="e-acrdn-item">
-                            <div class="e-acrdn-header">
+                            <div class="e-acrdn-header" title="Configuration">
                                 <span class="accordion-icon">⚙️</span> CONFIGURATION
                             </div>
                             <div class="e-acrdn-panel">
@@ -77,7 +76,7 @@
 
                         <!-- OPERATIONS Section -->
                         <div class="e-acrdn-item">
-                            <div class="e-acrdn-header">
+                            <div class="e-acrdn-header" title="Operations">
                                 <span class="accordion-icon">⚡</span> OPERATIONS
                             </div>
                             <div class="e-acrdn-panel">
@@ -92,7 +91,7 @@
 
                         <!-- ANALYSIS Section -->
                         <div class="e-acrdn-item">
-                            <div class="e-acrdn-header">
+                            <div class="e-acrdn-header" title="Analysis">
                                 <span class="accordion-icon">📊</span> ANALYSIS
                             </div>
                             <div class="e-acrdn-panel">
@@ -108,7 +107,7 @@
 
                         <!-- BEST PRACTICES Section -->
                         <div class="e-acrdn-item">
-                            <div class="e-acrdn-header">
+                            <div class="e-acrdn-header" title="Best Practices">
                                 <span class="accordion-icon">⭐</span> BEST PRACTICES
                             </div>
                             <div class="e-acrdn-panel">
@@ -1802,7 +1801,26 @@
                     </div>
                 </div>
 
-                <!-- Page: E-Signature -->
+                <!-- Page: Configuration (tabs: Email Campaign, E-Signature, VoIP, Proposals) -->
+                <div id="page-configuration" class="page-content">
+                    <div style="padding: 20px;">
+                        <h2 style="color: #2c3e50; margin: 0 0 20px 0;">⚙️ Configuration</h2>
+                        <div style="display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 2px solid #ecf0f1;">
+                            <button class="config-tab-btn active" data-config-tab="email" style="padding: 12px 20px; background: none; border: none; color: #2c3e50; font-weight: 600; cursor: pointer; border-bottom: 3px solid #3498db; margin-bottom: -2px;">📧 Email Campaign</button>
+                            <button class="config-tab-btn" data-config-tab="signature" style="padding: 12px 20px; background: none; border: none; color: #555; font-weight: 600; cursor: pointer; border-bottom: 3px solid transparent;">✍️ E-Signature</button>
+                            <button class="config-tab-btn" data-config-tab="voip" style="padding: 12px 20px; background: none; border: none; color: #555; font-weight: 600; cursor: pointer; border-bottom: 3px solid transparent;">☎️ VoIP</button>
+                            <button class="config-tab-btn" data-config-tab="proposals" style="padding: 12px 20px; background: none; border: none; color: #555; font-weight: 600; cursor: pointer; border-bottom: 3px solid transparent;">📄 Proposals</button>
+                        </div>
+                        <div id="config-tab-panels">
+                            <div id="config-panel-email" class="config-panel"></div>
+                            <div id="config-panel-signature" class="config-panel" style="display:none;"></div>
+                            <div id="config-panel-voip" class="config-panel" style="display:none;"></div>
+                            <div id="config-panel-proposals" class="config-panel" style="display:none;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Page: E-Signature (content moved into Configuration tab) -->
                 <div id="page-e-signature" class="page-content">
                     <div style="padding: 20px; max-width: 1400px; margin: 0 auto;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
@@ -2874,15 +2892,14 @@
                     </div>
                 </div>
 
-                <!-- Page: Proposals (Placeholder) -->
+                <!-- Page: Proposals (All proposals grid) -->
                 <div id="page-proposals" class="page-content">
-                    <div class="e-card">
-                        <div class="e-card-header">
-                            <div class="e-card-header-title">Proposals</div>
+                    <div class="proposals-page">
+                        <div class="proposals-header">
+                            <h2>📄 Proposals</h2>
+                            <p style="margin: 8px 0 0 0; font-size: 14px; color: #666;">All proposals across leads and clients</p>
                         </div>
-                        <div class="e-card-content">
-                            <p>Proposals page content coming soon...</p>
-                        </div>
+                        <div id="allProposalsGrid" style="width: 100%; height: calc(100vh - 180px); min-height: 400px;"></div>
                     </div>
                 </div>
 
@@ -3363,11 +3380,13 @@
     <script src="js/endpoint.js?v=20260207-0100"></script></script>
     <script src="js/lifecycle-page.js?v=20260123-1500"></script>
     <script src="js/company-research.js?v=20260208-1503"></script>
+    <script src="js/configuration.js?v=20260208-0100"></script>
     <script src="js/email-campaigns.js?v=20260123-1500"></script>
     <script src="js/e-signature.js?v=20260123-1500"></script>
     <script src="js/voip.js?v=20260123-1500"></script>
     <script src="js/grid-utils.js?v=20260208-0100"></script>
     <script src="js/leads.js?v=20260208-1404"></script>
+    <script src="js/proposals.js?v=20260208-0100"></script>
     <script src="js/billing.js?v=20260125-0200"></script>
     <script src="js/software.js?v=20260208-0203"></script>
     <script src="js/reports.js?v=20260208-0100"></script>

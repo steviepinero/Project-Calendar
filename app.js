@@ -2782,8 +2782,7 @@ function renderHardwareTable() {
             
             const grid = new window.ej.grids.Grid({
                 dataSource: gridData,
-                allowPaging: true,
-                pageSettings: { pageSize: 10 },
+                allowPaging: false,
                 allowSorting: true,
                 allowExcelExport: true,
                 columns: [
@@ -3000,8 +2999,7 @@ function initializeHardwareGrid() {
 
             const grid = new window.ej.grids.Grid({
                 dataSource: gridData,
-                allowPaging: true,
-                pageSettings: { pageSize: 10 },
+                allowPaging: false,
                 allowSorting: true,
                 columns: [
                     { field: 'Type', headerText: 'Type', width: '100', textAlign: 'Left' },

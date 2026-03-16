@@ -1626,6 +1626,15 @@ header h1 {
     color: #2c3e50;
 }
 
+.config-tab-btn.active {
+    color: #2c3e50 !important;
+    border-bottom: 3px solid #3498db !important;
+}
+.config-tab-btn:not(.active) {
+    color: #555;
+    border-bottom: 3px solid transparent;
+}
+
 .config-table {
     width: 100%;
     border-collapse: collapse;
@@ -2475,21 +2484,22 @@ body > #campaignModal {
     font-size: 13px !important;
 }
 
-/* Collapsed Sidebar State - Fully collapsed, only toggle button visible */
+/* Collapsed Sidebar State - Icon-only mode */
 .sidebar-collapsed {
-    width: 48px;
-    min-width: 48px;
-    padding: 0;
-    overflow: hidden;
+    width: 56px;
+    min-width: 56px;
+    padding: 8px 0;
+    overflow-x: hidden;
+    overflow-y: auto;
     transition: width 0.3s ease, min-width 0.3s ease;
 }
 
 .sidebar-collapsed .sidebar-header {
-    flex-direction: column;
-    gap: 8px;
-    font-size: 12px;
-    padding: 12px 8px;
+    flex-direction: row;
     justify-content: center;
+    padding: 8px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid #e0e0e0;
 }
 
 .sidebar-collapsed .sidebar-header > span {
@@ -2497,18 +2507,43 @@ body > #campaignModal {
 }
 
 .sidebar-collapsed .sidebar-toggle {
-    width: 100%;
     padding: 8px !important;
     margin: 0;
 }
 
-/* Hide accordion and footer entirely when collapsed */
+/* Show accordion as icon-only when collapsed */
 .sidebar-collapsed #sidebarAccordion {
-    display: none;
+    display: block !important;
+}
+
+.sidebar-collapsed .e-acrdn-item .e-acrdn-header {
+    padding: 10px 12px !important;
+    min-height: 44px;
+    justify-content: center;
+}
+
+.sidebar-collapsed .e-acrdn-item .e-acrdn-header .accordion-icon {
+    margin: 0 !important;
+    font-size: 18px;
+}
+
+/* Hide section labels and toggle arrow, show only icons */
+.sidebar-collapsed .e-acrdn-item .e-acrdn-header > *:not(.accordion-icon) {
+    display: none !important;
+}
+
+.sidebar-collapsed .e-acrdn-panel,
+.sidebar-collapsed .e-acrdn-content {
+    display: none !important;
 }
 
 .sidebar-collapsed .sidebar-footer {
     display: none;
+}
+
+/* Tooltip on hover for collapsed icons */
+.sidebar-collapsed .e-acrdn-header {
+    cursor: pointer;
 }
 
 /* Animation for Accordion */
@@ -5586,6 +5621,62 @@ a:focus-visible {
 #page-leads #profileTabContent .profile-right-tab.active,
 #page-leads #profileTabContent .profile-right-tab[style*="border-bottom: 3px solid #0066cc"] {
     color: #0f2f66 !important;
+}
+
+/* Schedule tab - workflow phase cards */
+.schedule-phase-card {
+    border: 1px solid #e4e4e4;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.schedule-phase-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    background: #f8f9fa;
+    font-size: 14px;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.schedule-phase-num {
+    width: 24px;
+    height: 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #0066cc;
+    color: white;
+    border-radius: 50%;
+    font-size: 12px;
+}
+
+.schedule-phase-title {
+    flex: 1;
+}
+
+.schedule-phase-toggle {
+    font-size: 10px;
+    color: #6c757d;
+}
+
+.schedule-phase-body {
+    padding: 12px 14px 12px 38px;
+    background: white;
+    border-top: 1px solid #eee;
+}
+
+.schedule-phase-item {
+    padding: 6px 0;
+    font-size: 13px;
+    color: #475569;
+    border-bottom: 1px dotted #e9ecef;
+}
+
+.schedule-phase-item:last-child {
+    border-bottom: none;
 }
 
 #clientSummaryStatus {

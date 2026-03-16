@@ -74,7 +74,7 @@ function renderHardwareTable() {
             
             const grid = new window.ej.grids.Grid({
                 dataSource: hardwareGridData,
-                allowPaging: true,
+                allowPaging: false,
                 pageSettings: { pageSize: 10 },
                 allowSorting: true,
                 allowExcelExport: true,
@@ -287,7 +287,7 @@ function renderHardwareTableTab() {
             
             const grid = new window.ej.grids.Grid({
                 dataSource: hardwareGridData,
-                allowPaging: true,
+                allowPaging: false,
                 pageSettings: { pageSize: 10 },
                 allowSorting: true,
                 allowExcelExport: true,
